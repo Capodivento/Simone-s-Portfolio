@@ -155,18 +155,24 @@
                         <span>View Python Guide</span>
                     </button>
                     
-                    <div id="pdf-viewer" class="pdf-container hidden mt-4">
-                        <!-- In a real implementation, you would use a PDF viewer or embed the actual PDF -->
-                        <div class="bg-gray-800 bg-opacity-50 p-4 rounded text-center">
-                            <h5 class="font-medium mb-2">Automate the Boring Stuff with Python</h5>
-                            <p class="text-sm mb-4">Prepared by Simone Capodivento</p>
-                            <p class="text-xs italic mb-4">A practical guide for beginners that teaches how to use Python to automate time-consuming tasks. Covers Python basics, file management, web scraping, Excel manipulation, and more.</p>
-                            <a href="Automate_the_Boring_Stuff_with_Python.pdf" download class="pdf-btn">
-                                <i class="fas fa-download"></i>
-                                <span>Download PDF</span>
-                            </a>
-                        </div>
-                    </div>
+                    <div id="pdf-viewer" class="hidden mt-4" style="position: relative; padding-bottom: 100%; height: 0; overflow: hidden; margin-top: 1rem;">
+    <!-- Embedded PDF viewer -->
+    <iframe
+        src="Automate_the_Boring_Stuff_with_Python_2.pdf"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid rgba(72, 219, 251, 0.3); border-radius: 4px;"
+        allowfullscreen
+    ></iframe>
+    
+    <!-- Download button below the embedded PDF -->
+    <div class="bg-gray-800 bg-opacity-50 p-4 rounded text-center" style="margin-top: calc(100% + 1rem);">
+        <h5 class="font-medium mb-2">Automate the Boring Stuff with Python</h5>
+        <p class="text-sm mb-4">Prepared by Simone Capodivento</p>
+        <a href="Automate_the_Boring_Stuff_with_Python_2.pdf" download="Python_Guide_by_Simone_Capodivento.pdf" class="pdf-btn">
+            <i class="fas fa-download"></i>
+            <span>Download PDF</span>
+        </a>
+    </div>
+</div>
                 </div>
             </div>
             
