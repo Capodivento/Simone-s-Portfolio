@@ -157,13 +157,21 @@
                     
                     <div id="pdf-viewer" class="hidden mt-4" style="position: relative; padding-bottom: 100%; height: 0; overflow: hidden; margin-top: 1rem;">
     <!-- Embedded PDF viewer -->
-    <iframe
-        src="Automate_the_Boring_Stuff_with_Python_2.pdf"
+    <div>
+    <!-- Using object tag instead of iframe for better PDF handling -->
+    <object
+        data="Automate_the_Boring_Stuff_with_Python_2.pdf"
+        type="application/pdf"
         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid rgba(72, 219, 251, 0.3); border-radius: 4px;"
-        allowfullscreen
-    ></iframe>
+        allowfullscreen>
+        <p>It appears your browser doesn't support embedded PDFs. 
+           <a href="Automate_the_Boring_Stuff_with_Python_2.pdf">
+             Click here to download the PDF
+           </a>
+        </p>
+    </object>
     
-    <!-- Download button below the embedded PDF -->
+    <!-- Download button below the embedded PDF - keeping your existing styling -->
     <div class="bg-gray-800 bg-opacity-50 p-4 rounded text-center" style="margin-top: calc(100% + 1rem);">
         <h5 class="font-medium mb-2">Automate the Boring Stuff with Python</h5>
         <p class="text-sm mb-4">Prepared by Simone Capodivento</p>
@@ -173,6 +181,31 @@
         </a>
     </div>
 </div>
+
+<!-- CSS for the download button - you can place this in your style section -->
+<style>
+.pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 10px 0;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.pdf-btn:hover {
+    background-color: #45a049;
+}
+
+.pdf-btn i {
+    margin-right: 8px;
+}
+</style>
                 </div>
             </div>
             
