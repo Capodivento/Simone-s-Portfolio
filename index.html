@@ -8,6 +8,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Add these before the closing </head> tag -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    // Set the PDF.js worker source
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
     <style>
         /* Scientific styling */
         .scientific-background {
@@ -157,28 +163,70 @@
                     
                     <div id="pdf-viewer" class="hidden mt-4" style="position: relative; padding-bottom: 100%; height: 0; overflow: hidden; margin-top: 1rem;">
     <!-- Embedded PDF viewer -->
-    <div>
-    <!-- Using object tag instead of iframe for better PDF handling -->
-    <object
-        data="Automate_the_Boring_Stuff_with_Python_2.pdf"
-        type="application/pdf"
-        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid rgba(72, 219, 251, 0.3); border-radius: 4px;"
-        allowfullscreen>
-        <p>It appears your browser doesn't support embedded PDFs. 
-           <a href="Automate_the_Boring_Stuff_with_Python_2.pdf">
-             Click here to download the PDF
-           </a>
-        </p>
-    </object>
+    <!-- Replace your current PDF viewer with this implementation -->
+<div id="pdf-viewer" class="hidden mt-4">
+    <!-- Loading indicator -->
+    <div id="pdf-loading" class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-400 mb-4"></div>
+        <p>Loading PDF...</p>
+    </div>
     
-    <!-- Download button below the embedded PDF - keeping your existing styling -->
-    <div class="bg-gray-800 bg-opacity-50 p-4 rounded text-center" style="margin-top: calc(100% + 1rem);">
+    <!-- PDF.js viewer container -->
+    <div class="pdf-container" style="height: 600px; border: 1px solid rgba(72, 219, 251, 0.3); border-radius: 4px; overflow: hidden;">
+        <div id="pdfjs-viewer" class="h-full"></div>
+    </div>
+    
+    <!-- PDF Controls Bar -->
+    <div class="bg-gray-800 bg-opacity-70 mt-4 p-3 rounded-lg flex justify-between items-center">
+        <div>
+            <span id="current-page" class="text-sm">Page: 1 / --</span>
+        </div>
+        <div class="flex space-x-3">
+            <button id="zoom-out" class="p-2 rounded hover:bg-gray-700 transition-colors">
+                <i class="fas fa-search-minus"></i>
+            </button>
+            <button id="zoom-in" class="p-2 rounded hover:bg-gray-700 transition-colors">
+                <i class="fas fa-search-plus"></i>
+            </button>
+            <button id="prev-page" class="p-2 rounded hover:bg-gray-700 transition-colors">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button id="next-page" class="p-2 rounded hover:bg-gray-700 transition-colors">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <a href="Automate_the_Boring_Stuff_with_Python (4).pdf" 
+               target="_blank" 
+               class="p-2 rounded hover:bg-gray-700 transition-colors">
+                <i class="fas fa-external-link-alt"></i>
+            </a>
+        </div>
+    </div>
+    
+    <!-- PDF Info and Download Section -->
+    <div class="bg-gray-800 bg-opacity-50 p-4 rounded mt-4 text-center">
         <h5 class="font-medium mb-2">Automate the Boring Stuff with Python</h5>
         <p class="text-sm mb-4">Prepared by Simone Capodivento</p>
-        <a href="Automate_the_Boring_Stuff_with_Python_2.pdf" download="Python_Guide_by_Simone_Capodivento.pdf" class="pdf-btn">
-            <i class="fas fa-download"></i>
-            <span>Download PDF</span>
-        </a>
+        <div class="flex justify-center space-x-4">
+            <a href="Automate_the_Boring_Stuff_with_Python (4).pdf" 
+               download="Python_Guide_by_Simone_Capodivento.pdf" 
+               class="pdf-btn">
+                <i class="fas fa-download"></i>
+                <span>Download PDF</span>
+            </a>
+            <button id="toggle-toc" class="pdf-btn">
+                <i class="fas fa-list"></i>
+                <span>Show Contents</span>
+            </button>
+        </div>
+        
+        <!-- Table of Contents (Initially Hidden) -->
+        <div id="pdf-toc" class="hidden mt-6 text-left">
+            <h6 class="text-emerald-300 mb-2 border-b border-emerald-300 pb-1">Table of Contents</h6>
+            <ul id="pdf-outline" class="text-sm space-y-2 pl-4">
+                <!-- Will be populated dynamically by PDF.js -->
+                <li class="pdf-outline-loading">Loading outline...</li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -204,6 +252,57 @@
 
 .pdf-btn i {
     margin-right: 8px;
+}
+    /* Add these to your existing <style> tag */
+
+/* PDF.js Viewer Styles */
+#pdfjs-viewer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    overflow: auto;
+}
+
+#pdfjs-viewer canvas {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Page number indicator */
+#current-page {
+    background-color: rgba(29, 209, 161, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+}
+
+/* Outline items */
+#pdf-outline li {
+    margin-bottom: 0.5rem;
+}
+
+#pdf-outline a {
+    display: block;
+    padding: 0.25rem 0;
+    text-decoration: none;
+}
+
+.pdf-outline-loading {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+/* Control button animation */
+#pdf-viewer button {
+    transition: transform 0.2s ease;
+}
+
+#pdf-viewer button:hover {
+    transform: scale(1.1);
+}
+
+#pdf-viewer button:active {
+    transform: scale(0.95);
 }
 </style>
                 </div>
@@ -452,3 +551,304 @@
     </script>
 </body>
 </html>
+// Add this to your script section at the bottom of the page
+
+// PDF.js Implementation
+document.addEventListener('DOMContentLoaded', function() {
+    // PDF viewer elements
+    const pdfViewerContainer = document.getElementById('pdfjs-viewer');
+    const loadingIndicator = document.getElementById('pdf-loading');
+    const currentPageSpan = document.getElementById('current-page');
+    const prevPageBtn = document.getElementById('prev-page');
+    const nextPageBtn = document.getElementById('next-page');
+    const zoomInBtn = document.getElementById('zoom-in');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    const toggleTocBtn = document.getElementById('toggle-toc');
+    const pdfToc = document.getElementById('pdf-toc');
+    const pdfOutline = document.getElementById('pdf-outline');
+    
+    // PDF.js variables
+    let pdfDoc = null;
+    let pdfPage = null;
+    let pageNum = 1;
+    let pageRendering = false;
+    let pageNumPending = null;
+    let scale = 1.0;
+    let canvas = null;
+    let ctx = null;
+    
+    // Initialize PDF viewer
+    function initPdfViewer() {
+        // Create canvas element
+        canvas = document.createElement('canvas');
+        canvas.className = 'w-full h-full';
+        ctx = canvas.getContext('2d');
+        pdfViewerContainer.appendChild(canvas);
+        
+        // Load the PDF
+        loadPdf('Automate_the_Boring_Stuff_with_Python (4).pdf');
+    }
+    
+    // Load PDF document
+    function loadPdf(url) {
+        pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            pdfDoc = pdf;
+            currentPageSpan.textContent = `Page: ${pageNum} / ${pdfDoc.numPages}`;
+            
+            // Hide loading indicator
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            
+            // Load outline/table of contents if available
+            pdfDoc.getOutline().then(function(outline) {
+                if (outline && outline.length > 0) {
+                    renderOutline(outline);
+                } else {
+                    pdfOutline.innerHTML = '<li>No table of contents available</li>';
+                }
+            }).catch(function() {
+                pdfOutline.innerHTML = '<li>No table of contents available</li>';
+            });
+            
+            // Render the first page
+            renderPage(pageNum);
+        }).catch(function(error) {
+            console.error('Error loading PDF:', error);
+            pdfViewerContainer.innerHTML = `
+                <div class="text-center p-8 border border-dashed border-emerald-400 rounded-lg">
+                    <i class="fas fa-exclamation-triangle text-4xl text-emerald-400 mb-4"></i>
+                    <h4 class="text-lg mb-4">Error Loading PDF</h4>
+                    <p class="mb-4">${error.message}</p>
+                    <a href="Automate_the_Boring_Stuff_with_Python (4).pdf" 
+                       class="pdf-btn" 
+                       download="Python_Guide_by_Simone_Capodivento.pdf">
+                        <i class="fas fa-download"></i>
+                        <span>Download PDF Instead</span>
+                    </a>
+                </div>
+            `;
+            
+            // Hide loading indicator
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+        });
+    }
+    
+    // Render PDF page
+    function renderPage(num) {
+        pageRendering = true;
+        
+        // Get page
+        pdfDoc.getPage(num).then(function(page) {
+            pdfPage = page;
+            
+            // Set scale based on container size
+            const viewport = page.getViewport({ scale: scale });
+            const containerWidth = pdfViewerContainer.clientWidth;
+            const containerHeight = pdfViewerContainer.clientHeight;
+            
+            // Adjust scale to fit container while maintaining aspect ratio
+            const scaleFactor = Math.min(
+                containerWidth / viewport.width,
+                containerHeight / viewport.height
+            );
+            
+            const adjustedViewport = page.getViewport({ scale: scale * scaleFactor });
+            
+            // Set canvas dimensions
+            canvas.height = adjustedViewport.height;
+            canvas.width = adjustedViewport.width;
+            
+            // Render PDF page into canvas context
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: adjustedViewport
+            };
+            
+            const renderTask = page.render(renderContext);
+            
+            // Wait for rendering to finish
+            renderTask.promise.then(function() {
+                pageRendering = false;
+                
+                // Handle pending page requests
+                if (pageNumPending !== null) {
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+            });
+        });
+        
+        // Update page counter
+        currentPageSpan.textContent = `Page: ${num} / ${pdfDoc.numPages}`;
+    }
+    
+    // Queue rendering of the page
+    function queueRenderPage(num) {
+        if (pageRendering) {
+            pageNumPending = num;
+        } else {
+            renderPage(num);
+        }
+    }
+    
+    // Go to previous page
+    function prevPage() {
+        if (pageNum <= 1) {
+            return;
+        }
+        pageNum--;
+        queueRenderPage(pageNum);
+    }
+    
+    // Go to next page
+    function nextPage() {
+        if (pageNum >= pdfDoc.numPages) {
+            return;
+        }
+        pageNum++;
+        queueRenderPage(pageNum);
+    }
+    
+    // Zoom in
+    function zoomIn() {
+        scale *= 1.2;
+        queueRenderPage(pageNum);
+    }
+    
+    // Zoom out
+    function zoomOut() {
+        scale /= 1.2;
+        queueRenderPage(pageNum);
+    }
+    
+    // Render outline/table of contents
+    function renderOutline(outline) {
+        pdfOutline.innerHTML = '';
+        
+        outline.forEach(function(item, index) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = item.title;
+            a.className = 'hover:text-emerald-300 transition-colors';
+            
+            // Set up click event to navigate to the destination
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (item.dest) {
+                    pdfDoc.getDestination(item.dest).then(function(dest) {
+                        if (dest) {
+                            const pageNumber = getPageNumberFromDestination(dest);
+                            if (pageNumber) {
+                                pageNum = pageNumber;
+                                queueRenderPage(pageNum);
+                            }
+                        }
+                    });
+                }
+            });
+            
+            li.appendChild(a);
+            pdfOutline.appendChild(li);
+        });
+    }
+    
+    // Helper to extract page number from destination
+    function getPageNumberFromDestination(dest) {
+        if (Array.isArray(dest) && dest.length > 0) {
+            const ref = dest[0];
+            if (ref instanceof Object && 'num' in ref) {
+                return ref.num;
+            }
+        }
+        return null;
+    }
+    
+    // Set up event listeners
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', prevPage);
+    }
+    
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', nextPage);
+    }
+    
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', zoomIn);
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', zoomOut);
+    }
+    
+    // Toggle Table of Contents
+    if (toggleTocBtn && pdfToc) {
+        toggleTocBtn.addEventListener('click', function() {
+            if (pdfToc.classList.contains('hidden')) {
+                pdfToc.classList.remove('hidden');
+                this.innerHTML = '<i class="fas fa-list"></i><span>Hide Contents</span>';
+            } else {
+                pdfToc.classList.add('hidden');
+                this.innerHTML = '<i class="fas fa-list"></i><span>Show Contents</span>';
+            }
+        });
+    }
+    
+    // Update toggle button for PDF
+    document.getElementById('toggle-pdf').addEventListener('click', function() {
+        const pdfViewer = document.getElementById('pdf-viewer');
+        const projectOne = document.getElementById('project-one');
+        
+        if (pdfViewer.classList.contains('hidden')) {
+            // Show PDF viewer
+            pdfViewer.classList.remove('hidden');
+            // Expand the project card
+            projectOne.classList.add('lg:col-span-2', 'lg:row-span-2');
+            // Change button text
+            this.innerHTML = '<i class="fas fa-times"></i><span>Close PDF</span>';
+            
+            // Initialize PDF viewer if not already initialized
+            if (!canvas) {
+                initPdfViewer();
+            }
+            
+            // Animate the expansion
+            gsap.to(projectOne, {
+                height: 'auto',
+                duration: 0.3,
+                ease: 'power2.out',
+                onComplete: function() {
+                    // Re-render the page to adjust to new container size
+                    if (pdfPage) {
+                        queueRenderPage(pageNum);
+                    }
+                }
+            });
+        } else {
+            // Hide PDF viewer
+            pdfViewer.classList.add('hidden');
+            // Reduce the project card
+            projectOne.classList.remove('lg:col-span-2', 'lg:row-span-2');
+            // Change button text back
+            this.innerHTML = '<i class="fas fa-file-pdf"></i><span>View Python Guide</span>';
+            
+            // Animate the collapse
+            gsap.to(projectOne, {
+                height: 'auto',
+                duration: 0.3,
+                ease: 'power2.in'
+            });
+        }
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (pdfPage) {
+            queueRenderPage(pageNum);
+        }
+    });
+});
