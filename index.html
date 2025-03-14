@@ -78,7 +78,21 @@
                 transparent
             );
         }
+        
+        /* Tech font styling */
+        .tech-font {
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+        
+        /* Tech highlight effect */
+        .tech-highlight {
+            color: #48DBF1;
+            font-weight: 600;
+        }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body class="bg-transparent text-emerald-100 relative">
     <div class="scientific-background"></div>
@@ -99,10 +113,22 @@
         </nav>
     </header>
     
-    <section id="hero" class="h-screen flex items-center justify-center text-center">
+    <section id="hero" class="h-screen flex flex-col items-center justify-center text-center px-4">
         <div>
-            <h2 class="text-5xl font-extrabold scientific-text">Welcome to My Portfolio</h2>
-            <p class="mt-4 text-lg">Exploring the intersection of science and technology</p>
+            <h2 class="text-5xl font-extrabold scientific-text mb-6">I'M SIMO</h2>
+            <p class="mt-4 text-lg tech-font tracking-wider">
+                I LIKE TO BUILD THINGS WITH <span class="tech-highlight">CODE</span> AND BEYOND.
+            </p>
+            <p class="mt-6 text-lg tech-font tracking-wider max-w-2xl mx-auto">
+                SOME OF MY INTERESTS ARE: <span class="tech-highlight">DESIGN</span>, 
+                <span class="tech-highlight">WEB DEVELOPMENT</span>, 
+                <span class="tech-highlight">ANDROID DEVELOPMENT</span>,
+                <span class="tech-highlight">COMPUTER GRAPHICS</span> AND 
+                <span class="tech-highlight">ANIMATION</span>.
+            </p>
+            <p class="mt-8 text-lg tech-font">
+                YOU CAN FIND HERE SOME OF THE PROJECTS I'VE WORKED ON.
+            </p>
         </div>
     </section>
     
@@ -253,6 +279,7 @@
             y: 50, 
             duration: 1.5, 
             delay: 0.3, 
+            stagger: 0.2,
             ease: "power3.out"
         });
     </script>
