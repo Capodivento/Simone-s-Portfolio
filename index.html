@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Previous head section remains exactly the same until the body -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -91,6 +90,19 @@
             color: #48DBF1;
             font-weight: 600;
         }
+        
+        /* Project image */
+        .project-image {
+            width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .project-image:hover {
+            transform: scale(1.05);
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
@@ -135,8 +147,9 @@
         <h2 class="text-4xl font-bold text-center scientific-text">Projects</h2>
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all">
-                <h3 class="text-2xl font-semibold">Project One</h3>
-                <p class="mt-2">Advanced 3D visualization and scientific modeling.</p>
+                <h3 class="text-2xl font-semibold">Blender 3D Project</h3>
+                <p class="mt-2">3D modeling and rendering created with Blender.</p>
+                <img src="https://raw.githubusercontent.com/Capodivento/Website/main/Screenshot%202025-03-23%20at%2021.37.02.png" alt="Blender 3D Project" class="project-image">
             </div>
             <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all">
                 <h3 class="text-2xl font-semibold">Project Two</h3>
@@ -166,7 +179,6 @@
         <p>&copy; 2025 Simone. All rights reserved.</p>
     </footer>
 
-    <!-- Previous JavaScript remains exactly the same -->
     <script>
         // Three.js Scene Setup
         const scene = new THREE.Scene();
@@ -275,6 +287,16 @@
             delay: 0.3, 
             stagger: 0.2,
             ease: "power3.out"
+        });
+        
+        // Animation for project images
+        gsap.from(".project-image", {
+            opacity: 0,
+            scale: 0.8,
+            duration: 1,
+            delay: 0.5,
+            stagger: 0.2,
+            ease: "back.out(1.7)"
         });
     </script>
 </body>
