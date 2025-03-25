@@ -68,6 +68,14 @@
             opacity: 0.5;
         }
 
+        /* Project 3D Container */
+        .project-3d-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            margin-top: 1rem;
+        }
+
         /* Scientific grid */
         .grid-line {
             position: absolute;
@@ -152,13 +160,12 @@
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot-2025-03-23.png" alt="Blender 3D Project" class="project-image" style="width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem; transition: transform 0.3s ease;">
             </div>
             <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all">
-                <h3 class="text-2xl font-semibold">Project Two</h3>
-                <p class="mt-2">Interactive data visualization with Three.js.</p>
+                <h3 class="text-2xl font-semibold">3D Geometric Visualization</h3>
+                <p class="mt-2">Interactive 3D geometry created with Three.js</p>
+                <div class="project-3d-container" id="project-3d-container"></div>
             </div>
         </div>
     </section>
-    
-
     
     <section id="contact" class="p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
         <h2 class="text-4xl font-bold scientific-text">Contact</h2>
@@ -178,14 +185,14 @@
     </footer>
 
     <script>
-        // Three.js Scene Setup
+        // Three.js Scene Setup for background
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('scene-container').appendChild(renderer.domElement);
 
-        // Create 3D shapes
+        // Create 3D shapes for background
         const shapes = [];
         const geometries = [
             new THREE.IcosahedronGeometry(1),
@@ -222,9 +229,9 @@
 
         camera.position.z = 15;
 
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
+        // Animation loop for background
+        function animateBackground() {
+            requestAnimationFrame(animateBackground);
 
             shapes.forEach(shape => {
                 shape.rotation.x += 0.001;
@@ -234,11 +241,18 @@
             renderer.render(scene, camera);
         }
 
-        // Handle window resize
+        // Handle window resize for background
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Also resize project 3D scene
+            if (projectCamera && projectRenderer) {
+                projectCamera.aspect = projectContainer.clientWidth / projectContainer.clientHeight;
+                projectCamera.updateProjectionMatrix();
+                projectRenderer.setSize(projectContainer.clientWidth, projectContainer.clientHeight);
+            }
         });
 
         // Create particles
@@ -267,8 +281,8 @@
         // Create particles periodically
         setInterval(createParticle, 200);
 
-        // Start animation
-        animate();
+        // Start background animation
+        animateBackground();
 
         // GSAP animations for content
         gsap.from("#hero h2", { 
@@ -296,6 +310,179 @@
             stagger: 0.2,
             ease: "back.out(1.7)"
         });
+
+        // Three.js for project section
+        let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
+        const projectContainer = document.getElementById('project-3d-container');
+
+        function initProject3D() {
+            // Scene setup
+            projectScene = new THREE.Scene();
+            projectCamera = new THREE.PerspectiveCamera(75, projectContainer.clientWidth / projectContainer.clientHeight, 0.1, 1000);
+            projectRenderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true 
+            });
+            projectRenderer.setSize(projectContainer.clientWidth, projectContainer.clientHeight);
+            projectContainer.appendChild(projectRenderer.domElement);
+
+            // Create complex low-poly geometry
+            function createCustomGeometry() {
+                const geometry = new THREE.BufferGeometry();
+                
+                // Vertices with more complex arrangement
+                const vertices = new Float32Array([
+                    // Main shape vertices
+                    -1.0, -1.0, 1.0,
+                    1.0, -1.0, 1.0,
+                    1.0,  1.0, 1.0,
+                    -1.0,  1.0, 1.0,
+                    
+                    -1.0, -1.0, -1.0,
+                    1.0, -1.0, -1.0,
+                    1.0,  1.0, -1.0,
+                    -1.0,  1.0, -1.0,
+                    
+                    // Additional irregular vertices
+                    0.0,  2.0,  0.0,
+                    2.0,  0.0,  0.0,
+                    -2.0,  0.0,  0.0,
+                    0.0,  0.0,  2.0,
+                    0.0,  0.0, -2.0
+                ]);
+
+                // Indices to create faces
+                const indices = [
+                    0,1,2, 0,2,3,  // front
+                    1,5,6, 1,6,2,  // right
+                    5,4,7, 5,7,6,  // back
+                    4,0,3, 4,3,7,  // left
+                    3,2,8, 2,6,8,  // top
+                    4,5,9, 0,4,10, // complex connections
+                    1,0,11, 5,1,12
+                ];
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                geometry.setIndex(indices);
+                geometry.computeVertexNormals();
+
+                return geometry;
+            }
+
+            // Main shape
+            const mainGeometry = createCustomGeometry();
+            const mainMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x48DBF1, 
+                transparent: true, 
+                opacity: 0.8,
+                wireframe: false
+            });
+            projectMesh = new THREE.Mesh(mainGeometry, mainMaterial);
+            projectScene.add(projectMesh);
+
+            // Wireframe
+            function createWireframe() {
+                const wireGeometry = new THREE.BufferGeometry();
+                const wireVertices = [];
+
+                // Create more complex wire network
+                for (let i = 0; i < 200; i++) {
+                    wireVertices.push(
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 10
+                    );
+                }
+
+                wireGeometry.setAttribute('position', new THREE.Float32BufferAttribute(wireVertices, 3));
+                
+                const wireMaterial = new THREE.LineBasicMaterial({ 
+                    color: 0xbae6fd, 
+                    transparent: true, 
+                    opacity: 0.5 
+                });
+
+                return new THREE.LineSegments(wireGeometry, wireMaterial);
+            }
+
+            projectWireframe = createWireframe();
+            projectScene.add(projectWireframe);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            projectScene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(1, 1, 1);
+            projectScene.add(directionalLight);
+
+            // Camera positioning
+            projectCamera.position.z = 5;
+
+            // Interaction
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            projectContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { 
+                    x: e.clientX - projectContainer.getBoundingClientRect().left, 
+                    y: e.clientY - projectContainer.getBoundingClientRect().top 
+                };
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                const currentMousePosition = { 
+                    x: e.clientX - projectContainer.getBoundingClientRect().left, 
+                    y: e.clientY - projectContainer.getBoundingClientRect().top 
+                };
+
+                const deltaMove = {
+                    x: currentMousePosition.x - previousMousePosition.x,
+                    y: currentMousePosition.y - previousMousePosition.y
+                };
+
+                projectMesh.rotation.y += deltaMove.x * 0.01;
+                projectMesh.rotation.x += deltaMove.y * 0.01;
+                projectWireframe.rotation.y += deltaMove.x * 0.01;
+                projectWireframe.rotation.x += deltaMove.y * 0.01;
+
+                previousMousePosition = currentMousePosition;
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            // Animation loop
+            function animateProject() {
+                requestAnimationFrame(animateProject);
+
+                if (!isDragging) {
+                    projectMesh.rotation.y += 0.005;
+                    projectMesh.rotation.x += 0.002;
+                    projectWireframe.rotation.y += 0.005;
+                    projectWireframe.rotation.x += 0.002;
+                }
+
+                projectRenderer.render(projectScene, projectCamera);
+            }
+
+            // Start animation
+            animateProject();
+        }
+
+        // Initialize project 3D when the section is in view
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                initProject3D();
+                observer.disconnect();
+            }
+        }, { threshold: 0.1 });
+
+        observer.observe(document.getElementById('projects'));
     </script>
 </body>
 </html>
