@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Geometric Visualization</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas { 
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            alpha: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create complex low-poly geometry
+        function createCustomGeometry() {
+            const geometry = new THREE.BufferGeometry();
+            
+            // Vertices with more complex arrangement
+            const vertices = new Float32Array([
+                // Main shape vertices
+                -1.0, -1.0, 1.0,
+                 1.0, -1.0, 1.0,
+                 1.0,  1.0, 1.0,
+                -1.0,  1.0, 1.0,
+                
+                -1.0, -1.0, -1.0,
+                 1.0, -1.0, -1.0,
+                 1.0,  1.0, -1.0,
+                -1.0,  1.0, -1.0,
+                
+                // Additional irregular vertices
+                 0.0,  2.0,  0.0,
+                 2.0,  0.0,  0.0,
+                -2.0,  0.0,  0.0,
+                 0.0,  0.0,  2.0,
+                 0.0,  0.0, -2.0
+            ]);
+
+            // Indices to create faces
+            const indices = [
+                0,1,2, 0,2,3,  // front
+                1,5,6, 1,6,2,  // right
+                5,4,7, 5,7,6,  // back
+                4,0,3, 4,3,7,  // left
+                3,2,8, 2,6,8,  // top
+                4,5,9, 0,4,10, // complex connections
+                1,0,11, 5,1,12
+            ];
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+            geometry.setIndex(indices);
+            geometry.computeVertexNormals();
+
+            return geometry;
+        }
+
+        // Main shape
+        const mainGeometry = createCustomGeometry();
+        const mainMaterial = new THREE.MeshPhongMaterial({ 
+            color: 0x2c3e50, 
+            transparent: true, 
+            opacity: 0.8 
+        });
+        const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial);
+        scene.add(mainMesh);
+
+        // Wireframe
+        function createWireframe() {
+            const wireGeometry = new THREE.BufferGeometry();
+            const wireVertices = [];
+
+            // Create more complex wire network
+            for (let i = 0; i < 200; i++) {
+                wireVertices.push(
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10
+                );
+            }
+
+            wireGeometry.setAttribute('position', new THREE.Float32BufferAttribute(wireVertices, 3));
+            
+            const wireMaterial = new THREE.LineBasicMaterial({ 
+                color: 0xbae6fd, 
+                transparent: true, 
+                opacity: 0.5 
+            });
+
+            return new THREE.LineSegments(wireGeometry, wireMaterial);
+        }
+
+        const wireframe = createWireframe();
+        scene.add(wireframe);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(1, 1, 1);
+        scene.add(directionalLight);
+
+        // Camera positioning
+        camera.position.z = 5;
+
+        // Interaction
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        document.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const deltaMove = {
+                x: e.clientX - previousMousePosition.x,
+                y: e.clientY - previousMousePosition.y
+            };
+
+            mainMesh.rotation.y += deltaMove.x * 0.01;
+            mainMesh.rotation.x += deltaMove.y * 0.01;
+            wireframe.rotation.y += deltaMove.x * 0.01;
+            wireframe.rotation.x += deltaMove.y * 0.01;
+
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (!isDragging) {
+                mainMesh.rotation.y += 0.005;
+                mainMesh.rotation.x += 0.002;
+                wireframe.rotation.y += 0.005;
+                wireframe.rotation.x += 0.002;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Responsive handling
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        });
+
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
