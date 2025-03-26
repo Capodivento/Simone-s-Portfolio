@@ -151,18 +151,28 @@
         </div>
     </section>
     
+    <!-- Updated Projects Section -->
     <section id="projects" class="p-12 backdrop-blur-sm bg-opacity-10 bg-gray-900">
-        <h2 class="text-4xl font-bold text-center scientific-text">Projects</h2>
-        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all col-span-1 lg:col-span-2">
-                <h3 class="text-2xl font-semibold">Blender 3D Project</h3>
-                <p class="mt-2">3D modeling and rendering created with Blender. My messy room.</p>
-                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot-2025-03-23.png" alt="Blender 3D Project" class="project-image" style="width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1rem; transition: transform 0.3s ease;">
+        <h2 class="text-4xl font-bold text-center scientific-text mb-8">Projects</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Blender Project Card - Larger, more prominent -->
+            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all md:col-span-2 lg:col-span-1 flex flex-col">
+                <div class="flex-grow">
+                    <h3 class="text-2xl font-semibold mb-4">Blender 3D Project</h3>
+                    <p class="mt-2 mb-4 text-emerald-200">3D modeling and rendering created with Blender. A detailed visualization of my personal space.</p>
+                </div>
+                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot-2025-03-23.png" 
+                     alt="Blender 3D Project" 
+                     class="project-image object-cover w-full h-80 rounded-lg">
             </div>
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all">
-                <h3 class="text-2xl font-semibold">3D Geometric Visualization</h3>
-                <p class="mt-2">Interactive 3D geometry created with Three.js</p>
-                <div class="project-3d-container" id="project-3d-container"></div>
+
+            <!-- 3D Geometric Visualization -->
+            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all flex flex-col">
+                <div class="flex-grow">
+                    <h3 class="text-2xl font-semibold mb-4">3D Geometric Visualization</h3>
+                    <p class="mt-2 mb-4 text-emerald-200">Interactive 3D geometry created with Three.js, exploring complex geometric forms.</p>
+                </div>
+                <div class="project-3d-container h-64 w-full" id="project-3d-container"></div>
             </div>
         </div>
     </section>
