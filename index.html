@@ -102,14 +102,17 @@
         /* Project image */
         .project-image {
             width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
+            height: 500px;  /* Increased height */
+            object-fit: cover;  /* Ensures image covers the entire space */
+            border-radius: 0.75rem;  /* Slightly larger border radius */
             margin-top: 1rem;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);  /* Added shadow */
         }
         
         .project-image:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);  /* Subtle scale on hover */
+            box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);  /* Enhanced shadow on hover */
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -159,11 +162,11 @@
             <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all md:col-span-2 lg:col-span-1 flex flex-col">
                 <div class="flex-grow">
                     <h3 class="text-2xl font-semibold mb-4">Blender 3D Project</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">3D modeling and rendering created with Blender. A detailed visualization of my personal space.</p>
+                    <p class="mt-2 mb-4 text-emerald-200">A detailed 3D visualization of my personal space, crafted with precision in Blender.</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png" 
                      alt="Blender 3D Project" 
-                     class="project-image object-cover w-full h-80 rounded-lg">
+                     class="project-image">
             </div>
 
             <!-- 3D Geometric Visualization -->
