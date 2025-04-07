@@ -78,17 +78,6 @@
             margin-top: 1rem;
         }
 
-        /* Benzene 3D Container */
-        #benzene-container {
-            width: 100%;
-            height: 400px;
-            position: relative;
-            margin-top: 1rem;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);
-        }
-
         /* Scientific grid */
         .grid-line {
             position: absolute;
@@ -138,6 +127,25 @@
             font-size: 1.5rem;
             text-align: center;
         }
+
+        /* Linktree button styling */
+        .linktree-btn {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #48DBF1 0%, #1DD1A1 100%);
+            color: white;
+            border-radius: 2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(29, 209, 161, 0.3);
+        }
+
+        .linktree-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(29, 209, 161, 0.4);
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
@@ -175,27 +183,16 @@
             <p class="mt-8 text-lg tech-font">
                 YOU CAN FIND HERE SOME OF THE PROJECTS I'VE WORKED ON.
             </p>
+            <a href="https://linktr.ee/simone.capodivento" target="_blank" class="linktree-btn">
+                <i class="fas fa-external-link-alt mr-2"></i> My Linktree
+            </a>
         </div>
     </section>
     
-    <!-- Updated Projects Section with Benzene Model -->
+    <!-- Projects Section -->
     <section id="projects" class="p-12 backdrop-blur-sm bg-opacity-10 bg-gray-900">
         <h2 class="text-4xl font-bold text-center scientific-text mb-8">Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Benzene Model Card - NEW ADDITION -->
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all md:col-span-2 flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Benzene Molecular Structure</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Interactive 3D model of a benzene molecule created in Blender. Drag to rotate and explore the structure.</p>
-                </div>
-                <div id="benzene-container">
-                    <div class="loading-indicator">Loading Benzene model...</div>
-                </div>
-                <div class="mt-4 text-center">
-                    <p class="text-sm text-emerald-200">Click and drag to rotate. Scroll to zoom.</p>
-                </div>
-            </div>
-
             <!-- Blender Project Card -->
             <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
                 <div class="flex-grow">
@@ -219,7 +216,7 @@
             </div>
 
             <!-- 3D Geometric Visualization -->
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all flex flex-col">
+            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all flex flex-col md:col-span-2">
                 <div class="flex-grow">
                     <h3 class="text-2xl font-semibold mb-4">3D Geometric Visualization</h3>
                     <p class="mt-2 mb-4 text-emerald-200">Interactive 3D geometry created with Three.js, exploring complex geometric forms.</p>
@@ -238,6 +235,11 @@
             </a>
             <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" class="hover:text-emerald-300 transition-colors">
                 <i class="fab fa-linkedin text-3xl"></i>
+            </a>
+        </div>
+        <div class="mt-6">
+            <a href="https://linktr.ee/simone.capodivento" target="_blank" class="linktree-btn">
+                <i class="fas fa-external-link-alt mr-2"></i> Find all my links on Linktree
             </a>
         </div>
     </section>
@@ -314,13 +316,6 @@
                 projectCamera.aspect = projectContainer.clientWidth / projectContainer.clientHeight;
                 projectCamera.updateProjectionMatrix();
                 projectRenderer.setSize(projectContainer.clientWidth, projectContainer.clientHeight);
-            }
-            
-            // Resize benzene container if it exists
-            if (benzeneCamera && benzeneRenderer) {
-                benzeneCamera.aspect = benzeneContainer.clientWidth / benzeneContainer.clientHeight;
-                benzeneCamera.updateProjectionMatrix();
-                benzeneRenderer.setSize(benzeneContainer.clientWidth, benzeneContainer.clientHeight);
             }
         });
 
@@ -552,188 +547,6 @@
         }, { threshold: 0.1 });
 
         observer.observe(document.getElementById('projects'));
-
-        // NEW CODE: Set up Benzene 3D model viewer
-        let benzeneScene, benzeneCamera, benzeneRenderer, benzeneModel;
-        const benzeneContainer = document.getElementById('benzene-container');
-
-        function initBenzeneViewer() {
-            // Scene setup
-            benzeneScene = new THREE.Scene();
-            benzeneScene.background = new THREE.Color(0x000000);
-            
-            // Camera setup with perspective for molecule viewing
-            benzeneCamera = new THREE.PerspectiveCamera(
-                60, 
-                benzeneContainer.clientWidth / benzeneContainer.clientHeight, 
-                0.1, 
-                1000
-            );
-            benzeneCamera.position.z = 5;
-            
-            // Renderer setup
-            benzeneRenderer = new THREE.WebGLRenderer({ antialias: true });
-            benzeneRenderer.setSize(benzeneContainer.clientWidth, benzeneContainer.clientHeight);
-            benzeneContainer.appendChild(benzeneRenderer.domElement);
-            
-            // Lighting setup for better visibility
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            benzeneScene.add(ambientLight);
-            
-            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight1.position.set(1, 1, 1);
-            benzeneScene.add(directionalLight1);
-            
-            const directionalLight2 = new THREE.DirectionalLight(0x48DBF1, 0.5);
-            directionalLight2.position.set(-1, -1, -1);
-            benzeneScene.add(directionalLight2);
-            
-            // Create OBJ loader and load the benzene model
-            const loader = new THREE.OBJLoader();
-            
-            // Load the benzene model from GitHub
-            loader.load(
-                'https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Benzene%20.obj',
-                function(object) {
-                    // Material setup for the model - scientific blue color
-                    object.traverse(function(child) {
-                        if (child instanceof THREE.Mesh) {
-                            child.material = new THREE.MeshPhongMaterial({
-                                color: 0x48DBF1,
-                                specular: 0xffffff,
-                                shininess: 100,
-                                transparent: true,
-                                opacity: 0.9
-                            });
-                        }
-                    });
-                    
-                    // Center the model
-                    const box = new THREE.Box3().setFromObject(object);
-                    const center = box.getCenter(new THREE.Vector3());
-                    object.position.sub(center);
-                    
-                    // Scale model appropriately
-                    const size = box.getSize(new THREE.Vector3());
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    const scale = 3 / maxDim;
-                    object.scale.set(scale, scale, scale);
-                    
-                    // Add the model to the scene
-                    benzeneModel = object;
-                    benzeneScene.add(benzeneModel);
-                    
-                    // Remove loading indicator
-                    const loadingIndicator = benzeneContainer.querySelector('.loading-indicator');
-                    if (loadingIndicator) {
-                        loadingIndicator.remove();
-                    }
-                    
-                    // Start auto-rotation
-                    autoRotate = true;
-                },
-                function(xhr) {
-                    // Progress callback
-                    const loadingIndicator = benzeneContainer.querySelector('.loading-indicator');
-                    if (loadingIndicator) {
-                        const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
-                        loadingIndicator.textContent = `Loading Benzene model: ${percent}%`;
-                    }
-                },
-                function(error) {
-                    // Error callback
-                    console.error('Error loading the benzene model:', error);
-                    const loadingIndicator = benzeneContainer.querySelector('.loading-indicator');
-                    if (loadingIndicator) {
-                        loadingIndicator.textContent = 'Error loading model. Please try again later.';
-                    }
-                }
-            );
-            
-            // Interaction variables
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-            let autoRotate = true;
-            
-            // Mouse event handlers for rotation
-            benzeneContainer.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                autoRotate = false;
-                previousMousePosition = {
-                    x: e.clientX - benzeneContainer.getBoundingClientRect().left,
-                    y: e.clientY - benzeneContainer.getBoundingClientRect().top
-                };
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging || !benzeneModel) return;
-                
-                const currentMousePosition = {
-                    x: e.clientX - benzeneContainer.getBoundingClientRect().left,
-                    y: e.clientY - benzeneContainer.getBoundingClientRect().top
-                };
-                
-                const deltaMove = {
-                    x: currentMousePosition.x - previousMousePosition.x,
-                    y: currentMousePosition.y - previousMousePosition.y
-                };
-                
-                benzeneModel.rotation.y += deltaMove.x * 0.01;
-                benzeneModel.rotation.x += deltaMove.y * 0.01;
-                
-                previousMousePosition = currentMousePosition;
-            });
-            
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-                // Restart auto-rotation after a brief delay
-                setTimeout(() => {
-                    if (!isDragging) autoRotate = true;
-                }, 1500);
-            });
-            
-            // Scroll event for zoom functionality
-            benzeneContainer.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                
-                if (!benzeneModel) return;
-                
-                // Adjust zoom based on scroll direction
-                if (e.deltaY > 0) {
-                    benzeneCamera.position.z += 0.5;
-                } else {
-                    benzeneCamera.position.z -= 0.5;
-                }
-                
-                // Limit how close/far the camera can get
-                benzeneCamera.position.z = Math.max(2, Math.min(benzeneCamera.position.z, 10));
-            });
-            
-            // Animation function
-            function animateBenzene() {
-                requestAnimationFrame(animateBenzene);
-                
-                if (benzeneModel && autoRotate) {
-                    benzeneModel.rotation.y += 0.005;
-                    benzeneModel.rotation.x += 0.002;
-                }
-                
-                benzeneRenderer.render(benzeneScene, benzeneCamera);
-            }
-            
-            // Start animation
-            animateBenzene();
-        }
-        
-        // Initialize benzene viewer when container is in view
-        const benzeneObserver = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                initBenzeneViewer();
-                benzeneObserver.disconnect();
-            }
-        }, { threshold: 0.1 });
-        
-        benzeneObserver.observe(document.getElementById('benzene-container'));
     </script>
 </body>
 </html>
