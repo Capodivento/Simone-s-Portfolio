@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Geometric Visualization</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        canvas { 
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            max-height: 80vh;
+            overflow-y: auto;
+            width: 250px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+        .control-group h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #7fdbff;
+        }
+        button, select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover, select:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 5px 0;
+        }
+        label {
+            display: block;
+            margin: 8px 0 4px;
+            font-size: 13px;
+        }
+        .color-preview {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-left: 5px;
+            vertical-align: middle;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .checkbox-label input {
+            margin-right: 8px;
+        }
+        /* Audio player styles */
+        .audio-player {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0,0,0,0.7);
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+        }
+        .audio-player button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .audio-player button:hover {
+            color: #7fdbff;
+        }
+        .audio-player input[type="range"] {
+            width: 100px;
+            margin: 0;
+        }
+        .song-title {
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .audio-loading {
+            color: #7fdbff;
+            font-size: 12px;
+        }
+        .audio-error {
+            color: #ff6b6b;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">Drag to rotate | Scroll to zoom | Right-click to pan</div>
+    <div class="controls">
+        <div class="control-group">
+            <h3>Shape Controls</h3>
+            <label for="shapeType">Shape Type:</label>
+            <select id="shapeType">
+                <option value="icosahedron">Icosahedron</option>
+                <option value="dodecahedron">Dodecahedron</option>
+                <option value="torus">Torus</option>
+                <option value="sphere">Sphere</option>
+                <option value="torusKnot">Torus Knot</option>
+                <option value="custom">Custom Organic</option>
+            </select>
+            
+            <label for="detailLevel">Detail Level:</label>
+            <input type="range" id="detailLevel" min="0" max="5" step="1" value="2">
+            
+            <label for="wireframeDensity">Wireframe Density:</label>
+            <input type="range" id="wireframeDensity" min="10" max="100" step="5" value="50">
+        </div>
+        
+        <div class="control-group">
+            <h3>Material & Color</h3>
+            <label for="mainColor">Main Color:</label>
+            <input type="color" id="mainColor" value="#4a6fa5">
+            
+            <label for="wireframeColor">Wireframe Color:</label>
+            <input type="color" id="wireframeColor" value="#7fdbff">
+            
+            <label for="particleColor">Particle Color:</label>
+            <input type="color" id="particleColor" value="#7fdbff">
+            
+            <label for="materialType">Material Type:</label>
+            <select id="materialType">
+                <option value="physical">Physical (Metallic)</option>
+                <option value="standard">Standard</option>
+                <option value="glass">Glass</option>
+                <option value="matte">Matte</option>
+            </select>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" id="doubleSided" checked> Double-sided
+            </label>
+        </div>
+        
+        <div class="control-group">
+            <h3>Animation</h3>
+            <label class="checkbox-label">
+                <input type="checkbox" id="autoRotate" checked> Auto Rotate
+            </label>
+            
+            <label for="rotationSpeed">Rotation Speed:</label>
+            <input type="range" id="rotationSpeed" min="0" max="0.02" step="0.001" value="0.005">
+            
+            <label for="particleSpeed">Particle Speed:</label>
+            <input type="range" id="particleSpeed" min="0" max="0.05" step="0.001" value="0.01">
+        </div>
+        
+        <div class="control-group">
+            <h3>Effects</h3>
+            <label class="checkbox-label">
+                <input type="checkbox" id="showWireframe" checked> Show Wireframe
+            </label>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" id="showParticles" checked> Show Particles
+            </label>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" id="showLights" checked> Show Lights
+            </label>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" id="fogEnabled" checked> Enable Fog
+            </label>
+            
+            <label for="bgGradient1">Background Color 1:</label>
+            <input type="color" id="bgGradient1" value="#1a1a2e">
+            
+            <label for="bgGradient2">Background Color 2:</label>
+            <input type="color" id="bgGradient2" value="#16213e">
+        </div>
+        
+        <button id="randomize">Randomize All</button>
+        <button id="reset">Reset Defaults</button>
+    </div>
+    
+    <!-- Audio Player -->
+    <div class="audio-player">
+        <span class="song-title">ALBA (feat. Rapanaro)</span>
+        <span id="audioStatus" class="audio-loading">Loading...</span>
+        <button id="playPauseBtn" disabled>▶</button>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.5">
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script>
+        // Audio setup with GitHub raw URL
+        const audio = new Audio('https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/ALBA%20(feat.%20Rapanaro).mp3');
+        audio.loop = true;
+        
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const volumeControl = document.getElementById('volumeControl');
+        const audioStatus = document.getElementById('audioStatus');
+        
+        // Enable play button when audio is ready
+        audio.addEventListener('canplaythrough', () => {
+            playPauseBtn.disabled = false;
+            audioStatus.textContent = "Ready";
+            audioStatus.className = "";
+        });
+        
+        // Handle audio loading errors
+        audio.addEventListener('error', (e) => {
+            console.error('Audio error:', e);
+            audioStatus.textContent = "Error loading audio";
+            audioStatus.className = "audio-error";
+            playPauseBtn.disabled = true;
+            playPauseBtn.textContent = '❌';
+        });
+        
+        // Handle audio loading progress
+        audio.addEventListener('progress', () => {
+            audioStatus.textContent = "Loading...";
+            audioStatus.className = "audio-loading";
+        });
+        
+        playPauseBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    playPauseBtn.textContent = '❚❚';
+                }).catch(e => {
+                    console.error('Playback failed:', e);
+                    audioStatus.textContent = "Click to enable audio";
+                    audioStatus.className = "audio-error";
+                });
+            } else {
+                audio.pause();
+                playPauseBtn.textContent = '▶';
+            }
+        });
+        
+        volumeControl.addEventListener('input', () => {
+            audio.volume = volumeControl.value;
+        });
+        
+        // Set initial volume
+        audio.volume = volumeControl.value;
+        
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x16213e, 0.02);
+        
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 8;
+        
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            alpha: true 
+        });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // Add orbit controls for better interaction
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 3;
+        controls.maxDistance = 20;
+
+        // Create geometries
+        function createGeometry(type, detail) {
+            detail = Math.floor(detail);
+            
+            switch(type) {
+                case 'icosahedron':
+                    return new THREE.IcosahedronGeometry(1.5, detail);
+                case 'dodecahedron':
+                    return new THREE.DodecahedronGeometry(1.5, detail);
+                case 'torus':
+                    return new THREE.TorusGeometry(1.5, 0.5, 16, 32 + (detail * 16));
+                case 'sphere':
+                    return new THREE.SphereGeometry(1.5, 32 + (detail * 8), 16 + (detail * 8));
+                case 'torusKnot':
+                    return new THREE.TorusKnotGeometry(1.5, 0.4, 100 + (detail * 40), 16 + (detail * 4));
+                case 'custom':
+                default:
+                    return createCustomGeometry(detail);
+            }
+        }
+
+        // Create custom organic geometry
+        function createCustomGeometry(detail) {
+            const baseGeometry = new THREE.IcosahedronGeometry(1.5, detail);
+            
+            // Displace vertices for more organic shape
+            const positionAttribute = baseGeometry.getAttribute('position');
+            const vertex = new THREE.Vector3();
+            
+            for (let i = 0; i < positionAttribute.count; i++) {
+                vertex.fromBufferAttribute(positionAttribute, i);
+                vertex.normalize().multiplyScalar(1 + Math.random() * 0.3);
+                positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
+            }
+            
+            baseGeometry.computeVertexNormals();
+            return baseGeometry;
+        }
+
+        // Create wireframe
+        function createWireframe(density) {
+            const wireGeometry = new THREE.BufferGeometry();
+            const wireVertices = [];
+            
+            // Create a spherical wireframe structure
+            const radius = 4;
+            const segments = density;
+            
+            for (let i = 0; i <= segments; i++) {
+                const theta = (i / segments) * Math.PI * 2;
+                for (let j = 0; j <= segments / 2; j++) {
+                    const phi = (j / (segments / 2)) * Math.PI;
+                    
+                    const x = radius * Math.sin(phi) * Math.cos(theta);
+                    const y = radius * Math.sin(phi) * Math.sin(theta);
+                    const z = radius * Math.cos(phi);
+                    
+                    wireVertices.push(x, y, z);
+                }
+            }
+            
+            wireGeometry.setAttribute('position', new THREE.Float32BufferAttribute(wireVertices, 3));
+            
+            return wireGeometry;
+        }
+
+        // Create particles
+        function createParticles(count = 1000) {
+            const particlesGeometry = new THREE.BufferGeometry();
+            const posArray = new Float32Array(count * 3);
+            
+            for (let i = 0; i < count * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 20;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            return particlesGeometry;
+        }
+
+        // Create material based on type
+        function createMaterial(type, color, isDoubleSided) {
+            const baseColor = new THREE.Color(color);
+            
+            switch(type) {
+                case 'physical':
+                    return new THREE.MeshPhysicalMaterial({ 
+                        color: baseColor,
+                        metalness: 0.3,
+                        roughness: 0.4,
+                        clearcoat: 0.5,
+                        clearcoatRoughness: 0.2,
+                        transmission: 0.2,
+                        opacity: 0.9,
+                        transparent: true,
+                        side: isDoubleSided ? THREE.DoubleSide : THREE.FrontSide,
+                        specular: 0x111111,
+                        envMapIntensity: 0.5
+                    });
+                case 'standard':
+                    return new THREE.MeshStandardMaterial({
+                        color: baseColor,
+                        metalness: 0.2,
+                        roughness: 0.5,
+                        transparent: true,
+                        opacity: 0.9,
+                        side: isDoubleSided ? THREE.DoubleSide : THREE.FrontSide
+                    });
+                case 'glass':
+                    return new THREE.MeshPhysicalMaterial({
+                        color: baseColor,
+                        transmission: 0.9,
+                        roughness: 0.1,
+                        metalness: 0.0,
+                        clearcoat: 1.0,
+                        clearcoatRoughness: 0.1,
+                        ior: 1.5,
+                        thickness: 1.0,
+                        side: isDoubleSided ? THREE.DoubleSide : THREE.FrontSide
+                    });
+                case 'matte':
+                default:
+                    return new THREE.MeshPhongMaterial({
+                        color: baseColor,
+                        shininess: 30,
+                        side: isDoubleSided ? THREE.DoubleSide : THREE.FrontSide
+                    });
+            }
+        }
+
+        // Create wireframe material
+        function createWireframeMaterial(color) {
+            return new THREE.LineBasicMaterial({ 
+                color: new THREE.Color(color),
+                transparent: true,
+                opacity: 0.3,
+                linewidth: 1
+            });
+        }
+
+        // Create particle material
+        function createParticleMaterial(color) {
+            return new THREE.PointsMaterial({
+                size: 0.05,
+                color: new THREE.Color(color),
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+        }
+
+        // Initial setup
+        let mainMesh, wireframe, particles;
+        let directionalLight, pointLight, hemisphereLight, ambientLight;
+        
+        function initScene() {
+            // Clear previous objects
+            if (mainMesh) scene.remove(mainMesh);
+            if (wireframe) scene.remove(wireframe);
+            if (particles) scene.remove(particles);
+            if (directionalLight) scene.remove(directionalLight);
+            if (pointLight) scene.remove(pointLight);
+            if (hemisphereLight) scene.remove(hemisphereLight);
+            if (ambientLight) scene.remove(ambientLight);
+            
+            // Get current settings
+            const shapeType = document.getElementById('shapeType').value;
+            const detailLevel = parseFloat(document.getElementById('detailLevel').value);
+            const wireframeDensity = parseFloat(document.getElementById('wireframeDensity').value);
+            const mainColor = document.getElementById('mainColor').value;
+            const wireframeColor = document.getElementById('wireframeColor').value;
+            const particleColor = document.getElementById('particleColor').value;
+            const materialType = document.getElementById('materialType').value;
+            const isDoubleSided = document.getElementById('doubleSided').checked;
+            const showWireframe = document.getElementById('showWireframe').checked;
+            const showParticles = document.getElementById('showParticles').checked;
+            const showLights = document.getElementById('showLights').checked;
+            const fogEnabled = document.getElementById('fogEnabled').checked;
+            const bgColor1 = document.getElementById('bgGradient1').value;
+            const bgColor2 = document.getElementById('bgGradient2').value;
+            
+            // Update background
+            document.body.style.background = `linear-gradient(135deg, ${bgColor1} 0%, ${bgColor2} 100%)`;
+            
+            // Update fog
+            scene.fog = fogEnabled ? new THREE.FogExp2(bgColor2, 0.02) : null;
+            
+            // Create main mesh
+            const geometry = createGeometry(shapeType, detailLevel);
+            const material = createMaterial(materialType, mainColor, isDoubleSided);
+            mainMesh = new THREE.Mesh(geometry, material);
+            mainMesh.castShadow = true;
+            mainMesh.receiveShadow = true;
+            scene.add(mainMesh);
+            
+            // Create wireframe
+            const wireGeometry = createWireframe(wireframeDensity);
+            const wireMaterial = createWireframeMaterial(wireframeColor);
+            wireframe = new THREE.LineSegments(
+                new THREE.WireframeGeometry(wireGeometry),
+                wireMaterial
+            );
+            wireframe.visible = showWireframe;
+            scene.add(wireframe);
+            
+            // Create particles
+            const particlesGeometry = createParticles(1000);
+            const particlesMaterial = createParticleMaterial(particleColor);
+            particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            particles.visible = showParticles;
+            scene.add(particles);
+            
+            // Create lights
+            ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+            scene.add(ambientLight);
+
+            directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 10, 7);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 1024;
+            directionalLight.shadow.mapSize.height = 1024;
+            directionalLight.visible = showLights;
+            scene.add(directionalLight);
+
+            hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5);
+            hemisphereLight.visible = showLights;
+            scene.add(hemisphereLight);
+
+            pointLight = new THREE.PointLight(mainColor, 1, 20);
+            pointLight.position.set(3, 3, 3);
+            pointLight.visible = showLights;
+            scene.add(pointLight);
+        }
+
+        // Animation state
+        let autoRotate = true;
+        let rotationSpeed = 0.005;
+        let particleSpeed = 0.01;
+        
+        // UI Event Listeners
+        document.getElementById('autoRotate').addEventListener('change', (e) => {
+            autoRotate = e.target.checked;
+        });
+        
+        document.getElementById('rotationSpeed').addEventListener('input', (e) => {
+            rotationSpeed = parseFloat(e.target.value);
+        });
+        
+        document.getElementById('particleSpeed').addEventListener('input', (e) => {
+            particleSpeed = parseFloat(e.target.value);
+        });
+        
+        document.getElementById('showWireframe').addEventListener('change', (e) => {
+            if (wireframe) wireframe.visible = e.target.checked;
+        });
+        
+        document.getElementById('showParticles').addEventListener('change', (e) => {
+            if (particles) particles.visible = e.target.checked;
+        });
+        
+        document.getElementById('showLights').addEventListener('change', (e) => {
+            if (directionalLight) directionalLight.visible = e.target.checked;
+            if (pointLight) pointLight.visible = e.target.checked;
+            if (hemisphereLight) hemisphereLight.visible = e.target.checked;
+        });
+        
+        document.getElementById('fogEnabled').addEventListener('change', (e) => {
+            const bgColor2 = document.getElementById('bgGradient2').value;
+            scene.fog = e.target.checked ? new THREE.FogExp2(bgColor2, 0.02) : null;
+        });
+        
+        // Color pickers
+        document.getElementById('mainColor').addEventListener('input', (e) => {
+            if (mainMesh) mainMesh.material.color.set(e.target.value);
+            if (pointLight) pointLight.color.set(e.target.value);
+        });
+        
+        document.getElementById('wireframeColor').addEventListener('input', (e) => {
+            if (wireframe) wireframe.material.color.set(e.target.value);
+        });
+        
+        document.getElementById('particleColor').addEventListener('input', (e) => {
+            if (particles) particles.material.color.set(e.target.value);
+        });
+        
+        // Shape and material controls
+        document.getElementById('shapeType').addEventListener('change', initScene);
+        document.getElementById('detailLevel').addEventListener('input', initScene);
+        document.getElementById('wireframeDensity').addEventListener('input', initScene);
+        document.getElementById('materialType').addEventListener('change', initScene);
+        document.getElementById('doubleSided').addEventListener('change', initScene);
+        
+        // Background controls
+        document.getElementById('bgGradient1').addEventListener('input', initScene);
+        document.getElementById('bgGradient2').addEventListener('input', initScene);
+        
+        // Randomize button
+        document.getElementById('randomize').addEventListener('click', () => {
+            // Randomize shape
+            const shapes = ['icosahedron', 'dodecahedron', 'torus', 'sphere', 'torusKnot', 'custom'];
+            document.getElementById('shapeType').value = shapes[Math.floor(Math.random() * shapes.length)];
+            
+            // Randomize detail level
+            document.getElementById('detailLevel').value = Math.floor(Math.random() * 6);
+            
+            // Randomize wireframe density
+            document.getElementById('wireframeDensity').value = 10 + Math.floor(Math.random() * 91);
+            
+            // Randomize colors
+            document.getElementById('mainColor').value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            document.getElementById('wireframeColor').value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            document.getElementById('particleColor').value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            
+            // Randomize material
+            const materials = ['physical', 'standard', 'glass', 'matte'];
+            document.getElementById('materialType').value = materials[Math.floor(Math.random() * materials.length)];
+            
+            // Randomize background
+            document.getElementById('bgGradient1').value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            document.getElementById('bgGradient2').value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            
+            // Randomize other settings
+            document.getElementById('autoRotate').checked = Math.random() > 0.5;
+            document.getElementById('showWireframe').checked = Math.random() > 0.5;
+            document.getElementById('showParticles').checked = Math.random() > 0.5;
+            document.getElementById('showLights').checked = Math.random() > 0.5;
+            document.getElementById('fogEnabled').checked = Math.random() > 0.5;
+            
+            // Update rotation speed
+            document.getElementById('rotationSpeed').value = (Math.random() * 0.02).toFixed(3);
+            document.getElementById('particleSpeed').value = (Math.random() * 0.05).toFixed(3);
+            
+            // Update the scene
+            initScene();
+        });
+        
+        // Reset button
+        document.getElementById('reset').addEventListener('click', () => {
+            document.getElementById('shapeType').value = 'icosahedron';
+            document.getElementById('detailLevel').value = 2;
+            document.getElementById('wireframeDensity').value = 50;
+            document.getElementById('mainColor').value = '#4a6fa5';
+            document.getElementById('wireframeColor').value = '#7fdbff';
+            document.getElementById('particleColor').value = '#7fdbff';
+            document.getElementById('materialType').value = 'physical';
+            document.getElementById('doubleSided').checked = true;
+            document.getElementById('autoRotate').checked = true;
+            document.getElementById('rotationSpeed').value = 0.005;
+            document.getElementById('particleSpeed').value = 0.01;
+            document.getElementById('showWireframe').checked = true;
+            document.getElementById('showParticles').checked = true;
+            document.getElementById('showLights').checked = true;
+            document.getElementById('fogEnabled').checked = true;
+            document.getElementById('bgGradient1').value = '#1a1a2e';
+            document.getElementById('bgGradient2').value = '#16213e';
+            
+            initScene();
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (autoRotate) {
+                mainMesh.rotation.y += rotationSpeed;
+                if (wireframe && wireframe.visible) wireframe.rotation.y += rotationSpeed * 0.8;
+                if (particles && particles.visible) {
+                    particles.rotation.y += rotationSpeed * 0.5;
+                    // Animate particles slightly
+                    const positions = particles.geometry.attributes.position.array;
+                    for (let i = 0; i < positions.length; i += 3) {
+                        positions[i] += (Math.random() - 0.5) * particleSpeed;
+                        positions[i+1] += (Math.random() - 0.5) * particleSpeed;
+                        positions[i+2] += (Math.random() - 0.5) * particleSpeed;
+                        
+                        // Keep particles within bounds
+                        if (Math.abs(positions[i]) > 10) positions[i] = (Math.random() - 0.5) * 20;
+                        if (Math.abs(positions[i+1]) > 10) positions[i+1] = (Math.random() - 0.5) * 20;
+                        if (Math.abs(positions[i+2]) > 10) positions[i+2] = (Math.random() - 0.5) * 20;
+                    }
+                    particles.geometry.attributes.position.needsUpdate = true;
+                }
+            }
+            
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        window.addEventListener('resize', onWindowResize);
+
+        // Initialize and start animation
+        initScene();
+        animate();
+    </script>
+</body>
+</html>
