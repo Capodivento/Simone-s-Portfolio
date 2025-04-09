@@ -158,6 +158,14 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3);
         }
+
+        /* Poly Project Button Container */
+        .poly-project-container {
+            width: 100%;
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
@@ -223,17 +231,6 @@
                      class="project-image">
             </div>
 
-            <!-- Poly Project Card -->
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Poly Project</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Interactive 3D polygonal mesh visualizer.</p>
-                    <a href="https://capodivento.github.io/Poly/" target="_blank" class="external-btn">
-                        View Full Project <i class="fas fa-external-link-alt ml-1"></i>
-                    </a>
-                </div>
-            </div>
-
             <!-- 3D Geometric Visualization -->
             <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all flex flex-col">
                 <div class="flex-grow">
@@ -242,6 +239,13 @@
                 </div>
                 <div class="project-3d-container h-64 w-full" id="project-3d-container"></div>
             </div>
+        </div>
+
+        <!-- Poly Project Button Container -->
+        <div class="poly-project-container">
+            <a href="https://capodivento.github.io/Poly/" target="_blank" class="external-btn">
+                View Poly Project <i class="fas fa-external-link-alt ml-1"></i>
+            </a>
         </div>
     </section>
     
