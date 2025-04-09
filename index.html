@@ -138,6 +138,26 @@
             font-size: 1.5rem;
             text-align: center;
         }
+
+        /* External button style */
+        .external-btn {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(72, 219, 251, 0.2);
+            border: 1px solid #48DBF1;
+            color: #48DBF1;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        .external-btn:hover {
+            background: rgba(72, 219, 251, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3);
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
@@ -178,29 +198,14 @@
         </div>
     </section>
     
-    <!-- Updated Projects Section with Benzene Model -->
-    <section id="projects" class="p-12 backdrop-blur-sm bg-opacity-10 bg-gray-900">
-        <h2 class="text-4xl font-bold text-center scientific-text mb-8">Projects</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Benzene Model Card - NEW ADDITION -->
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all md:col-span-2 flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Benzene Molecular Structure</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Interactive 3D model of a benzene molecule created in Blender. Drag to rotate and explore the structure.</p>
-                </div>
-                <div id="benzene-container">
-                    <div class="loading-indicator">Loading Benzene model...</div>
-                </div>
-                <div class="mt-4 text-center">
-                    <p class="text-sm text-emerald-200">Click and drag to rotate. Scroll to zoom.</p>
-                </div>
-            </div>
-
+    <section id="projects" class="p-12">
+        <h2 class="text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Blender Project Card -->
             <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
                 <div class="flex-grow">
                     <h3 class="text-2xl font-semibold mb-4">Blender 3D Project</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">A detailed 3D visualization of my personal space, crafted with precision in Blender.</p>
+                    <p class="mt-2 mb-4 text-emerald-200">A 3D visualization of my desk rn.</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png" 
                      alt="Blender 3D Project" 
@@ -211,11 +216,22 @@
             <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
                 <div class="flex-grow">
                     <h3 class="text-2xl font-semibold mb-4">Design Concept</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Experimental design visualization exploring form and function.</p>
+                    <p class="mt-2 mb-4 text-emerald-200">Experimental design visualization.</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-02%20at%2017.59.25.jpg" 
                      alt="Design Concept" 
                      class="project-image">
+            </div>
+
+            <!-- Poly Project Card -->
+            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
+                <div class="flex-grow">
+                    <h3 class="text-2xl font-semibold mb-4">Poly Project</h3>
+                    <p class="mt-2 mb-4 text-emerald-200">Interactive 3D polygonal mesh visualizer.</p>
+                    <a href="https://capodivento.github.io/Poly/" target="_blank" class="external-btn">
+                        View Full Project <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
             </div>
 
             <!-- 3D Geometric Visualization -->
@@ -238,6 +254,9 @@
             </a>
             <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" class="hover:text-emerald-300 transition-colors">
                 <i class="fab fa-linkedin text-3xl"></i>
+            </a>
+            <a href="https://github.com/Capodivento" target="_blank" class="hover:text-emerald-300 transition-colors">
+                <i class="fab fa-github text-3xl"></i>
             </a>
         </div>
     </section>
