@@ -3,15 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scientific Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Scientific Portfolio - Simone</title> <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Replace OBJLoader with GLTFLoader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Scientific styling */
+        html {
+            scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+        }
+        body {
+            overscroll-behavior-y: none; /* Prevents excessive scrolling effects */
+        }
         .scientific-background {
             position: fixed;
             top: 0;
@@ -29,7 +33,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(circle at 20% 30%, rgba(72, 219, 251, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 70%, rgba(29, 209, 161, 0.1) 0%, transparent 50%);
             pointer-events: none;
@@ -42,6 +46,7 @@
             background: rgba(72, 219, 251, 0.5);
             border-radius: 50%;
             pointer-events: none;
+            z-index: -1; /* Ensure particles are behind content */
         }
 
         /* Scientific text effects */
@@ -73,16 +78,25 @@
         /* Project 3D Container */
         .project-3d-container {
             width: 100%;
-            height: 300px;
+            height: 300px; /* Default height, ensure it's sufficient */
+            min-height: 250px; /* Minimum height */
             position: relative;
             margin-top: 1rem;
+            cursor: grab; /* Indicate interactivity */
+            border-radius: 0.75rem; /* Match other cards */
+            overflow: hidden; /* Clip renderer if needed */
         }
+        .project-3d-container:active {
+             cursor: grabbing;
+        }
+
 
         /* Benzene 3D Container */
         #benzene-container {
             width: 100%;
-            height: 400px;
-            position: relative;
+            height: 400px; /* Default height */
+            min-height: 300px; /* Minimum height */
+            position: relative; /* Keep relative for loading indicator */
             margin-top: 1rem;
             border-radius: 0.75rem;
             overflow: hidden;
@@ -92,26 +106,26 @@
         /* Scientific grid */
         .grid-line {
             position: absolute;
-            background: linear-gradient(90deg, 
+            background: linear-gradient(90deg,
                 transparent,
                 rgba(72, 219, 251, 0.1) 50%,
                 transparent
             );
         }
-        
+
         /* Tech font styling */
         .tech-font {
             font-family: 'Share Tech Mono', 'Courier New', monospace;
             letter-spacing: 1px;
             line-height: 1.6;
         }
-        
+
         /* Tech highlight effect */
         .tech-highlight {
             color: #48DBF1;
             font-weight: 600;
         }
-        
+
         /* Project image */
         .project-image {
             width: 100%;
@@ -122,7 +136,7 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);  /* Added shadow */
         }
-        
+
         .project-image:hover {
             transform: scale(1.02);  /* Subtle scale on hover */
             box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);  /* Enhanced shadow on hover */
@@ -135,8 +149,13 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #48DBF1;
-            font-size: 1.5rem;
+            font-size: 1.25rem; /* Slightly smaller */
             text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            z-index: 5; /* Ensure it's above the canvas initially */
+            padding: 1rem;
+            background-color: rgba(0,0,0,0.5); /* Optional semi-transparent background */
+            border-radius: 0.5rem;
         }
 
         /* External button style */
@@ -152,7 +171,7 @@
             text-decoration: none;
             font-family: 'Share Tech Mono', monospace;
         }
-        
+
         .external-btn:hover {
             background: rgba(72, 219, 251, 0.4);
             transform: translateY(-2px);
@@ -166,599 +185,691 @@
             margin-top: 2rem;
             margin-bottom: 2rem;
         }
+
+        /* Project Card Styling */
+         .project-card {
+             background-color: rgba(45, 52, 54, 0.3); /* Slightly different base color */
+             border: 1px solid rgba(72, 219, 251, 0.2); /* Subtle border */
+             backdrop-filter: blur(10px); /* Stronger blur */
+             transition: all 0.3s ease;
+             display: flex; /* Use flexbox for layout */
+             flex-direction: column; /* Stack content vertically */
+         }
+         .project-card:hover {
+             background-color: rgba(45, 52, 54, 0.5);
+             border-color: rgba(72, 219, 251, 0.4);
+             transform: translateY(-5px); /* Lift effect on hover */
+             box-shadow: 0 15px 30px rgba(29, 209, 161, 0.15);
+         }
+         .project-card-content {
+             flex-grow: 1; /* Allow content to take available space */
+         }
+
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
-<body class="bg-transparent text-emerald-100 relative">
-    <div class="scientific-background"></div>
+<body class="bg-transparent text-emerald-100 relative tech-font"> <div class="scientific-background"></div>
     <div class="scientific-overlay"></div>
-    <div id="scene-container"></div>
-
-    <header class="p-6 flex justify-between items-center backdrop-blur-sm bg-opacity-20 bg-gray-900">
-        <div class="flex items-center space-x-4">
-            <img src="https://raw.githubusercontent.com/Capodivento/Website/main/1706100440515.jpeg" alt="Simone's Profile Picture" class="w-20 h-20 rounded-full ring-2 ring-emerald-400">
-            <h1 class="text-3xl font-bold scientific-text">Simone's Portfolio</h1>
+    <div id="scene-container"></div> <header class="sticky top-0 z-50 p-4 md:p-6 flex justify-between items-center backdrop-blur-md bg-opacity-30 bg-gray-900 shadow-lg"> <div class="flex items-center space-x-4">
+            <img src="https://raw.githubusercontent.com/Capodivento/Website/main/1706100440515.jpeg" alt="Simone's Profile Picture" class="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-emerald-400 shadow-md">
+            <h1 class="text-2xl md:text-3xl font-bold scientific-text">Simone's Portfolio</h1>
         </div>
         <nav>
-            <ul class="flex space-x-6">
-                <li><a href="#projects" class="hover:text-emerald-300 transition-colors">Projects</a></li>
+            <ul class="flex space-x-4 md:space-x-6 text-sm md:text-base">
+                <li><a href="#hero" class="hover:text-emerald-300 transition-colors">Home</a></li> <li><a href="#projects" class="hover:text-emerald-300 transition-colors">Projects</a></li>
                 <li><a href="#contact" class="hover:text-emerald-300 transition-colors">Contact</a></li>
             </ul>
         </nav>
     </header>
-    
-    <section id="hero" class="h-screen flex flex-col items-center justify-center text-center px-4">
-        <div>
-            <h2 class="text-5xl font-extrabold scientific-text mb-6">I'M SIMO</h2>
-            <p class="mt-4 text-lg tech-font tracking-wider">
-                I LIKE TO BUILD THINGS WITH <span class="tech-highlight">CODE</span> AND BEYOND.
-            </p>
-            <p class="mt-6 text-lg tech-font tracking-wider max-w-2xl mx-auto">
-                SOME OF MY INTERESTS ARE: <span class="tech-highlight">DESIGN</span>, 
-                <span class="tech-highlight">WEB DEVELOPMENT</span>, 
-                <span class="tech-highlight">ANDROID DEVELOPMENT</span>,
-                <span class="tech-highlight">COMPUTER GRAPHICS</span> AND 
-                <span class="tech-highlight">ANIMATION</span>.
-            </p>
-            <p class="mt-8 text-lg tech-font">
-                YOU CAN FIND HERE SOME OF THE PROJECTS I'VE WORKED ON.
-            </p>
-        </div>
-    </section>
-    
-    <section id="projects" class="p-12">
-        <h2 class="text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Blender Project Card -->
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Blender 3D Project</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">A 3D visualization of my desk rn.</p>
+
+    <main> <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-12"> <div>
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold scientific-text mb-6">I'M SIMONE</h2>
+                <p class="mt-4 text-base md:text-lg tracking-wider">
+                    I LIKE TO BUILD THINGS WITH <span class="tech-highlight">CODE</span> AND BEYOND.
+                </p>
+                <p class="mt-6 text-base md:text-lg tracking-wider max-w-3xl mx-auto"> SOME OF MY INTERESTS ARE: <span class="tech-highlight">DESIGN</span>,
+                    <span class="tech-highlight">WEB DEVELOPMENT</span>,
+                    <span class="tech-highlight">ANDROID DEVELOPMENT</span>,
+                    <span class="tech-highlight">COMPUTER GRAPHICS</span> AND
+                    <span class="tech-highlight">ANIMATION</span>.
+                </p>
+                <p class="mt-8 text-base md:text-lg">
+                    YOU CAN FIND HERE SOME OF THE PROJECTS I'VE WORKED ON.
+                </p>
+                 <a href="#projects" class="mt-10 inline-block px-6 py-3 bg-emerald-500 bg-opacity-80 hover:bg-opacity-100 rounded-md text-black font-semibold shadow-lg transition-all hover:shadow-emerald-400/50 hover:scale-105">
+                     View My Projects <i class="fas fa-arrow-down ml-2"></i>
+                 </a>
+            </div>
+        </section>
+
+        <section id="projects" class="p-8 md:p-12">
+            <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"> <div class="project-card p-6 rounded-lg lg:col-span-1">
+                    <div class="project-card-content">
+                        <h3 class="text-xl md:text-2xl font-semibold mb-4">Blender 3D Project</h3>
+                        <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A 3D visualization of my desk setup, modeled and rendered in Blender.</p>
+                    </div>
+                    <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png"
+                         alt="Blender 3D Project"
+                         class="project-image">
                 </div>
-                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png" 
-                     alt="Blender 3D Project" 
-                     class="project-image">
+
+                <div class="project-card p-6 rounded-lg lg:col-span-1">
+                    <div class="project-card-content">
+                        <h3 class="text-xl md:text-2xl font-semibold mb-4">Design Concept</h3>
+                        <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">An experimental abstract design visualization exploring form and color.</p>
+                    </div>
+                    <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-02%20at%2017.59.25.jpg"
+                         alt="Design Concept"
+                         class="project-image">
+                </div>
+
+                <div class="project-card p-6 rounded-lg lg:col-span-1">
+                     <div class="project-card-content">
+                         <h3 class="text-xl md:text-2xl font-semibold mb-4">Interactive Geometry</h3>
+                         <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">Drag to rotate this interactive 3D geometry created with Three.js.</p>
+                     </div>
+                     <div class="project-3d-container w-full" id="project-3d-container">
+                          <div class="loading-indicator">Loading Geometry...</div> </div>
+                 </div>
+
+
+                 <div class="project-card p-6 rounded-lg md:col-span-2 lg:col-span-3">
+                     <div class="project-card-content">
+                          <h3 class="text-xl md:text-2xl font-semibold mb-4">Interactive Benzene Molecule</h3>
+                          <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A 3D model of a Benzene molecule (C₆H₆) loaded using GLTFLoader. The model will auto-rotate.</p>
+                     </div>
+                     <div id="benzene-container">
+                          <div class="loading-indicator">Loading Benzene Model...</div> </div>
+                 </div>
+
             </div>
 
-            <!-- Design Concept Card -->
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Design Concept</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Experimental design visualization.</p>
-                </div>
-                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-02%20at%2017.59.25.jpg" 
-                     alt="Design Concept" 
-                     class="project-image">
+            <div class="poly-project-container">
+                <a href="https://capodivento.github.io/Poly/" target="_blank" rel="noopener noreferrer" class="external-btn"> View Poly Project <i class="fas fa-external-link-alt ml-1"></i>
+                </a>
             </div>
+        </section>
 
-            <!-- 3D Geometric Visualization -->
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">3D Geometric Visualization</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Interactive 3D geometry created with Three.js, exploring complex geometric forms.</p>
-                </div>
-                <div class="project-3d-container h-64 w-full" id="project-3d-container"></div>
+        <section id="contact" class="p-8 md:p-12 text-center backdrop-blur-sm bg-opacity-20 bg-gray-900 border-t border-emerald-900"> <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-6">Contact Me</h2> <p class="mt-4 text-base md:text-lg max-w-2xl mx-auto">Interested in collaborating or have a question? Feel free to connect!</p>
+            <div class="mt-8 flex justify-center space-x-6 md:space-x-8"> <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" class="text-emerald-300 hover:text-emerald-100 transition-colors transform hover:scale-110" aria-label="Instagram">
+                    <i class="fab fa-instagram text-3xl md:text-4xl"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" rel="noopener noreferrer" class="text-emerald-300 hover:text-emerald-100 transition-colors transform hover:scale-110" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin text-3xl md:text-4xl"></i>
+                </a>
+                <a href="https://github.com/Capodivento" target="_blank" rel="noopener noreferrer" class="text-emerald-300 hover:text-emerald-100 transition-colors transform hover:scale-110" aria-label="GitHub">
+                    <i class="fab fa-github text-3xl md:text-4xl"></i>
+                </a>
+                 <a href="mailto:your.email@example.com" class="text-emerald-300 hover:text-emerald-100 transition-colors transform hover:scale-110" aria-label="Email">
+                     <i class="fas fa-envelope text-3xl md:text-4xl"></i>
+                 </a>
             </div>
-        </div>
+        </section>
+    </main>
 
-        <!-- Poly Project Button Container -->
-        <div class="poly-project-container">
-            <a href="https://capodivento.github.io/Poly/" target="_blank" class="external-btn">
-                View Poly Project <i class="fas fa-external-link-alt ml-1"></i>
-            </a>
-        </div>
-    </section>
-    
-    <section id="contact" class="p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
-        <h2 class="text-4xl font-bold scientific-text">Contact</h2>
-        <p class="mt-4">Connect with me to discuss innovative projects and collaborations.</p>
-        <div class="mt-6 flex justify-center space-x-6">
-            <a href="https://www.instagram.com/" target="_blank" class="hover:text-emerald-300 transition-colors">
-                <i class="fab fa-instagram text-3xl"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" class="hover:text-emerald-300 transition-colors">
-                <i class="fab fa-linkedin text-3xl"></i>
-            </a>
-            <a href="https://github.com/Capodivento" target="_blank" class="hover:text-emerald-300 transition-colors">
-                <i class="fab fa-github text-3xl"></i>
-            </a>
-        </div>
-    </section>
-    
-    <footer class="p-6 text-center text-emerald-300 backdrop-blur-sm bg-opacity-20 bg-gray-900">
-        <p>&copy; 2025 Simone. All rights reserved.</p>
-    </footer>
+    <footer class="p-6 text-center text-sm text-emerald-400 backdrop-blur-sm bg-opacity-30 bg-gray-900 mt-12 border-t border-emerald-900"> <p>&copy; 2025 Simone Capodivento. All rights reserved.</p>
+         <p class="mt-2 text-xs text-emerald-600">Last updated: April 12, 2025</p> </footer>
 
     <script>
-        // Three.js Scene Setup for background
+        // Register ScrollTrigger Plugin
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- Three.js Scene Setup for background ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); // Enabled antialias
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('scene-container').appendChild(renderer.domElement);
+        const sceneContainer = document.getElementById('scene-container');
+        if (sceneContainer) {
+            sceneContainer.appendChild(renderer.domElement);
+        } else {
+            console.error("Background scene container '#scene-container' not found!");
+        }
+
 
         // Create 3D shapes for background
         const shapes = [];
         const geometries = [
-            new THREE.IcosahedronGeometry(1),
-            new THREE.DodecahedronGeometry(1),
-            new THREE.OctahedronGeometry(1)
+            new THREE.IcosahedronGeometry(1, 0), // Keep geometry simple
+            new THREE.DodecahedronGeometry(1, 0),
+            new THREE.OctahedronGeometry(1, 0)
         ];
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 10; i++) { // Reduced number of shapes for performance
             const geometry = geometries[Math.floor(Math.random() * geometries.length)];
             const material = new THREE.MeshPhongMaterial({
-                color: 0x1DD1A1,
+                color: 0x1DD1A1, // Use project's teal color
+                emissive: 0x07201a, // Add slight glow
+                specular: 0x111111,
+                shininess: 30,
                 wireframe: true,
                 transparent: true,
-                opacity: 0.3
+                opacity: 0.25 // Slightly less transparent
             });
             const shape = new THREE.Mesh(geometry, material);
-            
-            shape.position.x = (Math.random() - 0.5) * 20;
-            shape.position.y = (Math.random() - 0.5) * 20;
-            shape.position.z = (Math.random() - 0.5) * 20;
-            
+
+            // Position shapes further away and more spread out
+            shape.position.x = (Math.random() - 0.5) * 40;
+            shape.position.y = (Math.random() - 0.5) * 40;
+            shape.position.z = (Math.random() - 0.5) * 40 - 10; // Push further back
+
+            shape.rotation.x = Math.random() * Math.PI;
+            shape.rotation.y = Math.random() * Math.PI;
+
             shapes.push(shape);
             scene.add(shape);
         }
 
-        // Add ambient light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
+        // Add subtle ambient light for background shapes
+        const bgAmbientLight = new THREE.AmbientLight(0x404040, 0.5); // Dimmer ambient
+        scene.add(bgAmbientLight);
 
-        // Add point light
-        const pointLight = new THREE.PointLight(0x48DBF1, 1);
-        pointLight.position.set(10, 10, 10);
-        scene.add(pointLight);
+        // Add point light for highlights
+        const bgPointLight = new THREE.PointLight(0x48DBF1, 0.7, 100); // Adjusted intensity and distance
+        bgPointLight.position.set(5, 15, 20);
+        scene.add(bgPointLight);
 
-        camera.position.z = 15;
+        camera.position.z = 20; // Adjusted camera position for background
 
         // Animation loop for background
         function animateBackground() {
             requestAnimationFrame(animateBackground);
 
-            shapes.forEach(shape => {
-                shape.rotation.x += 0.001;
-                shape.rotation.y += 0.002;
+            const time = Date.now() * 0.0001; // Slow down animation
+
+            shapes.forEach((shape, index) => {
+                // Vary rotation speed slightly per shape
+                shape.rotation.x += 0.0005 + index * 0.00001;
+                shape.rotation.y += 0.001 + index * 0.00002;
+                // Add subtle movement
+                shape.position.y += Math.sin(time + index) * 0.01;
             });
 
-            renderer.render(scene, camera);
+            // Gently move the camera or lights for more dynamism (optional)
+            // camera.position.x = Math.sin(time * 0.5) * 2;
+
+            if(renderer) renderer.render(scene, camera);
         }
 
-        // Handle window resize for background
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            
-            // Also resize project 3D scenes
-            if (projectCamera && projectRenderer) {
-                projectCamera.aspect = projectContainer.clientWidth / projectContainer.clientHeight;
-                projectCamera.updateProjectionMatrix();
-                projectRenderer.setSize(projectContainer.clientWidth, projectContainer.clientHeight);
-            }
-            
-            // Resize benzene container if it exists
-            if (benzeneCamera && benzeneRenderer) {
-                benzeneCamera.aspect = benzeneContainer.clientWidth / benzeneContainer.clientHeight;
-                benzeneCamera.updateProjectionMatrix();
-                benzeneRenderer.setSize(benzeneContainer.clientWidth, benzeneContainer.clientHeight);
-            }
-        });
-
-        // Create particles
+        // --- Particle Effects ---
         function createParticle() {
             const particle = document.createElement('div');
             particle.className = 'particle';
-            
-            const size = Math.random() * 3;
+
+            const size = Math.random() * 2.5 + 0.5; // Slightly larger min size
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
-            
+            particle.style.opacity = Math.random() * 0.3 + 0.2; // Vary opacity
+
             particle.style.left = `${Math.random() * 100}vw`;
             particle.style.top = `${Math.random() * 100}vh`;
-            
+
             document.body.appendChild(particle);
-            
+
+            // Use GSAP for smoother animation
             gsap.to(particle, {
-                y: `${Math.random() * 200 - 100}`,
-                x: `${Math.random() * 200 - 100}`,
+                y: (Math.random() - 0.5) * 200, // Random vertical drift
+                x: (Math.random() - 0.5) * 200, // Random horizontal drift
                 opacity: 0,
-                duration: Math.random() * 3 + 2,
+                duration: Math.random() * 4 + 3, // Longer duration
+                ease: "power1.inOut",
                 onComplete: () => particle.remove()
             });
         }
+        // Create fewer particles for less clutter
+        setInterval(createParticle, 350); // Reduced frequency
 
-        // Create particles periodically
-        setInterval(createParticle, 200);
 
-        // Start background animation
-        animateBackground();
+        // --- GSAP Animations for Content ---
+        // Hero Section Animation
+        gsap.from("#hero > div > *", { // Target direct children of the div in hero
+             opacity: 0,
+             y: 30,
+             duration: 1.2,
+             stagger: 0.2, // Stagger animation for each element
+             ease: "power3.out",
+             delay: 0.5 // Start after a short delay
+         });
 
-        // GSAP animations for content
-        gsap.from("#hero h2", { 
-            opacity: 0, 
-            y: -50, 
-            duration: 1.5, 
-            ease: "power3.out"
+        // Project Cards Animation (using ScrollTrigger)
+        gsap.utils.toArray('.project-card').forEach((card, index) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%", // Trigger when card is 85% from top
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse", // Play on enter, reverse on leave
+                    // markers: true, // Uncomment for debugging scroll trigger
+                },
+                opacity: 0,
+                y: 50,
+                scale: 0.95,
+                duration: 0.8,
+                ease: "power2.out",
+                delay: index * 0.1 // Stagger cards slightly
+            });
         });
-        
-        gsap.from("#hero p", { 
-            opacity: 0, 
-            y: 50, 
-            duration: 1.5, 
-            delay: 0.3, 
-            stagger: 0.2,
-            ease: "power3.out"
-        });
-        
-        // Animation for project images
-        gsap.from(".project-image", {
-            opacity: 0,
-            scale: 0.8,
-            duration: 1,
-            delay: 0.5,
-            stagger: 0.2,
-            ease: "back.out(1.7)"
-        });
 
-        // Three.js for project section
+        // --- Three.js for Project Section (Interactive Geometry) ---
         let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
         const projectContainer = document.getElementById('project-3d-container');
+        let projectAnimationId = null; // To control animation loop
 
         function initProject3D() {
+            if (!projectContainer) {
+                console.error("Project 3D container not found!");
+                return;
+            }
+            if (projectScene) { // Prevent re-initialization
+                 console.warn("Project 3D already initialized.");
+                 return;
+            }
+            console.log("Initializing Project 3D...");
+
+
             // Scene setup
             projectScene = new THREE.Scene();
             projectCamera = new THREE.PerspectiveCamera(75, projectContainer.clientWidth / projectContainer.clientHeight, 0.1, 1000);
-            projectRenderer = new THREE.WebGLRenderer({ 
-                antialias: true,
-                alpha: true 
-            });
-            projectRenderer.setSize(projectContainer.clientWidth, projectContainer.clientHeight);
-            projectContainer.appendChild(projectRenderer.domElement);
+            projectCamera.position.z = 4; // Closer camera
+
+             // Renderer setup
+             try {
+                 projectRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                 projectRenderer.setPixelRatio(window.devicePixelRatio); // Improve sharpness on high DPI screens
+                 if (projectContainer.clientWidth > 0 && projectContainer.clientHeight > 0) {
+                     projectRenderer.setSize(projectContainer.clientWidth, projectContainer.clientHeight);
+                      // Clear container before appending
+                      while (projectContainer.firstChild) {
+                          projectContainer.removeChild(projectContainer.firstChild);
+                      }
+                     projectContainer.appendChild(projectRenderer.domElement);
+                 } else {
+                     console.warn("Project 3D container has zero dimensions during init.");
+                     // Attempt to resize later via observer or resize handler
+                 }
+             } catch (rendererError) {
+                 console.error("Failed to create Project 3D Renderer:", rendererError);
+                 projectContainer.innerHTML = '<div class="loading-indicator" style="color:#ff6b6b;">WebGL Init Failed.</div>';
+                 return;
+             }
 
             // Create complex low-poly geometry
             function createCustomGeometry() {
-                const geometry = new THREE.BufferGeometry();
-                
-                // Vertices with more complex arrangement
-                const vertices = new Float32Array([
-                    // Main shape vertices
-                    -1.0, -1.0, 1.0,
-                    1.0, -1.0, 1.0,
-                    1.0,  1.0, 1.0,
-                    -1.0,  1.0, 1.0,
-                    
-                    -1.0, -1.0, -1.0,
-                    1.0, -1.0, -1.0,
-                    1.0,  1.0, -1.0,
-                    -1.0,  1.0, -1.0,
-                    
-                    // Additional irregular vertices
-                    0.0,  2.0,  0.0,
-                    2.0,  0.0,  0.0,
-                    -2.0,  0.0,  0.0,
-                    0.0,  0.0,  2.0,
-                    0.0,  0.0, -2.0
-                ]);
-
-                // Indices to create faces
-                const indices = [
-                    0,1,2, 0,2,3,  // front
-                    1,5,6, 1,6,2,  // right
-                    5,4,7, 5,7,6,  // back
-                    4,0,3, 4,3,7,  // left
-                    3,2,8, 2,6,8,  // top
-                    4,5,9, 0,4,10, // complex connections
-                    1,0,11, 5,1,12
-                ];
-
-                geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-                geometry.setIndex(indices);
-                geometry.computeVertexNormals();
-
+                // Using a standard Three.js geometry for simplicity and reliability
+                const geometry = new THREE.IcosahedronGeometry(1.5, 1); // Radius 1.5, detail level 1
                 return geometry;
             }
 
-            // Main shape
-            const mainGeometry = createCustomGeometry();
-            const mainMaterial = new THREE.MeshPhongMaterial({ 
-                color: 0x48DBF1, 
-                transparent: true, 
-                opacity: 0.8,
-                wireframe: false
+            // Main shape material
+            const mainMaterial = new THREE.MeshStandardMaterial({ // Use StandardMaterial for better lighting
+                color: 0x48DBF1,
+                metalness: 0.3,
+                roughness: 0.6,
+                flatShading: true, // Gives a distinct low-poly look
+                transparent: true,
+                opacity: 0.9
             });
-            projectMesh = new THREE.Mesh(mainGeometry, mainMaterial);
+            projectMesh = new THREE.Mesh(createCustomGeometry(), mainMaterial);
             projectScene.add(projectMesh);
 
-            // Wireframe
-            function createWireframe() {
-                const wireGeometry = new THREE.BufferGeometry();
-                const wireVertices = [];
-
-                // Create more complex wire network
-                for (let i = 0; i < 200; i++) {
-                    wireVertices.push(
-                        (Math.random() - 0.5) * 10,
-                        (Math.random() - 0.5) * 10,
-                        (Math.random() - 0.5) * 10
-                    );
-                }
-
-                wireGeometry.setAttribute('position', new THREE.Float32BufferAttribute(wireVertices, 3));
-                
-                const wireMaterial = new THREE.LineBasicMaterial({ 
-                    color: 0xbae6fd, 
-                    transparent: true, 
-                    opacity: 0.5 
-                });
-
-                return new THREE.LineSegments(wireGeometry, wireMaterial);
-            }
-
-            projectWireframe = createWireframe();
+            // Wireframe using EdgesGeometry
+            const edges = new THREE.EdgesGeometry(projectMesh.geometry);
+            const wireMaterial = new THREE.LineBasicMaterial({
+                color: 0xbae6fd,
+                transparent: true,
+                opacity: 0.7
+            });
+            projectWireframe = new THREE.LineSegments(edges, wireMaterial);
+            projectWireframe.scale.set(1.01, 1.01, 1.01); // Slightly larger to avoid z-fighting
             projectScene.add(projectWireframe);
 
             // Lighting
-            const ambientLight = new THREE.AmbientLight(0x404040);
-            projectScene.add(ambientLight);
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-            directionalLight.position.set(1, 1, 1);
-            projectScene.add(directionalLight);
-
-            // Camera positioning
-            projectCamera.position.z = 5;
+            const projAmbientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            projectScene.add(projAmbientLight);
+            const projPointLight = new THREE.PointLight(0xffffff, 0.8, 100);
+            projPointLight.position.set(5, 5, 5);
+            projectScene.add(projPointLight);
+            const projDirectionalLight = new THREE.DirectionalLight(0x48DBF1, 0.5);
+            projDirectionalLight.position.set(-5, -3, 2);
+            projectScene.add(projDirectionalLight);
 
             // Interaction
             let isDragging = false;
             let previousMousePosition = { x: 0, y: 0 };
 
-            projectContainer.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                previousMousePosition = { 
-                    x: e.clientX - projectContainer.getBoundingClientRect().left, 
-                    y: e.clientY - projectContainer.getBoundingClientRect().top 
-                };
-            });
+            const onPointerDown = (event) => {
+                 // Check if the event target is within the container
+                 if (!projectContainer.contains(event.target)) return;
+                 isDragging = true;
+                 previousMousePosition = { x: event.clientX, y: event.clientY };
+                 projectContainer.style.cursor = 'grabbing';
+             }
 
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
+             const onPointerMove = (event) => {
+                 if (!isDragging || !projectMesh) return;
+                 const currentMousePosition = { x: event.clientX, y: event.clientY };
+                 const deltaMove = {
+                     x: currentMousePosition.x - previousMousePosition.x,
+                     y: currentMousePosition.y - previousMousePosition.y
+                 };
+                 const rotateSpeed = 0.006; // Adjusted speed
+                 projectMesh.rotation.y += deltaMove.x * rotateSpeed;
+                 projectMesh.rotation.x += deltaMove.y * rotateSpeed;
+                 if (projectWireframe) {
+                     projectWireframe.rotation.copy(projectMesh.rotation); // Keep rotations synced
+                 }
+                 previousMousePosition = currentMousePosition;
+             }
 
-                const currentMousePosition = { 
-                    x: e.clientX - projectContainer.getBoundingClientRect().left, 
-                    y: e.clientY - projectContainer.getBoundingClientRect().top 
-                };
+             const onPointerUp = () => {
+                 if (isDragging) {
+                     isDragging = false;
+                     projectContainer.style.cursor = 'grab';
+                 }
+             }
 
-                const deltaMove = {
-                    x: currentMousePosition.x - previousMousePosition.x,
-                    y: currentMousePosition.y - previousMousePosition.y
-                };
+             // Use pointer events for broader compatibility (touch + mouse)
+             projectContainer.addEventListener('pointerdown', onPointerDown);
+             window.addEventListener('pointermove', onPointerMove); // Listen on window for moves outside container
+             window.addEventListener('pointerup', onPointerUp); // Listen on window for mouseup
 
-                projectMesh.rotation.y += deltaMove.x * 0.01;
-                projectMesh.rotation.x += deltaMove.y * 0.01;
-                projectWireframe.rotation.y += deltaMove.x * 0.01;
-                projectWireframe.rotation.x += deltaMove.y * 0.01;
-
-                previousMousePosition = currentMousePosition;
-            });
-
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
 
             // Animation loop
             function animateProject() {
-                requestAnimationFrame(animateProject);
+                projectAnimationId = requestAnimationFrame(animateProject); // Store ID
+                if (!projectScene || !projectRenderer) return; // Stop if scene/renderer destroyed
 
-                if (!isDragging) {
-                    projectMesh.rotation.y += 0.005;
-                    projectMesh.rotation.x += 0.002;
-                    projectWireframe.rotation.y += 0.005;
-                    projectWireframe.rotation.x += 0.002;
+                if (!isDragging && projectMesh) { // Auto-rotate when not dragging
+                    projectMesh.rotation.y += 0.004; // Slower auto-rotate
+                    if (projectWireframe) {
+                        projectWireframe.rotation.y += 0.004;
+                    }
                 }
-
                 projectRenderer.render(projectScene, projectCamera);
             }
 
             // Start animation
             animateProject();
+            console.log("Project 3D animation started.");
         }
 
-        // Initialize project 3D when the section is in view
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                initProject3D();
-                observer.disconnect();
-            }
-        }, { threshold: 0.1 });
-
-        observer.observe(document.getElementById('projects'));
-
-        // Updated Benzene 3D model viewer with GLTFLoader
+        // --- NEW Benzene 3D model viewer with GLTFLoader ---
         let benzeneScene, benzeneCamera, benzeneRenderer, benzeneModel;
-        const benzeneContainer = document.getElementById('benzene-container');
+        const benzeneContainer = document.getElementById('benzene-container'); // Get container reference
+        let benzeneAnimationId = null; // To control animation loop
 
         function initBenzeneViewer() {
+             // Ensure container exists and viewer not already initialized
+             if (!benzeneContainer) {
+                 console.error("Benzene container element '#benzene-container' not found!");
+                 return;
+             }
+             if (benzeneScene) {
+                 console.warn("Benzene viewer already initialized.");
+                 return;
+             }
+             console.log("Initializing Benzene Viewer...");
+
+
             // Scene setup
             benzeneScene = new THREE.Scene();
-            benzeneScene.background = new THREE.Color(0x000000);
-            
-            // Camera setup with perspective for molecule viewing
-            benzeneCamera = new THREE.PerspectiveCamera(
-                60, 
-                benzeneContainer.clientWidth / benzeneContainer.clientHeight, 
-                0.1, 
-                1000
-            );
-            benzeneCamera.position.z = 5;
-            
-            // Renderer setup
-            benzeneRenderer = new THREE.WebGLRenderer({ antialias: true });
-            benzeneRenderer.setSize(benzeneContainer.clientWidth, benzeneContainer.clientHeight);
-            benzeneContainer.appendChild(benzeneRenderer.domElement);
-            
-            // Lighting setup for better visibility
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            benzeneScene.add(ambientLight);
-            
-            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight1.position.set(1, 1, 1);
-            benzeneScene.add(directionalLight1);
-            
-            const directionalLight2 = new THREE.DirectionalLight(0x48DBF1, 0.5);
-            directionalLight2.position.set(-1, -1, -1);
-            benzeneScene.add(directionalLight2);
-            
-            // Create GLTF loader and load the benzene model
+            // Optional: Set a specific background color for this viewer
+            // benzeneScene.background = new THREE.Color(0x1a1a1a);
+
+            // Camera setup
+            const aspect = (benzeneContainer.clientWidth > 0 && benzeneContainer.clientHeight > 0)
+                           ? benzeneContainer.clientWidth / benzeneContainer.clientHeight
+                           : 1;
+            benzeneCamera = new THREE.PerspectiveCamera(65, aspect, 0.1, 1000); // Slightly narrower FOV
+
+             // Renderer setup
+             try {
+                 benzeneRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha: true allows CSS background to show
+                 benzeneRenderer.setPixelRatio(window.devicePixelRatio);
+                  if (benzeneContainer.clientWidth > 0 && benzeneContainer.clientHeight > 0) {
+                      benzeneRenderer.setSize(benzeneContainer.clientWidth, benzeneContainer.clientHeight);
+                       // Clear container before appending
+                       while (benzeneContainer.firstChild) {
+                           benzeneContainer.removeChild(benzeneContainer.firstChild);
+                       }
+                      benzeneContainer.appendChild(benzeneRenderer.domElement);
+                  } else {
+                     console.warn("Benzene container has zero dimensions during init. Renderer not sized.");
+                  }
+             } catch (rendererError) {
+                  console.error("Failed to create Benzene WebGL Renderer:", rendererError);
+                  benzeneContainer.innerHTML = '<div class="loading-indicator" style="color:#ff6b6b;">WebGL Initialization Failed.</div>';
+                  return; // Stop initialization
+             }
+
+
+            // Add lighting
+            const ambientLightBenzene = new THREE.AmbientLight(0xffffff, 0.5); // Slightly less ambient
+            benzeneScene.add(ambientLightBenzene);
+
+            const directionalLightBenzene = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLightBenzene.position.set(2, 3, 2).normalize();
+            benzeneScene.add(directionalLightBenzene);
+
+            const backlightBenzene = new THREE.DirectionalLight(0x48DBF1, 0.4); // Teal backlight
+             backlightBenzene.position.set(-2, -1, -3).normalize();
+             benzeneScene.add(backlightBenzene);
+
+            // Load the Benzene GLB file
             const loader = new THREE.GLTFLoader();
-            
-            // Load the benzene model from GitHub
+            const modelUrl = 'https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Benzene%232.glb'; // Correct RAW URL
+
+            console.log(`Attempting to load benzene model from: ${modelUrl}`);
+            // Add a loading indicator if it's not already there from HTML
+            let loadingIndicator = benzeneContainer.querySelector('.loading-indicator');
+            if (!loadingIndicator) {
+                 loadingIndicator = document.createElement('div');
+                 loadingIndicator.className = 'loading-indicator';
+                 loadingIndicator.textContent = 'Loading Benzene Model...';
+                  if (benzeneContainer.childElementCount === 0) {
+                     benzeneContainer.appendChild(loadingIndicator);
+                  } else {
+                      loadingIndicator.style.position = 'absolute';
+                      loadingIndicator.style.top = '50%';
+                      loadingIndicator.style.left = '50%';
+                      loadingIndicator.style.transform = 'translate(-50%, -50%)';
+                      loadingIndicator.style.zIndex = '10';
+                      benzeneContainer.appendChild(loadingIndicator);
+                  }
+            }
+
+
             loader.load(
-                'https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Benzene.glb', // Update this path to your GLB file
+                modelUrl,
+                // === onSuccess ===
                 (gltf) => {
-                    // Model loaded successfully
+                    console.log("Benzene model loaded successfully.");
                     benzeneModel = gltf.scene;
-                    
-                    // Material setup for the model - scientific blue color
-                    benzeneModel.traverse((child) => {
-                        if (child.isMesh) {
-                            child.material = new THREE.MeshPhongMaterial({
-                                color: 0x48DBF1,
-                                specular: 0xffffff,
-                                shininess: 100,
-                                transparent: true,
-                                opacity: 0.9
-                            });
-                        }
-                    });
-                    
-                    // Center the model
-                    const box = new THREE.Box3().setFromObject(benzeneModel);
-                    const center = box.getCenter(new THREE.Vector3());
-                    benzeneModel.position.sub(center);
-                    
-                    // Scale model appropriately
-                    const size = box.getSize(new THREE.Vector3());
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    const scale = 3 / maxDim;
-                    benzeneModel.scale.set(scale, scale, scale);
-                    
-                    // Add the model to the scene
+
+                     // Apply a standard material for consistent appearance
+                     benzeneModel.traverse((child) => {
+                         if (child.isMesh) {
+                             child.material = new THREE.MeshStandardMaterial({
+                                 color: 0xcccccc, // Light gray
+                                 metalness: 0.2,
+                                 roughness: 0.7,
+                             });
+                             child.castShadow = true; // Optional: enable shadows
+                             child.receiveShadow = true;
+                         }
+                     });
+
                     benzeneScene.add(benzeneModel);
-                    
-                    // Remove loading indicator
-                    const loadingIndicator = benzeneContainer.querySelector('.loading-indicator');
-                    if (loadingIndicator) {
-                        loadingIndicator.remove();
+
+                    // Center and scale the model
+                    try {
+                        const box = new THREE.Box3().setFromObject(benzeneModel);
+                        const center = box.getCenter(new THREE.Vector3());
+                        const sizeVec = new THREE.Vector3();
+                        box.getSize(sizeVec); // Get size vector
+                        const size = sizeVec.length(); // Diagonal size
+
+                        benzeneModel.position.sub(center);
+
+                        if (size > 0.001) { // Check size threshold
+                             const desiredSize = 3.5; // Target size in scene units
+                             const scale = desiredSize / size;
+                             benzeneModel.scale.set(scale, scale, scale);
+                             // Adjust camera Z based on calculated size and scale
+                             benzeneCamera.position.z = Math.max(5, sizeVec.z * scale * 1.8); // Adjust distance based on depth
+                             console.log(`Benzene model centered, scaled to ~${desiredSize} units, camera Z adjusted to ${benzeneCamera.position.z.toFixed(2)}`);
+                        } else {
+                             console.warn("Benzene model loaded but bounding box size is very small. Using default scale and camera position.");
+                             benzeneCamera.position.z = 6; // Default camera Z if size is weird
+                        }
+
+                    } catch (error) {
+                        console.error("Error processing Benzene model geometry:", error);
+                        if (loadingIndicator) {
+                             loadingIndicator.textContent = "Error processing model.";
+                             loadingIndicator.style.color = "#ff6b6b";
+                        }
+                        return;
                     }
-                    
-                    // Start auto-rotation
-                    autoRotate = true;
+
+
+                    if (loadingIndicator) loadingIndicator.remove(); // Remove loading text
+
+                    // Start animation loop
+                    function animateBenzene() {
+                        benzeneAnimationId = requestAnimationFrame(animateBenzene); // Store ID
+                        if (!benzeneScene || !benzeneRenderer) return;
+                        if (benzeneModel) {
+                             benzeneModel.rotation.y += 0.008; // Slightly slower rotation
+                             benzeneModel.rotation.x += 0.002; // Add slight tilt rotation
+                        }
+                        benzeneRenderer.render(benzeneScene, benzeneCamera);
+                    }
+                    animateBenzene();
+                    console.log("Benzene animation started.");
                 },
-                // Progress callback
+                // === onProgress ===
                 (xhr) => {
-                    const loadingIndicator = benzeneContainer.querySelector('.loading-indicator');
-                    if (loadingIndicator) {
-                        const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
-                        loadingIndicator.textContent = `Loading Benzene model: ${percent}%`;
+                    if (xhr.lengthComputable) {
+                        const percentLoaded = (xhr.loaded / xhr.total * 100).toFixed(0);
+                        console.log(`Benzene model loading progress: ${percentLoaded}%`);
+                        if (loadingIndicator) {
+                            loadingIndicator.textContent = `Loading Benzene: ${percentLoaded}%`;
+                        }
+                    } else {
+                         console.log(`Benzene model loading progress: ${xhr.loaded} bytes`);
+                          if (loadingIndicator) {
+                             loadingIndicator.textContent = `Loading Benzene...`;
+                         }
                     }
                 },
-                // Error callback
+                // === onError ===
                 (error) => {
                     console.error('Error loading the benzene model:', error);
-                    const loadingIndicator = benzeneContainer.querySelector('.loading-indicator');
                     if (loadingIndicator) {
-                        loadingIndicator.textContent = 'Error loading model. Please try again later.';
+                        loadingIndicator.textContent = "Error Loading Model"; // Simpler error message
+                        loadingIndicator.style.color = "#ff6b6b";
+                        loadingIndicator.style.fontSize = "1rem";
                     }
+                    if (error.message) console.error("Loader error message:", error.message);
                 }
             );
-            
-            // Interaction variables
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-            let autoRotate = true;
-            
-            // Mouse event handlers for rotation
-            benzeneContainer.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                autoRotate = false;
-                previousMousePosition = {
-                    x: e.clientX - benzeneContainer.getBoundingClientRect().left,
-                    y: e.clientY - benzeneContainer.getBoundingClientRect().top
-                };
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging || !benzeneModel) return;
-                
-                const currentMousePosition = {
-                    x: e.clientX - benzeneContainer.getBoundingClientRect().left,
-                    y: e.clientY - benzeneContainer.getBoundingClientRect().top
-                };
-                
-                const deltaMove = {
-                    x: currentMousePosition.x - previousMousePosition.x,
-                    y: currentMousePosition.y - previousMousePosition.y
-                };
-                
-                benzeneModel.rotation.y += deltaMove.x * 0.01;
-                benzeneModel.rotation.x += deltaMove.y * 0.01;
-                
-                previousMousePosition = currentMousePosition;
-            });
-            
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-                // Restart auto-rotation after a brief delay
-                setTimeout(() => {
-                    if (!isDragging) autoRotate = true;
-                }, 1500);
-            });
-            
-            // Scroll event for zoom functionality
-            benzeneContainer.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                
-                if (!benzeneModel) return;
-                
-                // Adjust zoom based on scroll direction
-                if (e.deltaY > 0) {
-                    benzeneCamera.position.z += 0.5;
-                } else {
-                    benzeneCamera.position.z -= 0.5;
-                }
-                
-                // Limit how close/far the camera can get
-                benzeneCamera.position.z = Math.max(2, Math.min(benzeneCamera.position.z, 10));
-            });
-            
-            // Animation function
-            function animateBenzene() {
-                requestAnimationFrame(animateBenzene);
-                
-                if (benzeneModel && autoRotate) {
-                    benzeneModel.rotation.y += 0.005;
-                    benzeneModel.rotation.x += 0.002;
-                }
-                
-                benzeneRenderer.render(benzeneScene, benzeneCamera);
-            }
-            
-            // Start animation
-            animateBenzene();
         }
-        
-        // Initialize benzene viewer when container is in view
-        const benzeneObserver = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                initBenzeneViewer();
-                benzeneObserver.disconnect();
+
+        // --- Intersection Observers for Lazy Initialization ---
+        function createObserver(element, callback) {
+             if (!element) {
+                 console.error("Observer target element not found for", callback.name);
+                 return null;
+             }
+             const observer = new IntersectionObserver((entries, obs) => {
+                 entries.forEach(entry => {
+                     if (entry.isIntersecting) {
+                         console.log(`Element for ${callback.name} intersecting, initializing...`);
+                         // Delay initialization slightly
+                          setTimeout(callback, 150);
+                         obs.unobserve(entry.target); // Disconnect after triggering
+                     }
+                 });
+             }, { threshold: 0.10 }); // Trigger when 10% visible
+
+             observer.observe(element);
+             console.log(`IntersectionObserver attached for ${callback.name}.`);
+             return observer;
+         }
+
+        // Create observers for each 3D section
+        const project3DObserver = createObserver(projectContainer, initProject3D);
+        const benzeneObserver = createObserver(benzeneContainer, initBenzeneViewer);
+
+
+        // --- Global Resize Handler ---
+        function handleResize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            // Background scene resize
+            if (camera && renderer) {
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
             }
-        }, { threshold: 0.1 });
-        
-        benzeneObserver.observe(document.getElementById('benzene-container'));
+
+            // Project 3D scene resize
+            if (projectCamera && projectRenderer && projectContainer) {
+                const projWidth = projectContainer.clientWidth;
+                const projHeight = projectContainer.clientHeight;
+                 if (projWidth > 0 && projHeight > 0) {
+                     projectCamera.aspect = projWidth / projHeight;
+                     projectCamera.updateProjectionMatrix();
+                     projectRenderer.setSize(projWidth, projHeight);
+                 }
+            }
+
+            // Benzene scene resize
+            if (benzeneCamera && benzeneRenderer && benzeneContainer) {
+                const benzWidth = benzeneContainer.clientWidth;
+                const benzHeight = benzeneContainer.clientHeight;
+                 if (benzWidth > 0 && benzHeight > 0) {
+                     benzeneCamera.aspect = benzWidth / benzHeight;
+                     benzeneCamera.updateProjectionMatrix();
+                     benzeneRenderer.setSize(benzWidth, benzHeight);
+                 }
+            }
+             console.log("Window resized, updated relevant scenes.");
+        }
+
+        // Debounce resize handler for performance
+         let resizeTimeout;
+         window.addEventListener('resize', () => {
+             clearTimeout(resizeTimeout);
+             resizeTimeout = setTimeout(handleResize, 100); // Adjust delay as needed
+         });
+
+
+        // --- Start background animation ---
+        if (sceneContainer) {
+             animateBackground();
+             console.log("Background animation started.");
+        }
+
+         // --- Cleanup logic (optional but good practice) ---
+         window.addEventListener('beforeunload', () => {
+             // Stop animation loops
+             if (projectAnimationId) cancelAnimationFrame(projectAnimationId);
+             if (benzeneAnimationId) cancelAnimationFrame(benzeneAnimationId);
+
+             // Dispose Three.js resources to free GPU memory
+             // (More complex cleanup needed for full disposal)
+             if (projectRenderer) projectRenderer.dispose();
+             if (benzeneRenderer) benzeneRenderer.dispose();
+             if (renderer) renderer.dispose();
+
+             console.log("Cleaned up animation loops and renderers.");
+         });
+
     </script>
+
 </body>
 </html>
