@@ -3,632 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simone Capodivento</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <title>Scritti Politti</title>
     <style>
-        /* Scientific styling */
-        .scientific-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, #2D3436, #000000);
-            z-index: -2;
-        }
-        /* Add this in the <style> section */
-.counter {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    font-size: 0.9rem;
-    opacity: 0.6;
-    z-index: 999;
-    background: rgba(45, 52, 54, 0.7);
-    padding: 5px 10px;
-    border-radius: 4px;
-    backdrop-filter: blur(5px);
-    font-family: 'Share Tech Mono', monospace;
-    color: #48DBF1;
-    transition: opacity 0.3s ease;
-}
-
-.counter:hover {
-    opacity: 1;
-}
-        /* Scientific overlay effects */
-        .scientific-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 20% 30%, rgba(72, 219, 251, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(29, 209, 161, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* Particle effects */
-        .particle {
-            position: absolute;
-            background: rgba(72, 219, 251, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        /* Scientific text effects */
-        .scientific-text {
-            text-shadow: 0 0 10px rgba(72, 219, 251, 0.5);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 5px rgba(72, 219, 251, 0.5);
-            }
-            to {
-                text-shadow: 0 0 15px rgba(29, 209, 161, 0.8);
-            }
-        }
-
-        /* 3D Scene Container */
-        #scene-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.5;
-        }
-
-        /* Project 3D Container */
-        .project-3d-container {
-            width: 100%;
-            height: 300px;
-            position: relative;
-            margin-top: 1rem;
-        }
-
-        /* Benzene 3D Container */
-        #benzene-container {
-            width: 100%;
-            height: 400px;
-            position: relative; /* Keep relative for loading indicator */
-            margin-top: 1rem;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);
-        }
-
-        /* Scientific grid */
-        .grid-line {
-            position: absolute;
-            background: linear-gradient(90deg,
-                transparent,
-                rgba(72, 219, 251, 0.1) 50%,
-                transparent
-            );
-        }
-
-        /* Tech font styling */
-        .tech-font {
-            font-family: 'Share Tech Mono', 'Courier New', monospace;
-            letter-spacing: 1px;
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
             line-height: 1.6;
+            color: #e0e0e0;
+            background-color: #000000;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 50px;
         }
-
-        /* Tech highlight effect */
-        .tech-highlight {
-            color: #48DBF1;
-            font-weight: 600;
+        h1 {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: #ffffff;
         }
-
-        /* Project image */
-        .project-image {
-            width: 100%;
-            height: 500px;  /* Increased height */
-            object-fit: cover;  /* Ensures image covers the entire space */
-            border-radius: 0.75rem;  /* Slightly larger border radius */
-            margin-top: 1rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);  /* Added shadow */
+        h2 {
+            font-size: 24px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #ffffff;
         }
-
-        .project-image:hover {
-            transform: scale(1.02);  /* Subtle scale on hover */
-            box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);  /* Enhanced shadow on hover */
+        p {
+            margin-bottom: 15px;
         }
-
-        /* Loading indicator */
-        .loading-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #48DBF1;
-            font-size: 1.5rem;
-            text-align: center;
-            font-family: 'Share Tech Mono', monospace; /* Added font */
+        ul {
+            margin-bottom: 20px;
         }
-
-        /* External button style */
-        .external-btn {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            background: rgba(72, 219, 251, 0.2);
-            border: 1px solid #48DBF1;
-            color: #48DBF1;
-            border-radius: 0.25rem;
-            transition: all 0.3s ease;
+        a {
+            color: #4da6ff;
             text-decoration: none;
-            font-family: 'Share Tech Mono', monospace;
         }
-
-        .external-btn:hover {
-            background: rgba(72, 219, 251, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3);
+        a:hover {
+            text-decoration: underline;
         }
-
-        /* Poly Project Button Container */
-        .poly-project-container {
-            width: 100%;
-            text-align: center;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
+        .albums {
+            margin-top: 20px;
+        }
+        .album {
+            margin-bottom: 15px;
+        }
+        .album-title {
+            font-weight: bold;
+            color: #ffffff;
+        }
+        .year {
+            color: #b0b0b0;
+            font-style: italic;
+        }
+        .download-btn {
+            display: inline-block;
+            background-color: #0066cc;
+            color: white;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .download-btn:hover {
+            background-color: #004d99;
+            text-decoration: none;
+        }
+        .download-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #111111;
+            border-radius: 5px;
+        }
+        .view-counter {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #666666;
+            background-color: #0d0d0d;
+            padding: 5px 10px;
+            border-radius: 3px;
+            border: 1px solid #333333;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
-<body class="bg-transparent text-emerald-100 relative">
-    <div class="scientific-background"></div>
-    <div class="scientific-overlay"></div>
-    <div id="scene-container"></div>
-
-    <header class="p-6 flex justify-between items-center backdrop-blur-sm bg-opacity-20 bg-gray-900">
-        <div class="flex items-center space-x-4">
-            <img src="https://raw.githubusercontent.com/Capodivento/Website/main/1706100440515.jpeg" alt="Simone's Profile Picture" class="w-20 h-20 rounded-full ring-2 ring-emerald-400">
-            <h1 class="text-3xl font-bold scientific-text">Simone's Portfolio</h1>
+<body>
+    <h1>Scritti Politti</h1>
+    
+    <p>Scritti Politti is a musical group led by Welsh singer-songwriter Green Gartside. The band's music has evolved from its post-punk origins to a more mainstream pop sound in later years.</p>
+    
+    <h2>Background</h2>
+    <p>Formed in 1977 in Leeds, England, Scritti Politti began as a Marxist-inspired collective. The name is a play on the Italian term "Scritti Politici" which roughly translates to "political writings". The band's early work was characterized by a deconstructed sound and politically charged lyrics.</p>
+    
+    <p>In the early 1980s, Gartside changed the band's direction dramatically, embracing a more polished, soul and pop-influenced sound. This transformation culminated in the critically acclaimed album "Cupid & Psyche 85".</p>
+    
+    <h2>Discography</h2>
+    <div class="albums">
+        <div class="album">
+            <span class="album-title">Songs to Remember</span> - <span class="year">1982</span>
         </div>
-        <nav>
-            <ul class="flex space-x-6">
-                <li><a href="#projects" class="hover:text-emerald-300 transition-colors">Projects</a></li>
-                <li><a href="#contact" class="hover:text-emerald-300 transition-colors">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section id="hero" class="h-screen flex flex-col items-center justify-center text-center px-4">
-        <div>
-            <h2 class="text-5xl font-extrabold scientific-text mb-6">I'M SIMO</h2>
-            <p class="mt-4 text-lg tech-font tracking-wider">
-                I LIKE TO BUILD THINGS WITH <span class="tech-highlight">CODE</span> AND BEYOND.
-            </p>
-            <p class="mt-6 text-lg tech-font tracking-wider max-w-2xl mx-auto">
-                SOME OF MY INTERESTS ARE: <span class="tech-highlight">DESIGN</span>,
-                <span class="tech-highlight">WEB DEVELOPMENT</span>,
-                <span class="tech-highlight">ANDROID DEVELOPMENT</span>,
-                <span class="tech-highlight">COMPUTER GRAPHICS</span> AND
-                <span class="tech-highlight">ANIMATION</span>.
-            </p>
-            <p class="mt-8 text-lg tech-font">
-                YOU CAN FIND HERE SOME OF THE PROJECTS I'VE WORKED ON.
-            </p>
+        <div class="album">
+            <span class="album-title">Cupid & Psyche 85</span> - <span class="year">1985</span>
         </div>
-    </section>
-
-    <section id="projects" class="p-12">
-        <h2 class="text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Blender 3D Project</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">A 3D visualization of my desk rn.</p>
-                </div>
-                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png"
-                     alt="Blender 3D Project"
-                     class="project-image">
-            </div>
-
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Design Concept</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Experimental design visualization.</p>
-                </div>
-                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-02%20at%2017.59.25.jpg"
-                     alt="Design Concept"
-                     class="project-image">
-            </div>
-
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">3D Geometric Visualization</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Interactive 3D geometry created with Three.js, exploring complex geometric forms.</p>
-                </div>
-                <div class="project-3d-container h-64 w-full" id="project-3d-container"></div>
-            </div>
+        <div class="album">
+            <span class="album-title">Provision</span> - <span class="year">1988</span>
         </div>
-
-        <div class="poly-project-container">
-            <a href="https://capodivento.github.io/Poly/" target="_blank" class="external-btn">
-                View Poly Project <i class="fas fa-external-link-alt ml-1"></i>
-            </a>
+        <div class="album">
+            <span class="album-title">Anomie & Bonhomie</span> - <span class="year">1999</span>
         </div>
-    </section>
-
-    <section id="contact" class="p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
-        <h2 class="text-4xl font-bold scientific-text">Contact</h2>
-        <p class="mt-4">Connect with me to discuss innovative projects and collaborations.</p>
-        <div class="mt-6 flex justify-center space-x-6">
-            <a href="https://www.instagram.com/" target="_blank" class="hover:text-emerald-300 transition-colors">
-                <i class="fab fa-instagram text-3xl"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" class="hover:text-emerald-300 transition-colors">
-                <i class="fab fa-linkedin text-3xl"></i>
-            </a>
-            <a href="https://github.com/Capodivento" target="_blank" class="hover:text-emerald-300 transition-colors">
-                <i class="fab fa-github text-3xl"></i>
-            </a>
+        <div class="album">
+            <span class="album-title">White Bread Black Beer</span> - <span class="year">2006</span>
         </div>
-    </section>
-
-    <footer class="p-6 text-center text-emerald-300 backdrop-blur-sm bg-opacity-20 bg-gray-900">
-        <p>&copy; 2025 Simone. All rights reserved.</p>
-    </footer>
-
+    </div>
+    
+    <h2>Notable Songs</h2>
+    <ul>
+        <li>"The Sweetest Girl" (1981)</li>
+        <li>"Wood Beez (Pray Like Aretha Franklin)" (1984)</li>
+        <li>"Absolute" (1985)</li>
+        <li>"Perfect Way" (1985)</li>
+        <li>"Oh Patti (Don't Feel Sorry for Loverboy)" (1988)</li>
+    </ul>
+    
+    <h2>Legacy</h2>
+    <p>Scritti Politti's influence extends beyond their chart success. The band's innovative approach to production and Gartside's philosophical lyrics have influenced numerous artists across different genres. Their sophisticated blend of pop, R&B, and electronic elements helped shape the sound of 1980s pop music.</p>
+    
+    <p>Despite long periods of inactivity, Scritti Politti remains a cult favorite, with Green Gartside recognized as an innovative and thoughtful musician whose work bridges the gap between avant-garde experimentation and mainstream pop accessibility.</p>
+    
+    <div class="download-section">
+        <h2>Downloads</h2>
+        <p>Access our collection of Scritti Politti resources:</p>
+        <a href="#" class="download-btn">Download Band Biography (PDF)</a><br>
+        <a href="#" class="download-btn">Download Discography Details (PDF)</a><br>
+        <a href="#" class="download-btn">Download Lyrics Collection (PDF)</a><br>
+        <a href="#" class="download-btn">Download Concert History (PDF)</a>
+    </div>
+    
+    <p><a href="https://en.wikipedia.org/wiki/Scritti_Politti">Learn more about Scritti Politti</a></p>
+    
+    <div class="view-counter">Views: 42,831</div>
+    
     <script>
-        // Three.js Scene Setup for background
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('scene-container').appendChild(renderer.domElement);
-
-        // Create 3D shapes for background
-        const shapes = [];
-        const geometries = [
-            new THREE.IcosahedronGeometry(1),
-            new THREE.DodecahedronGeometry(1),
-            new THREE.OctahedronGeometry(1)
-        ];
-
-        for (let i = 0; i < 10; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x1DD1A1,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.3
-            });
-            const shape = new THREE.Mesh(geometry, material);
-
-            shape.position.x = (Math.random() - 0.5) * 20;
-            shape.position.y = (Math.random() - 0.5) * 20;
-            shape.position.z = (Math.random() - 0.5) * 20;
-
-            shapes.push(shape);
-            scene.add(shape);
-        }
-
-        // Add ambient light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-
-        // Add point light
-        const pointLight = new THREE.PointLight(0x48DBF1, 1);
-        pointLight.position.set(10, 10, 10);
-        scene.add(pointLight);
-
-        camera.position.z = 15;
-
-        // Animation loop for background
-        function animateBackground() {
-            requestAnimationFrame(animateBackground);
-
-            shapes.forEach(shape => {
-                shape.rotation.x += 0.001;
-                shape.rotation.y += 0.002;
-            });
-
-            renderer.render(scene, camera);
-        }
-
-        // Handle window resize for background and project scenes
-        window.addEventListener('resize', () => {
-            // Background resize
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-
-            // Resize project 3D scene if initialized
-            if (projectCamera && projectRenderer && projectContainer) {
-                 const projWidth = projectContainer.clientWidth;
-                 const projHeight = projectContainer.clientHeight;
-                 if (projWidth > 0 && projHeight > 0) {
-                    projectCamera.aspect = projWidth / projHeight;
-                    projectCamera.updateProjectionMatrix();
-                    projectRenderer.setSize(projWidth, projHeight);
-                 }
+        // Simple animation for the view counter to make it look like it's occasionally incrementing
+        // This is just for visual effect
+        setInterval(function() {
+            const viewCounter = document.querySelector('.view-counter');
+            const currentViews = parseInt(viewCounter.textContent.replace('Views: ', '').replace(',', ''));
+            if (Math.random() < 0.1) { // 10% chance of incrementing each interval
+                viewCounter.textContent = 'Views: ' + (currentViews + 1).toLocaleString();
             }
-
-            // Resize benzene container if initialized
-            if (benzeneCamera && benzeneRenderer && benzeneContainer) {
-                const benzWidth = benzeneContainer.clientWidth;
-                const benzHeight = benzeneContainer.clientHeight;
-                 if (benzWidth > 0 && benzHeight > 0) {
-                    benzeneCamera.aspect = benzWidth / benzHeight;
-                    benzeneCamera.updateProjectionMatrix();
-                    benzeneRenderer.setSize(benzWidth, benzHeight);
-                 }
-            }
-        });
-
-        // Create particles
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-
-            const size = Math.random() * 3;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-
-            particle.style.left = `${Math.random() * 100}vw`;
-            particle.style.top = `${Math.random() * 100}vh`;
-
-            document.body.appendChild(particle);
-
-            gsap.to(particle, {
-                y: `${Math.random() * 200 - 100}`,
-                x: `${Math.random() * 200 - 100}`,
-                opacity: 0,
-                duration: Math.random() * 3 + 2,
-                onComplete: () => particle.remove()
-            });
-        }
-
-        // Create particles periodically
-        setInterval(createParticle, 200);
-
-        // Start background animation
-        animateBackground();
-
-        // GSAP animations for content
-        gsap.from("#hero h2", {
-            opacity: 0,
-            y: -50,
-            duration: 1.5,
-            ease: "power3.out"
-        });
-
-        gsap.from("#hero p", {
-            opacity: 0,
-            y: 50,
-            duration: 1.5,
-            delay: 0.3,
-            stagger: 0.2,
-            ease: "power3.out"
-        });
-
-        // Animation for project images (might need adjustment if observer is used)
-        // Consider triggering this via the IntersectionObserver as well
-        gsap.from(".project-image", {
-            scrollTrigger: {
-                trigger: ".project-image",
-                start: "top 80%", // Start animation when 80% of the image is visible
-                toggleActions: "play none none none", // Play animation once when it enters viewport
-            },
-            opacity: 0,
-            scale: 0.8,
-            duration: 1,
-            stagger: 0.2,
-            ease: "back.out(1.7)"
-        });
-
-
-        // --- Three.js for project section ---
-        let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
-        const projectContainer = document.getElementById('project-3d-container');
-
-        function initProject3D() {
-            if (!projectContainer || projectScene) return; // Prevent re-initialization or if container not found
-
-            // Scene setup
-            projectScene = new THREE.Scene();
-            projectCamera = new THREE.PerspectiveCamera(75, projectContainer.clientWidth / projectContainer.clientHeight, 0.1, 1000);
-            projectRenderer = new THREE.WebGLRenderer({
-                antialias: true,
-                alpha: true
-            });
-            // Check for valid dimensions before setting size
-            if (projectContainer.clientWidth > 0 && projectContainer.clientHeight > 0) {
-                 projectRenderer.setSize(projectContainer.clientWidth, projectContainer.clientHeight);
-                 projectContainer.appendChild(projectRenderer.domElement);
-            } else {
-                 console.warn("Project container has zero dimensions. Cannot initialize renderer.");
-                 projectScene = null; // Reset scene if initialization fails
-                 return;
-            }
-
-
-            // Create complex low-poly geometry
-            function createCustomGeometry() {
-                const geometry = new THREE.BufferGeometry();
-
-                // Vertices with more complex arrangement
-                const vertices = new Float32Array([
-                    // Main shape vertices
-                    -1.0, -1.0, 1.0,
-                     1.0, -1.0, 1.0,
-                     1.0,  1.0, 1.0,
-                    -1.0,  1.0, 1.0,
-
-                    -1.0, -1.0, -1.0,
-                     1.0, -1.0, -1.0,
-                     1.0,  1.0, -1.0,
-                    -1.0,  1.0, -1.0,
-
-                    // Additional irregular vertices
-                     0.0,  2.0,  0.0,
-                     2.0,  0.0,  0.0,
-                    -2.0,  0.0,  0.0,
-                     0.0,  0.0,  2.0,
-                     0.0,  0.0, -2.0
-                ]);
-
-                // Indices to create faces
-                const indices = [
-                     0,1,2,  0,2,3,  // front
-                     1,5,6,  1,6,2,  // right
-                     5,4,7,  5,7,6,  // back
-                     4,0,3,  4,3,7,  // left
-                     3,2,8,  2,6,8,  // top part connected to vertex 8
-                     4,5,9,  0,4,10, // other connections involving new vertices
-                     1,0,11, 5,1,12,
-                     // Example: Connecting some irregular points
-                     8,2,9,  8,6,9,  // Connect top vertex 8 to vertex 9 via faces
-                     10,0,11, 10,3,11 // Connect vertices 10 and 11
-                ];
-
-                geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-                geometry.setIndex(indices);
-                geometry.computeVertexNormals(); // Important for lighting
-
-                return geometry;
-            }
-
-            // Main shape
-            const mainGeometry = createCustomGeometry();
-            const mainMaterial = new THREE.MeshPhongMaterial({
-                color: 0x48DBF1,
-                transparent: true,
-                opacity: 0.8,
-                shininess: 50, // Add some shininess
-                specular: 0x222222 // Add specular highlight
-            });
-            projectMesh = new THREE.Mesh(mainGeometry, mainMaterial);
-            projectScene.add(projectMesh);
-
-            // Wireframe (Optional, but nice effect) - Using EdgesGeometry for cleaner wireframe
-             const edges = new THREE.EdgesGeometry(mainGeometry);
-             const wireMaterial = new THREE.LineBasicMaterial({
-                 color: 0xbae6fd,
-                 transparent: true,
-                 opacity: 0.6
-             });
-             projectWireframe = new THREE.LineSegments(edges, wireMaterial);
-             projectScene.add(projectWireframe); // Add wireframe
-
-
-            // Lighting
-            const projAmbientLight = new THREE.AmbientLight(0xcccccc, 0.4); // Softer ambient
-            projectScene.add(projAmbientLight);
-
-            const projDirectionalLight = new THREE.DirectionalLight(0xffffff, 0.7); // Slightly stronger directional
-            projDirectionalLight.position.set(2, 3, 1).normalize(); // Adjust position
-            projectScene.add(projDirectionalLight);
-
-            // Camera positioning
-            projectCamera.position.z = 5;
-
-            // Interaction
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-
-            projectContainer.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                previousMousePosition = {
-                    x: e.clientX, // Use clientX/Y relative to viewport
-                    y: e.clientY
-                };
-                 projectContainer.style.cursor = 'grabbing'; // Change cursor
-            });
-
-            document.addEventListener('mousemove', (e) => { // Listen on document to catch drags outside container
-                if (!isDragging || !projectMesh) return;
-
-                const currentMousePosition = {
-                    x: e.clientX,
-                    y: e.clientY
-                };
-
-                const deltaMove = {
-                    x: currentMousePosition.x - previousMousePosition.x,
-                    y: currentMousePosition.y - previousMousePosition.y
-                };
-
-                // Adjust rotation sensitivity
-                const rotateSpeed = 0.005;
-                projectMesh.rotation.y += deltaMove.x * rotateSpeed;
-                projectMesh.rotation.x += deltaMove.y * rotateSpeed;
-                 if (projectWireframe) { // Rotate wireframe too if it exists
-                     projectWireframe.rotation.y += deltaMove.x * rotateSpeed;
-                     projectWireframe.rotation.x += deltaMove.y * rotateSpeed;
-                 }
-
-
-                previousMousePosition = currentMousePosition;
-            });
-
-            document.addEventListener('mouseup', () => { // Listen on document
-                if (isDragging) {
-                     isDragging = false;
-                     projectContainer.style.cursor = 'grab'; // Restore cursor
-                }
-            });
-             projectContainer.style.cursor = 'grab'; // Initial cursor
-
-
-            // Animation loop
-            function animateProject() {
-                if (!projectScene) return; // Stop animation if scene was destroyed
-                requestAnimationFrame(animateProject);
-
-                // Gentle auto-rotation when not dragging
-                if (!isDragging && projectMesh) {
-                    projectMesh.rotation.y += 0.003;
-                     if (projectWireframe) {
-                         projectWireframe.rotation.y += 0.003;
-                     }
-                }
-
-                projectRenderer.render(projectScene, projectCamera);
-            }
-
-            // Start animation
-            animateProject();
-        }
-
-        // Initialize project 3D when the section is in view
-        const projectObserver = new IntersectionObserver((entries) => {
-             entries.forEach(entry => {
-                 if (entry.isIntersecting) {
-                     // Delay initialization slightly to ensure container dimensions are ready
-                     setTimeout(initProject3D, 100);
-                     projectObserver.unobserve(entry.target); // Disconnect after first intersection
-                 }
-             });
-         }, { threshold: 0.1 }); // Trigger when 10% is visible
-
-         // Observe the container itself for better timing
-         if (projectContainer) {
-            projectObserver.observe(projectContainer);
-         } else {
-            console.error("Project 3D container not found for IntersectionObserver.");
-         }
-
+        }, 5000); // Check every 5 seconds
     </script>
-    <!-- Add this just before closing </body> tag, after your existing scripts -->
-<div class="counter tech-font">
-    <span id="busuanzi_value_site_pv"></span> Views
-</div>
 </body>
 </html>
