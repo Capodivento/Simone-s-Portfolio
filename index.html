@@ -1,12 +1,32 @@
+Okay, I've reviewed the code and applied several improvements focusing on refinement, fixing potential issues, adding small features, and enhancing the existing ones, while keeping the core scientific/tech theme.
+
+Here are the key changes incorporated into the code below:
+
+1.  **Smooth Scrolling:** Added `scroll-smooth` to the `<html>` tag via Tailwind for native smooth scrolling when clicking navigation links (`#projects`, `#contact`).
+2.  **Dynamic Copyright Year:** The copyright year in the footer now updates automatically to the current year using JavaScript.
+3.  **Project 3D Loading Indicator:** Implemented the loading indicator you had styled. It now appears while the 3D geometry scene is initializing and disappears once it's ready.
+4.  **Background Mouse Interaction:** Added a subtle parallax effect to the background Three.js scene. The geometric shapes will shift slightly based on mouse movement, adding depth.
+5.  **Removed Unused Code:** Removed the CSS and JavaScript resize logic related to the non-existent `#benzene-container` to keep the code cleaner.
+6.  **Refined Project 3D Initialization:** Added robustness checks to ensure the container has dimensions before initializing the Three.js renderer to prevent errors. The `IntersectionObserver` approach is good for performance.
+7.  **Minor Styling Tweaks:**
+    * Slightly increased the base opacity of background shapes for better visibility.
+    * Added a subtle scale effect on project card hover for more feedback.
+    * Ensured the 3D project container uses `overflow: hidden;` to contain the canvas correctly.
+8.  **Code Comments:** Added comments to explain the new functionalities (dynamic year, loading indicator, mouse interaction).
+9.  **Accessibility Hint:** While not a full audit, the structure uses semantic tags. Remember to always provide meaningful `alt` text for images (which you have done).
+
+Here's the improved code:
+
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simone Capodivento</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
@@ -21,27 +41,24 @@
             background: linear-gradient(to bottom, #2D3436, #000000);
             z-index: -2;
         }
-        /* Add this in the <style> section */
-.counter {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    font-size: 0.9rem;
-    opacity: 0.6;
-    z-index: 999;
-    background: rgba(45, 52, 54, 0.7);
-    padding: 5px 10px;
-    border-radius: 4px;
-    backdrop-filter: blur(5px);
-    font-family: 'Share Tech Mono', monospace;
-    color: #48DBF1;
-    transition: opacity 0.3s ease;
-}
-
-.counter:hover {
-    opacity: 1;
-}
-        /* Scientific overlay effects */
+        .counter {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            z-index: 999;
+            background: rgba(45, 52, 54, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            backdrop-filter: blur(5px);
+            font-family: 'Share Tech Mono', monospace;
+            color: #48DBF1;
+            transition: opacity 0.3s ease;
+        }
+        .counter:hover {
+            opacity: 1;
+        }
         .scientific-overlay {
             position: fixed;
             top: 0;
@@ -54,31 +71,22 @@
             pointer-events: none;
             z-index: -1;
         }
-
-        /* Particle effects */
         .particle {
             position: absolute;
             background: rgba(72, 219, 251, 0.5);
             border-radius: 50%;
             pointer-events: none;
+            z-index: -1; /* Ensure particles are behind content */
         }
-
-        /* Scientific text effects */
         .scientific-text {
             text-shadow: 0 0 10px rgba(72, 219, 251, 0.5);
             animation: glow 2s ease-in-out infinite alternate;
         }
-
         @keyframes glow {
-            from {
-                text-shadow: 0 0 5px rgba(72, 219, 251, 0.5);
-            }
-            to {
-                text-shadow: 0 0 15px rgba(29, 209, 161, 0.8);
-            }
+            from { text-shadow: 0 0 5px rgba(72, 219, 251, 0.5); }
+            to { text-shadow: 0 0 15px rgba(29, 209, 161, 0.8); }
         }
-
-        /* 3D Scene Container */
+        /* 3D Scene Container (Background) */
         #scene-container {
             position: fixed;
             top: 0;
@@ -86,66 +94,52 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.5;
+            opacity: 0.6; /* Slightly increased base opacity */
         }
-
         /* Project 3D Container */
         .project-3d-container {
             width: 100%;
-            height: 300px;
+            height: 300px; /* Adjust as needed */
             position: relative;
             margin-top: 1rem;
+            border-radius: 0.75rem; /* Match image radius */
+            overflow: hidden; /* Contain the canvas */
+            background: rgba(0, 0, 0, 0.2); /* Subtle background */
         }
-
-        /* Benzene 3D Container */
-        #benzene-container {
-            width: 100%;
-            height: 400px;
-            position: relative; /* Keep relative for loading indicator */
-            margin-top: 1rem;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);
-        }
-
-        /* Scientific grid */
-        .grid-line {
+        .grid-line { /* Unused in current HTML, keep if needed */
             position: absolute;
-            background: linear-gradient(90deg,
-                transparent,
-                rgba(72, 219, 251, 0.1) 50%,
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(72, 219, 251, 0.1) 50%, transparent);
         }
-
-        /* Tech font styling */
         .tech-font {
             font-family: 'Share Tech Mono', 'Courier New', monospace;
             letter-spacing: 1px;
             line-height: 1.6;
         }
-
-        /* Tech highlight effect */
         .tech-highlight {
             color: #48DBF1;
             font-weight: 600;
         }
-
-        /* Project image */
         .project-image {
             width: 100%;
-            height: 500px;  /* Increased height */
-            object-fit: cover;  /* Ensures image covers the entire space */
-            border-radius: 0.75rem;  /* Slightly larger border radius */
+            height: 300px;  /* Standardized height similar to 3D container */
+            object-fit: cover;
+            border-radius: 0.75rem;
             margin-top: 1rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);  /* Added shadow */
+            box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);
         }
-
         .project-image:hover {
-            transform: scale(1.02);  /* Subtle scale on hover */
-            box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);  /* Enhanced shadow on hover */
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);
         }
+        /* Project Card Hover */
+        .project-card {
+             transition: all 0.3s ease; /* Smooth transition for hover */
+        }
+         .project-card:hover {
+             transform: translateY(-5px) scale(1.01); /* Lift and slightly scale card */
+             box-shadow: 0 15px 30px rgba(29, 209, 161, 0.25); /* Enhance shadow */
+         }
 
         /* Loading indicator */
         .loading-indicator {
@@ -154,12 +148,16 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #48DBF1;
-            font-size: 1.5rem;
+            font-size: 1.2rem; /* Slightly smaller */
             text-align: center;
-            font-family: 'Share Tech Mono', monospace; /* Added font */
+            font-family: 'Share Tech Mono', monospace;
+            z-index: 10; /* Ensure it's above the canvas */
+            display: none; /* Hidden by default */
         }
+         .loading-indicator.visible {
+             display: block; /* Show when needed */
+         }
 
-        /* External button style */
         .external-btn {
             display: inline-block;
             margin-top: 1rem;
@@ -172,14 +170,11 @@
             text-decoration: none;
             font-family: 'Share Tech Mono', monospace;
         }
-
         .external-btn:hover {
             background: rgba(72, 219, 251, 0.4);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3);
         }
-
-        /* Poly Project Button Container */
         .poly-project-container {
             width: 100%;
             text-align: center;
@@ -189,72 +184,75 @@
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
-<body class="bg-transparent text-emerald-100 relative">
-    <div class="scientific-background"></div>
+<body class="bg-transparent text-emerald-100 relative tech-font"> <div class="scientific-background"></div>
     <div class="scientific-overlay"></div>
     <div id="scene-container"></div>
 
-    <header class="p-6 flex justify-between items-center backdrop-blur-sm bg-opacity-20 bg-gray-900">
-        <div class="flex items-center space-x-4">
-            <img src="https://raw.githubusercontent.com/Capodivento/Website/main/1706100440515.jpeg" alt="Simone's Profile Picture" class="w-20 h-20 rounded-full ring-2 ring-emerald-400">
-            <h1 class="text-3xl font-bold scientific-text">Simone's Portfolio</h1>
+    <header class="sticky top-0 z-50 p-6 flex justify-between items-center backdrop-blur-md bg-opacity-30 bg-gray-900 shadow-lg"> <div class="flex items-center space-x-4">
+            <img src="https://raw.githubusercontent.com/Capodivento/Website/main/1706100440515.jpeg" alt="Simone's Profile Picture" class="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-emerald-400 shadow-md"> <h1 class="text-2xl md:text-3xl font-bold scientific-text">Simone's Portfolio</h1>
         </div>
         <nav>
-            <ul class="flex space-x-6">
-                <li><a href="#projects" class="hover:text-emerald-300 transition-colors">Projects</a></li>
-                <li><a href="#contact" class="hover:text-emerald-300 transition-colors">Contact</a></li>
+            <ul class="flex space-x-4 md:space-x-6 text-sm md:text-base">
+                <li><a href="#hero" class="hover:text-emerald-300 transition-colors scientific-text">Home</a></li> <li><a href="#projects" class="hover:text-emerald-300 transition-colors scientific-text">Projects</a></li>
+                <li><a href="#contact" class="hover:text-emerald-300 transition-colors scientific-text">Contact</a></li>
             </ul>
         </nav>
     </header>
 
-    <section id="hero" class="h-screen flex flex-col items-center justify-center text-center px-4">
-        <div>
-            <h2 class="text-5xl font-extrabold scientific-text mb-6">I'M SIMO</h2>
-            <p class="mt-4 text-lg tech-font tracking-wider">
+    <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-12"> <div>
+            <h2 class="text-4xl sm:text-5xl font-extrabold scientific-text mb-6">I'M SIMO</h2>
+            <p class="mt-4 text-base sm:text-lg tracking-wider">
                 I LIKE TO BUILD THINGS WITH <span class="tech-highlight">CODE</span> AND BEYOND.
             </p>
-            <p class="mt-6 text-lg tech-font tracking-wider max-w-2xl mx-auto">
+            <p class="mt-6 text-base sm:text-lg tracking-wider max-w-2xl mx-auto">
                 SOME OF MY INTERESTS ARE: <span class="tech-highlight">DESIGN</span>,
                 <span class="tech-highlight">WEB DEVELOPMENT</span>,
                 <span class="tech-highlight">ANDROID DEVELOPMENT</span>,
                 <span class="tech-highlight">COMPUTER GRAPHICS</span> AND
                 <span class="tech-highlight">ANIMATION</span>.
             </p>
-            <p class="mt-8 text-lg tech-font">
+            <p class="mt-8 text-base sm:text-lg">
                 YOU CAN FIND HERE SOME OF THE PROJECTS I'VE WORKED ON.
             </p>
+             <div class="mt-12 animate-bounce">
+                <a href="#projects">
+                     <i class="fas fa-chevron-down text-3xl text-emerald-400 opacity-70 hover:opacity-100 transition-opacity"></i>
+                </a>
+            </div>
         </div>
     </section>
 
-    <section id="projects" class="p-12">
-        <h2 class="text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
+    <section id="projects" class="p-8 md:p-12">
+        <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
+            <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
                 <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Blender 3D Project</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">A 3D visualization of my desk rn.</p>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Blender 3D Project</h3>
+                    <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A 3D visualization of my desk setup.</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png"
-                     alt="Blender 3D Project"
+                     alt="Blender 3D render of a desk setup"
                      class="project-image">
-            </div>
+                </div>
 
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all lg:col-span-1 flex flex-col">
+            <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
                 <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">Design Concept</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Experimental design visualization.</p>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Design Concept</h3>
+                    <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">Experimental abstract design visualization.</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-02%20at%2017.59.25.jpg"
-                     alt="Design Concept"
+                     alt="Abstract design concept visualization"
                      class="project-image">
             </div>
 
-            <div class="bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all flex flex-col">
+            <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
                 <div class="flex-grow">
-                    <h3 class="text-2xl font-semibold mb-4">3D Geometric Visualization</h3>
-                    <p class="mt-2 mb-4 text-emerald-200">Interactive 3D geometry created with Three.js, exploring complex geometric forms.</p>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">3D Geometric Visualization</h3>
+                    <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">Interactive 3D geometry using Three.js. Drag to rotate.</p>
                 </div>
-                <div class="project-3d-container h-64 w-full" id="project-3d-container"></div>
+                <div class="project-3d-container" id="project-3d-container">
+                     <div class="loading-indicator" id="project-3d-loader">Loading 3D Model...</div>
+                </div>
             </div>
         </div>
 
@@ -265,84 +263,326 @@
         </div>
     </section>
 
-    <section id="contact" class="p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
-        <h2 class="text-4xl font-bold scientific-text">Contact</h2>
-        <p class="mt-4">Connect with me to discuss innovative projects and collaborations.</p>
+    <section id="contact" class="p-8 md:p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
+        <h2 class="text-3xl md:text-4xl font-bold scientific-text">Contact</h2>
+        <p class="mt-4 text-sm md:text-base">Connect with me to discuss innovative projects and collaborations.</p>
         <div class="mt-6 flex justify-center space-x-6">
-            <a href="https://www.instagram.com/" target="_blank" class="hover:text-emerald-300 transition-colors">
+            <a href="https://www.instagram.com/" target="_blank" aria-label="Instagram Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
                 <i class="fab fa-instagram text-3xl"></i>
             </a>
-            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" class="hover:text-emerald-300 transition-colors">
+            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" aria-label="LinkedIn Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
                 <i class="fab fa-linkedin text-3xl"></i>
             </a>
-            <a href="https://github.com/Capodivento" target="_blank" class="hover:text-emerald-300 transition-colors">
+            <a href="https://github.com/Capodivento" target="_blank" aria-label="GitHub Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
                 <i class="fab fa-github text-3xl"></i>
             </a>
         </div>
     </section>
 
-    <footer class="p-6 text-center text-emerald-300 backdrop-blur-sm bg-opacity-20 bg-gray-900">
-        <p>&copy; 2025 Simone. All rights reserved.</p>
+    <footer class="p-6 text-center text-emerald-300 backdrop-blur-sm bg-opacity-20 bg-gray-900 text-sm">
+        <p>&copy; <span id="current-year"></span> Simone Capodivento. All rights reserved.</p>
     </footer>
 
+    <div class="counter tech-font">
+        <span id="busuanzi_value_site_pv"></span> Views
+    </div>
+
     <script>
-        // Three.js Scene Setup for background
+        // --- GSAP & General Setup ---
+        gsap.registerPlugin(ScrollTrigger); // Register ScrollTrigger
+
+        // Dynamic Copyright Year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // --- Three.js Scene Setup for Background ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); // Added antialias
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('scene-container').appendChild(renderer.domElement);
 
-        // Create 3D shapes for background
+        // Background shapes
         const shapes = [];
         const geometries = [
-            new THREE.IcosahedronGeometry(1),
-            new THREE.DodecahedronGeometry(1),
-            new THREE.OctahedronGeometry(1)
+            new THREE.IcosahedronGeometry(1.2, 0), // Slightly larger, less detail
+            new THREE.DodecahedronGeometry(1.0, 0),
+            new THREE.OctahedronGeometry(1.1, 0)
         ];
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 12; i++) { // Slightly more shapes
             const geometry = geometries[Math.floor(Math.random() * geometries.length)];
             const material = new THREE.MeshPhongMaterial({
-                color: 0x1DD1A1,
+                color: Math.random() > 0.5 ? 0x1DD1A1 : 0x48DBF1, // Vary colors slightly
                 wireframe: true,
                 transparent: true,
-                opacity: 0.3
+                opacity: 0.35, // Adjusted opacity
+                shininess: 10
             });
             const shape = new THREE.Mesh(geometry, material);
 
-            shape.position.x = (Math.random() - 0.5) * 20;
-            shape.position.y = (Math.random() - 0.5) * 20;
-            shape.position.z = (Math.random() - 0.5) * 20;
+            shape.position.x = (Math.random() - 0.5) * 30; // Spread out more
+            shape.position.y = (Math.random() - 0.5) * 30;
+            shape.position.z = (Math.random() - 0.5) * 30 - 10; // Push back slightly
+
+            shape.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+            shape.scale.setScalar(Math.random() * 0.5 + 0.8); // Random sizes
 
             shapes.push(shape);
             scene.add(shape);
         }
 
-        // Add ambient light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        // Background Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Slightly brighter ambient
         scene.add(ambientLight);
-
-        // Add point light
-        const pointLight = new THREE.PointLight(0x48DBF1, 1);
-        pointLight.position.set(10, 10, 10);
+        const pointLight = new THREE.PointLight(0x48DBF1, 1.2, 100); // Stronger point light
+        pointLight.position.set(5, 15, 15);
         scene.add(pointLight);
+        const directionalLight = new THREE.DirectionalLight(0x1DD1A1, 0.5); // Added directional
+        directionalLight.position.set(-10, -5, -10);
+        scene.add(directionalLight);
 
-        camera.position.z = 15;
+        camera.position.z = 12; // Adjusted camera distance
+
+        // --- Background Mouse Interaction ---
+        const mouse = new THREE.Vector2();
+        const targetCameraPos = new THREE.Vector3(); // Target position for smooth movement
+
+        function onMouseMove(event) {
+            // Normalize mouse coordinates (-1 to +1)
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            // Calculate target camera offset based on mouse position
+            targetCameraPos.x = mouse.x * 1.5; // Adjust multiplier for effect intensity
+            targetCameraPos.y = mouse.y * 1.5;
+        }
+        window.addEventListener('mousemove', onMouseMove, false);
 
         // Animation loop for background
         function animateBackground() {
             requestAnimationFrame(animateBackground);
 
-            shapes.forEach(shape => {
-                shape.rotation.x += 0.001;
-                shape.rotation.y += 0.002;
+            // Smoothly interpolate camera position towards target
+            camera.position.x += (targetCameraPos.x - camera.position.x) * 0.03;
+            camera.position.y += (targetCameraPos.y + 2 - camera.position.y) * 0.03; // +2 to slightly raise default view
+            camera.lookAt(scene.position); // Ensure camera always looks at the center
+
+            shapes.forEach((shape, index) => {
+                shape.rotation.x += 0.001 + index * 0.00005; // Vary rotation speeds slightly
+                shape.rotation.y += 0.002 + index * 0.00005;
             });
 
             renderer.render(scene, camera);
         }
 
-        // Handle window resize for background and project scenes
+        // --- Particle Effect (GSAP based) ---
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+
+            const size = Math.random() * 3 + 1; // Slightly larger min size
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.top = `${Math.random() * 100}vh`;
+
+            document.body.appendChild(particle); // Append to body
+
+            gsap.to(particle, {
+                y: `random(-150, 150)`, // Use GSAP random
+                x: `random(-150, 150)`,
+                opacity: 0,
+                duration: `random(3, 6)`, // Longer duration range
+                ease: "power1.out",
+                onComplete: () => particle.remove()
+            });
+        }
+        setInterval(createParticle, 250); // Slightly less frequent
+
+        // --- GSAP Content Animations ---
+        gsap.from("header", { duration: 1, y: -100, opacity: 0, ease: "power3.out"});
+        gsap.from("#hero h2", { duration: 1.5, y: -50, opacity: 0, ease: "power3.out", delay: 0.5 });
+        gsap.from("#hero p", { duration: 1.5, y: 30, opacity: 0, ease: "power3.out", delay: 0.8, stagger: 0.2 });
+        gsap.from("#hero .fa-chevron-down", { duration: 1, y: -20, opacity: 0, ease: "bounce.out", delay: 1.5 });
+
+        // Animate project cards on scroll
+        gsap.utils.toArray('.project-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%", // Trigger slightly earlier
+                    toggleActions: "play none none none",
+                    // markers: true, // Uncomment for debugging
+                },
+                opacity: 0,
+                y: 50,
+                scale: 0.95,
+                duration: 0.8,
+                delay: i * 0.1, // Stagger animation
+                ease: "power3.out"
+            });
+        });
+
+         // Animate contact section
+         gsap.from("#contact h2", {
+             scrollTrigger: { trigger: "#contact", start: "top 80%" },
+             opacity: 0, y: 30, duration: 1, ease: "power3.out"
+         });
+          gsap.from("#contact p", {
+             scrollTrigger: { trigger: "#contact", start: "top 75%" },
+             opacity: 0, y: 30, duration: 1, delay: 0.2, ease: "power3.out"
+         });
+         gsap.from("#contact .fab", {
+             scrollTrigger: { trigger: "#contact", start: "top 70%" },
+             opacity: 0, scale: 0.5, duration: 0.6, delay: 0.4, stagger: 0.15, ease: "back.out(1.7)"
+         });
+
+
+        // --- Three.js for Project Geometric Visualization ---
+        let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
+        const projectContainer = document.getElementById('project-3d-container');
+        const projectLoader = document.getElementById('project-3d-loader'); // Get loader element
+
+        function initProject3D() {
+            if (!projectContainer || projectScene) return; // Prevent re-init or if container missing
+
+            // Show loader
+            if(projectLoader) projectLoader.classList.add('visible');
+
+            const projWidth = projectContainer.clientWidth;
+            const projHeight = projectContainer.clientHeight;
+
+            if (projWidth <= 0 || projHeight <= 0) {
+                console.warn("Project container has zero dimensions. Delaying initialization.");
+                if(projectLoader) projectLoader.classList.remove('visible'); // Hide loader if failed
+                 // Optional: Try again after a short delay
+                 // setTimeout(initProject3D, 200);
+                return;
+            }
+
+            // Scene setup
+            projectScene = new THREE.Scene();
+            projectCamera = new THREE.PerspectiveCamera(60, projWidth / projHeight, 0.1, 1000); // Adjusted FOV
+            projectRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            projectRenderer.setSize(projWidth, projHeight);
+            projectRenderer.setPixelRatio(window.devicePixelRatio); // Improve sharpness on high DPI screens
+            projectContainer.appendChild(projectRenderer.domElement);
+
+            // Create complex geometry (same as before, but ensure normals are computed)
+             function createCustomGeometry() {
+                const geometry = new THREE.BufferGeometry();
+                const vertices = new Float32Array([
+                    -1.0, -1.0, 1.0,  1.0, -1.0, 1.0,  1.0,  1.0, 1.0, -1.0,  1.0, 1.0,
+                    -1.0, -1.0,-1.0,  1.0, -1.0,-1.0,  1.0,  1.0,-1.0, -1.0,  1.0,-1.0,
+                     0.0,  2.0, 0.0,  2.0,  0.0, 0.0, -2.0,  0.0, 0.0,  0.0,  0.0, 2.0,
+                     0.0,  0.0,-2.0
+                ]);
+                const indices = [
+                    0,1,2,  0,2,3,  1,5,6,  1,6,2,  5,4,7,  5,7,6,  4,0,3,  4,3,7,
+                    3,2,8,  2,6,8,  4,5,12, // Corrected index from 9 to 12
+                    0,4,10, 1,0,11, 5,1,9,  // Corrected index from 12 to 9
+                    8,2,9,  8,6,9,  10,0,11, 10,3,11
+                ];
+                geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                geometry.setIndex(indices);
+                geometry.computeVertexNormals(); // Crucial for lighting
+                return geometry;
+            }
+
+            // Main shape material
+            const mainMaterial = new THREE.MeshStandardMaterial({ // Using StandardMaterial for better lighting
+                color: 0x48DBF1,
+                metalness: 0.3, // Add some metallic look
+                roughness: 0.6, // Control shininess
+                transparent: true,
+                opacity: 0.9,
+                side: THREE.DoubleSide // Render both sides if geometry isn't perfectly closed
+            });
+            const mainGeometry = createCustomGeometry();
+            projectMesh = new THREE.Mesh(mainGeometry, mainMaterial);
+            projectMesh.scale.set(0.8, 0.8, 0.8); // Scale down slightly
+            projectScene.add(projectMesh);
+
+            // Wireframe using EdgesGeometry
+            const edges = new THREE.EdgesGeometry(mainGeometry);
+            const wireMaterial = new THREE.LineBasicMaterial({
+                color: 0xbae6fd, // Light blue wireframe
+                transparent: true,
+                opacity: 0.7
+            });
+            projectWireframe = new THREE.LineSegments(edges, wireMaterial);
+             projectWireframe.scale.copy(projectMesh.scale); // Match scale
+            projectScene.add(projectWireframe);
+
+            // Lighting for project scene
+            const projAmbientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            projectScene.add(projAmbientLight);
+            const projPointLight = new THREE.PointLight(0xffffff, 0.8, 100);
+            projPointLight.position.set(5, 5, 5);
+            projectScene.add(projPointLight);
+            const projDirectionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            projDirectionalLight.position.set(-5, 3, 2);
+            projectScene.add(projDirectionalLight);
+
+
+            projectCamera.position.z = 4; // Adjusted camera position
+
+            // Interaction
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+            projectContainer.style.cursor = 'grab';
+
+            projectContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+                projectContainer.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', (e) => { // Listen on document
+                if (!isDragging || !projectMesh) return;
+                const currentMousePosition = { x: e.clientX, y: e.clientY };
+                const deltaMove = {
+                    x: currentMousePosition.x - previousMousePosition.x,
+                    y: currentMousePosition.y - previousMousePosition.y
+                };
+                const rotateSpeed = 0.007; // Slightly faster rotation
+
+                // Apply rotation to both mesh and wireframe
+                const rotationQuaternion = new THREE.Quaternion()
+                    .setFromEuler(new THREE.Euler(deltaMove.y * rotateSpeed, deltaMove.x * rotateSpeed, 0, 'XYZ'));
+                projectMesh.quaternion.multiplyQuaternions(rotationQuaternion, projectMesh.quaternion);
+                projectWireframe.quaternion.copy(projectMesh.quaternion); // Keep wireframe aligned
+
+                previousMousePosition = currentMousePosition;
+            });
+
+            document.addEventListener('mouseup', () => { // Listen on document
+                if (isDragging) {
+                    isDragging = false;
+                    projectContainer.style.cursor = 'grab';
+                }
+            });
+
+            // Hide loader once scene is ready (appendchild is synchronous)
+            if(projectLoader) projectLoader.classList.remove('visible');
+
+            // Animation loop for the project scene
+            function animateProject() {
+                if (!projectScene) return; // Stop if scene removed
+                requestAnimationFrame(animateProject);
+
+                // Gentle auto-rotation when not dragging
+                if (!isDragging && projectMesh) {
+                    projectMesh.rotation.y += 0.002; // Slower auto-rotate
+                    projectWireframe.rotation.y += 0.002;
+                }
+
+                projectRenderer.render(projectScene, projectCamera);
+            }
+            animateProject(); // Start animation loop
+        }
+
+        // --- Resize Handling ---
         window.addEventListener('resize', () => {
             // Background resize
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -351,284 +591,36 @@
 
             // Resize project 3D scene if initialized
             if (projectCamera && projectRenderer && projectContainer) {
-                 const projWidth = projectContainer.clientWidth;
-                 const projHeight = projectContainer.clientHeight;
-                 if (projWidth > 0 && projHeight > 0) {
+                const projWidth = projectContainer.clientWidth;
+                const projHeight = projectContainer.clientHeight;
+                if (projWidth > 0 && projHeight > 0) {
                     projectCamera.aspect = projWidth / projHeight;
                     projectCamera.updateProjectionMatrix();
                     projectRenderer.setSize(projWidth, projHeight);
-                 }
-            }
-
-            // Resize benzene container if initialized
-            if (benzeneCamera && benzeneRenderer && benzeneContainer) {
-                const benzWidth = benzeneContainer.clientWidth;
-                const benzHeight = benzeneContainer.clientHeight;
-                 if (benzWidth > 0 && benzHeight > 0) {
-                    benzeneCamera.aspect = benzWidth / benzHeight;
-                    benzeneCamera.updateProjectionMatrix();
-                    benzeneRenderer.setSize(benzWidth, benzHeight);
-                 }
-            }
-        });
-
-        // Create particles
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-
-            const size = Math.random() * 3;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-
-            particle.style.left = `${Math.random() * 100}vw`;
-            particle.style.top = `${Math.random() * 100}vh`;
-
-            document.body.appendChild(particle);
-
-            gsap.to(particle, {
-                y: `${Math.random() * 200 - 100}`,
-                x: `${Math.random() * 200 - 100}`,
-                opacity: 0,
-                duration: Math.random() * 3 + 2,
-                onComplete: () => particle.remove()
-            });
-        }
-
-        // Create particles periodically
-        setInterval(createParticle, 200);
-
-        // Start background animation
-        animateBackground();
-
-        // GSAP animations for content
-        gsap.from("#hero h2", {
-            opacity: 0,
-            y: -50,
-            duration: 1.5,
-            ease: "power3.out"
-        });
-
-        gsap.from("#hero p", {
-            opacity: 0,
-            y: 50,
-            duration: 1.5,
-            delay: 0.3,
-            stagger: 0.2,
-            ease: "power3.out"
-        });
-
-        // Animation for project images (might need adjustment if observer is used)
-        // Consider triggering this via the IntersectionObserver as well
-        gsap.from(".project-image", {
-            scrollTrigger: {
-                trigger: ".project-image",
-                start: "top 80%", // Start animation when 80% of the image is visible
-                toggleActions: "play none none none", // Play animation once when it enters viewport
-            },
-            opacity: 0,
-            scale: 0.8,
-            duration: 1,
-            stagger: 0.2,
-            ease: "back.out(1.7)"
-        });
-
-
-        // --- Three.js for project section ---
-        let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
-        const projectContainer = document.getElementById('project-3d-container');
-
-        function initProject3D() {
-            if (!projectContainer || projectScene) return; // Prevent re-initialization or if container not found
-
-            // Scene setup
-            projectScene = new THREE.Scene();
-            projectCamera = new THREE.PerspectiveCamera(75, projectContainer.clientWidth / projectContainer.clientHeight, 0.1, 1000);
-            projectRenderer = new THREE.WebGLRenderer({
-                antialias: true,
-                alpha: true
-            });
-            // Check for valid dimensions before setting size
-            if (projectContainer.clientWidth > 0 && projectContainer.clientHeight > 0) {
-                 projectRenderer.setSize(projectContainer.clientWidth, projectContainer.clientHeight);
-                 projectContainer.appendChild(projectRenderer.domElement);
-            } else {
-                 console.warn("Project container has zero dimensions. Cannot initialize renderer.");
-                 projectScene = null; // Reset scene if initialization fails
-                 return;
-            }
-
-
-            // Create complex low-poly geometry
-            function createCustomGeometry() {
-                const geometry = new THREE.BufferGeometry();
-
-                // Vertices with more complex arrangement
-                const vertices = new Float32Array([
-                    // Main shape vertices
-                    -1.0, -1.0, 1.0,
-                     1.0, -1.0, 1.0,
-                     1.0,  1.0, 1.0,
-                    -1.0,  1.0, 1.0,
-
-                    -1.0, -1.0, -1.0,
-                     1.0, -1.0, -1.0,
-                     1.0,  1.0, -1.0,
-                    -1.0,  1.0, -1.0,
-
-                    // Additional irregular vertices
-                     0.0,  2.0,  0.0,
-                     2.0,  0.0,  0.0,
-                    -2.0,  0.0,  0.0,
-                     0.0,  0.0,  2.0,
-                     0.0,  0.0, -2.0
-                ]);
-
-                // Indices to create faces
-                const indices = [
-                     0,1,2,  0,2,3,  // front
-                     1,5,6,  1,6,2,  // right
-                     5,4,7,  5,7,6,  // back
-                     4,0,3,  4,3,7,  // left
-                     3,2,8,  2,6,8,  // top part connected to vertex 8
-                     4,5,9,  0,4,10, // other connections involving new vertices
-                     1,0,11, 5,1,12,
-                     // Example: Connecting some irregular points
-                     8,2,9,  8,6,9,  // Connect top vertex 8 to vertex 9 via faces
-                     10,0,11, 10,3,11 // Connect vertices 10 and 11
-                ];
-
-                geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-                geometry.setIndex(indices);
-                geometry.computeVertexNormals(); // Important for lighting
-
-                return geometry;
-            }
-
-            // Main shape
-            const mainGeometry = createCustomGeometry();
-            const mainMaterial = new THREE.MeshPhongMaterial({
-                color: 0x48DBF1,
-                transparent: true,
-                opacity: 0.8,
-                shininess: 50, // Add some shininess
-                specular: 0x222222 // Add specular highlight
-            });
-            projectMesh = new THREE.Mesh(mainGeometry, mainMaterial);
-            projectScene.add(projectMesh);
-
-            // Wireframe (Optional, but nice effect) - Using EdgesGeometry for cleaner wireframe
-             const edges = new THREE.EdgesGeometry(mainGeometry);
-             const wireMaterial = new THREE.LineBasicMaterial({
-                 color: 0xbae6fd,
-                 transparent: true,
-                 opacity: 0.6
-             });
-             projectWireframe = new THREE.LineSegments(edges, wireMaterial);
-             projectScene.add(projectWireframe); // Add wireframe
-
-
-            // Lighting
-            const projAmbientLight = new THREE.AmbientLight(0xcccccc, 0.4); // Softer ambient
-            projectScene.add(projAmbientLight);
-
-            const projDirectionalLight = new THREE.DirectionalLight(0xffffff, 0.7); // Slightly stronger directional
-            projDirectionalLight.position.set(2, 3, 1).normalize(); // Adjust position
-            projectScene.add(projDirectionalLight);
-
-            // Camera positioning
-            projectCamera.position.z = 5;
-
-            // Interaction
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-
-            projectContainer.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                previousMousePosition = {
-                    x: e.clientX, // Use clientX/Y relative to viewport
-                    y: e.clientY
-                };
-                 projectContainer.style.cursor = 'grabbing'; // Change cursor
-            });
-
-            document.addEventListener('mousemove', (e) => { // Listen on document to catch drags outside container
-                if (!isDragging || !projectMesh) return;
-
-                const currentMousePosition = {
-                    x: e.clientX,
-                    y: e.clientY
-                };
-
-                const deltaMove = {
-                    x: currentMousePosition.x - previousMousePosition.x,
-                    y: currentMousePosition.y - previousMousePosition.y
-                };
-
-                // Adjust rotation sensitivity
-                const rotateSpeed = 0.005;
-                projectMesh.rotation.y += deltaMove.x * rotateSpeed;
-                projectMesh.rotation.x += deltaMove.y * rotateSpeed;
-                 if (projectWireframe) { // Rotate wireframe too if it exists
-                     projectWireframe.rotation.y += deltaMove.x * rotateSpeed;
-                     projectWireframe.rotation.x += deltaMove.y * rotateSpeed;
-                 }
-
-
-                previousMousePosition = currentMousePosition;
-            });
-
-            document.addEventListener('mouseup', () => { // Listen on document
-                if (isDragging) {
-                     isDragging = false;
-                     projectContainer.style.cursor = 'grab'; // Restore cursor
                 }
-            });
-             projectContainer.style.cursor = 'grab'; // Initial cursor
-
-
-            // Animation loop
-            function animateProject() {
-                if (!projectScene) return; // Stop animation if scene was destroyed
-                requestAnimationFrame(animateProject);
-
-                // Gentle auto-rotation when not dragging
-                if (!isDragging && projectMesh) {
-                    projectMesh.rotation.y += 0.003;
-                     if (projectWireframe) {
-                         projectWireframe.rotation.y += 0.003;
-                     }
-                }
-
-                projectRenderer.render(projectScene, projectCamera);
             }
+        });
 
-            // Start animation
-            animateProject();
-        }
-
-        // Initialize project 3D when the section is in view
+        // Initialize project 3D using Intersection Observer
         const projectObserver = new IntersectionObserver((entries) => {
              entries.forEach(entry => {
                  if (entry.isIntersecting) {
-                     // Delay initialization slightly to ensure container dimensions are ready
-                     setTimeout(initProject3D, 100);
-                     projectObserver.unobserve(entry.target); // Disconnect after first intersection
+                     // Delay slightly might help ensure layout is fully stable
+                     setTimeout(initProject3D, 150);
+                     projectObserver.unobserve(entry.target); // Observe only once
                  }
              });
-         }, { threshold: 0.1 }); // Trigger when 10% is visible
+         }, { threshold: 0.2 }); // Trigger when 20% is visible
 
-         // Observe the container itself for better timing
-         if (projectContainer) {
+        if (projectContainer) {
             projectObserver.observe(projectContainer);
-         } else {
+        } else {
             console.error("Project 3D container not found for IntersectionObserver.");
-         }
+        }
+
+        // --- Start Background Animation ---
+        animateBackground();
 
     </script>
-    <!-- Add this just before closing </body> tag, after your existing scripts -->
-<div class="counter tech-font">
-    <span id="busuanzi_value_site_pv"></span> Views
-</div>
 </body>
 </html>
