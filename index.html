@@ -1,4 +1,4 @@
-<!DOC<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -232,17 +232,20 @@
                      <div class="loading-indicator" id="project-3d-loader">Loading 3D Model...</div>
                 </div>
             </div>
-        </div>
-        <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
-            <div class="flex-grow">
-                <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Bathroom</h3>
-                <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A odern</p>
+            
+            <!-- Bathroom project card now properly inside the grid -->
+            <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
+                <div class="flex-grow">
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Modern Bathroom</h3>
+                    <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A sleek minimalist bathroom design with elegant fixtures and ambient lighting. Created with architectural visualization techniques.</p>
+                </div>
+                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-27%20at%2011.52.29.png"
+                     alt="3D render of a modern bathroom"
+                     class="project-image">
             </div>
-            <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-27%20at%2011.52.29.png"
-                 alt="3D render of space station"
-                 class="project-image">
         </div>
-    </div>
+        <!-- Grid closing div is now AFTER the bathroom card -->
+
         <div class="poly-project-container">
             <a href="https://capodivento.github.io/Poly/" target="_blank" class="external-btn">
                 View Poly Project <i class="fas fa-external-link-alt ml-1"></i>
@@ -565,5 +568,4 @@
 
     </script>
 </body>
-
 </html>
