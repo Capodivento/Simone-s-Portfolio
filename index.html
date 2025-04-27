@@ -236,7 +236,7 @@
         <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
             <div class="flex-grow">
                 <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Bathroom</h3>
-                <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A modern bathroom</p>
+                <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A odern</p>
             </div>
             <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-27%20at%2011.52.29.png"
                  alt="3D render of space station"
@@ -411,159 +411,159 @@
          });
 
 
-        // Three.js Project Visualization Module
-class ProjectVisualizer {
-    constructor(containerId, loaderId) {
-        this.container = document.getElementById(containerId);
-        this.loader = document.getElementById(loaderId);
-        this.scene = null;
-        this.camera = null;
-        this.renderer = null;
-        this.mesh = null;
-        this.wireframe = null;
-        this.isAnimating = false;
-        this.isDragging = false;
-        this.previousMousePosition = { x: 0, y: 0 };
-    }
+        // --- Three.js for Project Geometric Visualization ---
+        let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
+        const projectContainer = document.getElementById('project-3d-container');
+        const projectLoader = document.getElementById('project-3d-loader');
 
-    async initialize() {
-        try {
-            if (!this.container || this.scene) return;
-            this.showLoader();
-            await this.setupScene();
-            this.setupLights();
-            await this.createGeometry();
-            this.setupInteraction();
-            this.setupResizeHandler();
-            this.animate();
-            this.hideLoader();
-        } catch (error) {
-            console.error('Visualization initialization failed:', error);
-            this.hideLoader();
+        function initProject3D() {
+            if (!projectContainer || projectScene) return;
+            if(projectLoader) projectLoader.classList.add('visible');
+
+            const projWidth = projectContainer.clientWidth;
+            const projHeight = projectContainer.clientHeight;
+
+            if (projWidth <= 0 || projHeight <= 0) {
+                console.warn("Project container has zero dimensions. Delaying initialization.");
+                if(projectLoader) projectLoader.classList.remove('visible');
+                return;
+            }
+
+            projectScene = new THREE.Scene();
+            projectCamera = new THREE.PerspectiveCamera(60, projWidth / projHeight, 0.1, 1000);
+            projectRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            projectRenderer.setSize(projWidth, projHeight);
+            projectRenderer.setPixelRatio(window.devicePixelRatio);
+            projectContainer.appendChild(projectRenderer.domElement);
+
+             function createCustomGeometry() {
+                const geometry = new THREE.BufferGeometry();
+                const vertices = new Float32Array([
+                    -1.0, -1.0, 1.0,  1.0, -1.0, 1.0,  1.0,  1.0, 1.0, -1.0,  1.0, 1.0,
+                    -1.0, -1.0,-1.0,  1.0, -1.0,-1.0,  1.0,  1.0,-1.0, -1.0,  1.0,-1.0,
+                     0.0,  2.0, 0.0,  2.0,  0.0, 0.0, -2.0,  0.0, 0.0,  0.0,  0.0, 2.0,
+                     0.0,  0.0,-2.0
+                ]);
+                const indices = [ // Ensure indices correctly reference vertices (0 to 12)
+                    0,1,2,  0,2,3,  1,5,6,  1,6,2,  5,4,7,  5,7,6,  4,0,3,  4,3,7,
+                    3,2,8,  2,6,8,  4,5,12, 0,4,10, 1,0,11, 5,1,9,
+                    8,2,9,  8,6,9,  10,0,11, 10,3,11
+                ];
+                geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                geometry.setIndex(indices);
+                geometry.computeVertexNormals();
+                return geometry;
+            }
+
+            const mainMaterial = new THREE.MeshStandardMaterial({
+                color: 0x48DBF1, metalness: 0.3, roughness: 0.6,
+                transparent: true, opacity: 0.9, side: THREE.DoubleSide
+            });
+            const mainGeometry = createCustomGeometry();
+            projectMesh = new THREE.Mesh(mainGeometry, mainMaterial);
+            projectMesh.scale.set(0.8, 0.8, 0.8);
+            projectScene.add(projectMesh);
+
+            const edges = new THREE.EdgesGeometry(mainGeometry);
+            const wireMaterial = new THREE.LineBasicMaterial({
+                color: 0xbae6fd, transparent: true, opacity: 0.7
+            });
+            projectWireframe = new THREE.LineSegments(edges, wireMaterial);
+            projectWireframe.scale.copy(projectMesh.scale);
+            projectScene.add(projectWireframe);
+
+            const projAmbientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            projectScene.add(projAmbientLight);
+            const projPointLight = new THREE.PointLight(0xffffff, 0.8, 100);
+            projPointLight.position.set(5, 5, 5);
+            projectScene.add(projPointLight);
+            const projDirectionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            projDirectionalLight.position.set(-5, 3, 2);
+            projectScene.add(projDirectionalLight);
+
+            projectCamera.position.z = 4;
+
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+            projectContainer.style.cursor = 'grab';
+
+            projectContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+                projectContainer.style.cursor = 'grabbing';
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging || !projectMesh) return;
+                const currentMousePosition = { x: e.clientX, y: e.clientY };
+                const deltaMove = {
+                    x: currentMousePosition.x - previousMousePosition.x,
+                    y: currentMousePosition.y - previousMousePosition.y
+                };
+                const rotateSpeed = 0.007;
+                const rotationQuaternion = new THREE.Quaternion()
+                    .setFromEuler(new THREE.Euler(deltaMove.y * rotateSpeed, deltaMove.x * rotateSpeed, 0, 'XYZ'));
+                projectMesh.quaternion.multiplyQuaternions(rotationQuaternion, projectMesh.quaternion);
+                projectWireframe.quaternion.copy(projectMesh.quaternion);
+                previousMousePosition = currentMousePosition;
+            });
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    projectContainer.style.cursor = 'grab';
+                }
+            });
+
+            if(projectLoader) projectLoader.classList.remove('visible');
+
+            function animateProject() {
+                if (!projectScene) return;
+                requestAnimationFrame(animateProject);
+                if (!isDragging && projectMesh) {
+                    projectMesh.rotation.y += 0.002;
+                    projectWireframe.rotation.y += 0.002;
+                }
+                projectRenderer.render(projectScene, projectCamera);
+            }
+            animateProject();
         }
-    }
 
-    showLoader() {
-        if (this.loader) this.loader.classList.add('visible');
-    }
+        // --- Resize Handling ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
 
-    hideLoader() {
-        if (this.loader) this.loader.classList.remove('visible');
-    }
-
-    async setupScene() {
-        const { clientWidth: width, clientHeight: height } = this.container;
-        
-        if (width <= 0 || height <= 0) {
-            throw new Error('Invalid container dimensions');
-        }
-
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true,
-            powerPreference: 'high-performance'
+            if (projectCamera && projectRenderer && projectContainer) {
+                const projWidth = projectContainer.clientWidth;
+                const projHeight = projectContainer.clientHeight;
+                if (projWidth > 0 && projHeight > 0) {
+                    projectCamera.aspect = projWidth / projHeight;
+                    projectCamera.updateProjectionMatrix();
+                    projectRenderer.setSize(projWidth, projHeight);
+                }
+            }
         });
 
-        this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.container.appendChild(this.renderer.domElement);
-        this.camera.position.z = 4;
-    }
+        // Initialize project 3D using Intersection Observer
+        const projectObserver = new IntersectionObserver((entries) => {
+             entries.forEach(entry => {
+                 if (entry.isIntersecting) {
+                     setTimeout(initProject3D, 150);
+                     projectObserver.unobserve(entry.target);
+                 }
+             });
+         }, { threshold: 0.2 });
 
-    setupLights() {
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        const pointLight = new THREE.PointLight(0x48DBF1, 1.0, 100);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-
-        pointLight.position.set(5, 5, 5);
-        directionalLight.position.set(-5, 3, 2);
-
-        this.scene.add(ambientLight, pointLight, directionalLight);
-    }
-
-    async createGeometry() {
-        const geometry = this.generateCustomGeometry();
-        const material = new THREE.MeshPhysicalMaterial({
-            color: 0x48DBF1,
-            metalness: 0.5,
-            roughness: 0.3,
-            transparent: true,
-            opacity: 0.9,
-            side: THREE.DoubleSide,
-            clearcoat: 0.3,
-            clearcoatRoughness: 0.25
-        });
-
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.scale.set(0.8, 0.8, 0.8);
-        
-        const edges = new THREE.EdgesGeometry(geometry);
-        const wireMaterial = new THREE.LineBasicMaterial({
-            color: 0xbae6fd,
-            transparent: true,
-            opacity: 0.7
-        });
-        
-        this.wireframe = new THREE.LineSegments(edges, wireMaterial);
-        this.wireframe.scale.copy(this.mesh.scale);
-        
-        this.scene.add(this.mesh, this.wireframe);
-    }
-
-    generateCustomGeometry() {
-        const geometry = new THREE.BufferGeometry();
-        // ... existing vertex and index data ...
-        geometry.computeVertexNormals();
-        return geometry;
-    }
-
-    setupInteraction() {
-        this.container.style.cursor = 'grab';
-        
-        this.container.addEventListener('mousedown', this.onMouseDown.bind(this));
-        document.addEventListener('mousemove', this.onMouseMove.bind(this));
-        document.addEventListener('mouseup', this.onMouseUp.bind(this));
-        
-        // Touch support
-        this.container.addEventListener('touchstart', this.onTouchStart.bind(this));
-        document.addEventListener('touchmove', this.onTouchMove.bind(this));
-        document.addEventListener('touchend', this.onTouchEnd.bind(this));
-    }
-
-    setupResizeHandler() {
-        window.addEventListener('resize', this.onResize.bind(this));
-    }
-
-    animate() {
-        if (!this.scene || !this.isAnimating) return;
-        
-        requestAnimationFrame(this.animate.bind(this));
-        
-        if (!this.isDragging && this.mesh) {
-            this.mesh.rotation.y += 0.002;
-            this.wireframe.rotation.copy(this.mesh.rotation);
+        if (projectContainer) {
+            projectObserver.observe(projectContainer);
+        } else {
+            console.error("Project 3D container not found for IntersectionObserver.");
         }
-        
-        this.renderer.render(this.scene, this.camera);
-    }
 
-    dispose() {
-        this.isAnimating = false;
-        // Clean up resources...
-        if (this.renderer) {
-            this.renderer.dispose();
-            this.container.removeChild(this.renderer.domElement);
-        }
-        // Remove event listeners...
-    }
+        // --- Start Background Animation ---
+        animateBackground();
 
-    // Event handlers...
-}
-
-// Usage
-const visualizer = new ProjectVisualizer('project-3d-container', 'project-3d-loader');
-visualizer.initialize();
+    </script>
+</body>
 
 </html>
