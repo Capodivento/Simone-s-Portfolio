@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simone Capodivento - Portfolio</title>
-    <!-- In your <head> tag -->
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNiIgZmlsbD0iIzQxNzZlZiIvPjx0ZXh0IHg9IjE2IiB5PSIyMSIgZm9udC1zaXplPSIxNnB4IiBmb250LWZhbWlseT0iQXJpYWwiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIj5TPC90ZXh0Pjwvc3ZnPg==" type="image/svg+xml">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -110,11 +109,11 @@
             box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);
         }
         .project-card {
-             transition: all 0.3s ease;
+             transition: all 0.4s ease; /* Smoother transition */
         }
          .project-card:hover {
-             transform: translateY(-5px) scale(1.01);
-             box-shadow: 0 15px 30px rgba(29, 209, 161, 0.25);
+             transform: translateY(-5px) scale(1.03); /* Slightly larger on hover */
+             box-shadow: 0 15px 30px rgba(29, 209, 161, 0.35); /* Stronger shadow */
          }
         .loading-indicator {
             position: absolute;
@@ -128,9 +127,9 @@
             z-index: 10;
             display: none;
         }
-         .loading-indicator.visible {
+          .loading-indicator.visible {
              display: block;
-         }
+          }
         .external-btn {
             display: inline-block;
             margin-top: 1rem;
@@ -193,10 +192,10 @@
                 YOU CAN FIND HERE SOME OF THE PROJECTS I'VE WORKED ON.
             </p>
              <div class="mt-12 animate-bounce">
-                <a href="#projects" aria-label="Scroll to projects">
-                     <i class="fas fa-chevron-down text-3xl text-emerald-400 opacity-70 hover:opacity-100 transition-opacity"></i>
-                </a>
-            </div>
+                 <a href="#projects" aria-label="Scroll to projects">
+                       <i class="fas fa-chevron-down text-3xl text-emerald-400 opacity-70 hover:opacity-100 transition-opacity"></i>
+                 </a>
+             </div>
         </div>
     </section>
 
@@ -232,8 +231,7 @@
                      <div class="loading-indicator" id="project-3d-loader">Loading 3D Model...</div>
                 </div>
             </div>
-            
-            <!-- Bathroom project card now properly inside the grid -->
+
             <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
                 <div class="flex-grow">
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Modern Bathroom</h3>
@@ -244,8 +242,6 @@
                      class="project-image">
             </div>
         </div>
-        <!-- Grid closing div is now AFTER the bathroom card -->
-
         <div class="poly-project-container">
             <a href="https://capodivento.github.io/Poly/" target="_blank" class="external-btn">
                 View Poly Project <i class="fas fa-external-link-alt ml-1"></i>
@@ -256,30 +252,30 @@
     <section id="contact" class="p-8 md:p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
         <h2 class="text-3xl md:text-4xl font-bold scientific-text">Contact</h2>
         <p class="mt-4 text-sm md:text-base">Check me out here.</p>
-        
+
         <div class="mt-6 flex justify-center space-x-6">
-            <a href="https://www.instagram.com/" target="_blank" 
-               aria-label="Instagram Profile" 
+            <a href="https://www.instagram.com/" target="_blank"
+               aria-label="Instagram Profile"
                class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-                <i class="fab fa-instagram text-3xl"></i> 
-            </a>
-            
-            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" 
-               aria-label="LinkedIn Profile" 
-               class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-                <i class="fab fa-linkedin text-3xl"></i>
-            </a>
-            
-            <a href="https://github.com/Capodivento" target="_blank" 
-               aria-label="GitHub Profile" 
-               class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-                <i class="fab fa-github text-3xl"></i>
+                 <i class="fab fa-instagram text-3xl"></i>
             </a>
 
-            <a href="https://leetcode.com/u/simonecapodivento311/" target="_blank" 
-               aria-label="LeetCode Profile" 
+            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank"
+               aria-label="LinkedIn Profile"
                class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-                <i class="fas fa-code text-3xl"></i>
+                 <i class="fab fa-linkedin text-3xl"></i>
+            </a>
+
+            <a href="https://github.com/Capodivento" target="_blank"
+               aria-label="GitHub Profile"
+               class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+                 <i class="fab fa-github text-3xl"></i>
+            </a>
+
+            <a href="https://leetcode.com/u/simonecapodivento311/" target="_blank"
+               aria-label="LeetCode Profile"
+               class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+                 <i class="fas fa-code text-3xl"></i>
             </a>
         </div>
     </section>
@@ -405,16 +401,16 @@
         });
 
          gsap.from("#contact h2", {
-             scrollTrigger: { trigger: "#contact", start: "top 80%" },
-             opacity: 0, y: 30, duration: 1, ease: "power3.out"
+              scrollTrigger: { trigger: "#contact", start: "top 80%" },
+              opacity: 0, y: 30, duration: 1, ease: "power3.out"
          });
           gsap.from("#contact p", {
-             scrollTrigger: { trigger: "#contact", start: "top 75%" },
-             opacity: 0, y: 30, duration: 1, delay: 0.2, ease: "power3.out"
+              scrollTrigger: { trigger: "#contact", start: "top 75%" },
+              opacity: 0, y: 30, duration: 1, delay: 0.2, ease: "power3.out"
          });
          gsap.from("#contact .fab, #contact .fas", { // Updated to include both fab and fas icons
-             scrollTrigger: { trigger: "#contact", start: "top 70%" },
-             opacity: 0, scale: 0.5, duration: 0.6, delay: 0.4, stagger: 0.15, ease: "back.out(1.7)"
+              scrollTrigger: { trigger: "#contact", start: "top 70%" },
+              opacity: 0, scale: 0.5, duration: 0.6, delay: 0.4, stagger: 0.15, ease: "back.out(1.7)"
          });
 
 
@@ -422,6 +418,7 @@
         let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
         const projectContainer = document.getElementById('project-3d-container');
         const projectLoader = document.getElementById('project-3d-loader');
+        let isDragging = false; // Moved outside init to be accessible in animateProject
 
         function initProject3D() {
             if (!projectContainer || projectScene) return;
@@ -444,23 +441,23 @@
             projectContainer.appendChild(projectRenderer.domElement);
 
              function createCustomGeometry() {
-                const geometry = new THREE.BufferGeometry();
-                const vertices = new Float32Array([
-                    -1.0, -1.0, 1.0,  1.0, -1.0, 1.0,  1.0,  1.0, 1.0, -1.0,  1.0, 1.0,
-                    -1.0, -1.0,-1.0,  1.0, -1.0,-1.0,  1.0,  1.0,-1.0, -1.0,  1.0,-1.0,
-                     0.0,  2.0, 0.0,  2.0,  0.0, 0.0, -2.0,  0.0, 0.0,  0.0,  0.0, 2.0,
-                     0.0,  0.0,-2.0
-                ]);
-                const indices = [ // Ensure indices correctly reference vertices (0 to 12)
-                    0,1,2,  0,2,3,  1,5,6,  1,6,2,  5,4,7,  5,7,6,  4,0,3,  4,3,7,
-                    3,2,8,  2,6,8,  4,5,12, 0,4,10, 1,0,11, 5,1,9,
-                    8,2,9,  8,6,9,  10,0,11, 10,3,11
-                ];
-                geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-                geometry.setIndex(indices);
-                geometry.computeVertexNormals();
-                return geometry;
-            }
+                 const geometry = new THREE.BufferGeometry();
+                 const vertices = new Float32Array([
+                     -1.0, -1.0, 1.0,  1.0, -1.0, 1.0,  1.0,  1.0, 1.0, -1.0,  1.0, 1.0,
+                     -1.0, -1.0,-1.0,  1.0, -1.0,-1.0,  1.0,  1.0,-1.0, -1.0,  1.0,-1.0,
+                      0.0,  2.0, 0.0,  2.0,  0.0, 0.0, -2.0,  0.0, 0.0,  0.0,  0.0, 2.0,
+                      0.0,  0.0,-2.0
+                 ]);
+                 const indices = [ // Ensure indices correctly reference vertices (0 to 12)
+                     0,1,2,  0,2,3,  1,5,6,  1,6,2,  5,4,7,  5,7,6,  4,0,3,  4,3,7,
+                     3,2,8,  2,6,8,  4,5,12, 0,4,10, 1,0,11, 5,1,9,
+                     8,2,9,  8,6,9,  10,0,11, 10,3,11
+                 ];
+                 geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                 geometry.setIndex(indices);
+                 geometry.computeVertexNormals();
+                 return geometry;
+             }
 
             const mainMaterial = new THREE.MeshStandardMaterial({
                 color: 0x48DBF1, metalness: 0.3, roughness: 0.6,
@@ -490,7 +487,7 @@
 
             projectCamera.position.z = 4;
 
-            let isDragging = false;
+            // Drag interaction setup
             let previousMousePosition = { x: 0, y: 0 };
             projectContainer.style.cursor = 'grab';
 
@@ -510,7 +507,7 @@
                 const rotationQuaternion = new THREE.Quaternion()
                     .setFromEuler(new THREE.Euler(deltaMove.y * rotateSpeed, deltaMove.x * rotateSpeed, 0, 'XYZ'));
                 projectMesh.quaternion.multiplyQuaternions(rotationQuaternion, projectMesh.quaternion);
-                projectWireframe.quaternion.copy(projectMesh.quaternion);
+                projectWireframe.quaternion.copy(projectMesh.quaternion); // Keep wireframe aligned
                 previousMousePosition = currentMousePosition;
             });
             document.addEventListener('mouseup', () => {
@@ -522,24 +519,33 @@
 
             if(projectLoader) projectLoader.classList.remove('visible');
 
-            function animateProject() {
-                if (!projectScene) return;
-                requestAnimationFrame(animateProject);
-                if (!isDragging && projectMesh) {
-                    projectMesh.rotation.y += 0.002;
-                    projectWireframe.rotation.y += 0.002;
-                }
-                projectRenderer.render(projectScene, projectCamera);
-            }
+            // Start the animation loop for this specific project
             animateProject();
         }
 
+        // Project animation loop (kept outside init for clarity)
+        function animateProject() {
+            if (!projectScene) return; // Don't run if not initialized
+            requestAnimationFrame(animateProject);
+
+            // *** ADDED: Continuous rotation when not dragging ***
+            if (!isDragging && projectMesh) {
+                 projectMesh.rotation.y += 0.002;
+                 projectWireframe.rotation.y += 0.002; // Rotate wireframe too
+            }
+
+            projectRenderer.render(projectScene, projectCamera);
+        }
+
+
         // --- Resize Handling ---
         window.addEventListener('resize', () => {
+            // Background scene resize
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
 
+            // Project 3D resize (if initialized)
             if (projectCamera && projectRenderer && projectContainer) {
                 const projWidth = projectContainer.clientWidth;
                 const projHeight = projectContainer.clientHeight;
@@ -555,11 +561,11 @@
         const projectObserver = new IntersectionObserver((entries) => {
              entries.forEach(entry => {
                  if (entry.isIntersecting) {
-                     setTimeout(initProject3D, 150);
-                     projectObserver.unobserve(entry.target);
+                     setTimeout(initProject3D, 150); // Initialize after a short delay
+                     projectObserver.unobserve(entry.target); // Stop observing once initialized
                  }
              });
-         }, { threshold: 0.2 });
+         }, { threshold: 0.2 }); // Trigger when 20% visible
 
         if (projectContainer) {
             projectObserver.observe(projectContainer);
