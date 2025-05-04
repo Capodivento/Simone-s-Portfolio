@@ -5,60 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simone Capodivento - Portfolio</title>
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNiIgZmlsbD0iIzQxNzZlZiIvPjx0ZXh0IHg9IjE2IiB5PSIyMSIgZm9udC1zaXplPSIxNnB4IiBmb250LWZhbWlseT0iQXJpYWwiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIj5TPC90ZXh0Pjwvc3ZnPg==" type="image/svg+xml">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://raw.githubusercontent.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
     <style>
-        /* Scientific styling */
+        /* Scientific styling (existing styles remain largely the same) */
         .scientific-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, #2D3436, #000000);
             z-index: -2;
         }
         .counter {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            font-size: 0.9rem;
-            opacity: 0.6;
-            z-index: 999;
-            background: rgba(45, 52, 54, 0.7);
-            padding: 5px 10px;
-            border-radius: 4px;
-            backdrop-filter: blur(5px);
-            font-family: 'Share Tech Mono', monospace;
-            color: #48DBF1;
+            position: fixed; bottom: 10px; left: 10px; font-size: 0.9rem; opacity: 0.6; z-index: 999;
+            background: rgba(45, 52, 54, 0.7); padding: 5px 10px; border-radius: 4px;
+            backdrop-filter: blur(5px); font-family: 'Share Tech Mono', monospace; color: #48DBF1;
             transition: opacity 0.3s ease;
         }
-        .counter:hover {
-            opacity: 1;
-        }
+        .counter:hover { opacity: 1; }
         .scientific-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background:
                 radial-gradient(circle at 20% 30%, rgba(72, 219, 251, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 70%, rgba(29, 209, 161, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+            pointer-events: none; z-index: -1;
         }
         .particle {
-            position: absolute;
-            background: rgba(72, 219, 251, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: -1;
+            position: absolute; background: rgba(72, 219, 251, 0.5); border-radius: 50%;
+            pointer-events: none; z-index: -1;
         }
         .scientific-text {
             text-shadow: 0 0 10px rgba(72, 219, 251, 0.5);
@@ -68,40 +51,22 @@
             from { text-shadow: 0 0 5px rgba(72, 219, 251, 0.5); }
             to { text-shadow: 0 0 15px rgba(29, 209, 161, 0.8); }
         }
-        #scene-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.6;
+        #scene-container { /* Background 3D */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.6; pointer-events: none; /* Added pointer-events none */
         }
-        .project-3d-container {
-            width: 100%;
-            height: 300px;
-            position: relative;
-            margin-top: 1rem;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            background: rgba(0, 0, 0, 0.2);
+        .project-3d-container { /* Project 3D */
+            width: 100%; height: 300px; position: relative; margin-top: 1rem;
+            border-radius: 0.75rem; overflow: hidden; background: rgba(0, 0, 0, 0.2);
         }
         .tech-font {
             font-family: 'Share Tech Mono', 'Courier New', monospace;
-            letter-spacing: 1px;
-            line-height: 1.6;
+            letter-spacing: 1px; line-height: 1.6;
         }
-        .tech-highlight {
-            color: #48DBF1;
-            font-weight: 600;
-        }
+        .tech-highlight { color: #48DBF1; font-weight: 600; }
         .project-image {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 0.75rem;
-            margin-top: 1rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%; height: 300px; object-fit: cover; border-radius: 0.75rem;
+            margin-top: 1rem; transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);
         }
         .project-image:hover {
@@ -109,61 +74,40 @@
             box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);
         }
         .project-card {
-             transition: all 0.4s ease; /* Smoother transition */
+             /* Simplified transition */
+             transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
         }
-         .project-card:hover {
-             transform: translateY(-5px) scale(1.03); /* Slightly larger on hover */
-             box-shadow: 0 15px 30px rgba(29, 209, 161, 0.35); /* Stronger shadow */
-         }
+        .project-card:hover {
+             transform: translateY(-5px) scale(1.02); /* Adjusted scale slightly */
+             box-shadow: 0 15px 30px rgba(29, 209, 161, 0.35);
+        }
         .loading-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #48DBF1;
-            font-size: 1.2rem;
-            text-align: center;
-            font-family: 'Share Tech Mono', monospace;
-            z-index: 10;
-            display: none;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: #48DBF1; font-size: 1.2rem; text-align: center;
+            font-family: 'Share Tech Mono', monospace; z-index: 10; display: none;
         }
-          .loading-indicator.visible {
-             display: block;
-          }
+        .loading-indicator.visible { display: block; }
         .external-btn {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            background: rgba(72, 219, 251, 0.2);
-            border: 1px solid #48DBF1;
-            color: #48DBF1;
-            border-radius: 0.25rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            font-family: 'Share Tech Mono', monospace;
+            display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem;
+            background: rgba(72, 219, 251, 0.2); border: 1px solid #48DBF1;
+            color: #48DBF1; border-radius: 0.25rem; transition: all 0.3s ease;
+            text-decoration: none; font-family: 'Share Tech Mono', monospace;
         }
         .external-btn:hover {
-            background: rgba(72, 219, 251, 0.4);
-            transform: translateY(-2px);
+            background: rgba(72, 219, 251, 0.4); transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3);
         }
-        .poly-project-container {
-            width: 100%;
-            text-align: center;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
+         .poly-project-container {
+             width: 100%; text-align: center; margin-top: 2rem; margin-bottom: 2rem;
+         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body class="bg-transparent text-emerald-100 relative tech-font">
     <div class="scientific-background"></div>
     <div class="scientific-overlay"></div>
-    <div id="scene-container"></div>
-
-    <header class="sticky top-0 z-50 p-6 flex justify-between items-center backdrop-blur-md bg-opacity-30 bg-gray-900 shadow-lg">
+    <div id="scene-container"></div> <header class="sticky top-0 z-50 p-6 flex justify-between items-center backdrop-blur-md bg-opacity-30 bg-gray-900 shadow-lg">
         <div class="flex items-center space-x-4">
-            <img src="https://raw.githubusercontent.com/Capodivento/Website/main/1706100440515.jpeg" alt="Simone's Profile Picture" class="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-emerald-400 shadow-md">
+            <img src="https://raw.githubusercontent.com/Capodivento/Website/main/1706100440515.jpeg" alt="Simone's Profile Picture" class="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-emerald-400 shadow-md" width="80" height="80">
             <h1 class="text-2xl md:text-3xl font-bold scientific-text">Simone's Portfolio</h1>
         </div>
         <nav>
@@ -193,7 +137,7 @@
             </p>
              <div class="mt-12 animate-bounce">
                  <a href="#projects" aria-label="Scroll to projects">
-                       <i class="fas fa-chevron-down text-3xl text-emerald-400 opacity-70 hover:opacity-100 transition-opacity"></i>
+                      <i class="fas fa-chevron-down text-3xl text-emerald-400 opacity-70 hover:opacity-100 transition-opacity"></i>
                  </a>
              </div>
         </div>
@@ -202,6 +146,7 @@
     <section id="projects" class="p-8 md:p-12">
         <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
             <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
                 <div class="flex-grow">
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Blender 3D Project</h3>
@@ -209,8 +154,8 @@
                 </div>
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png"
                      alt="Blender 3D render of a desk setup"
-                     class="project-image">
-            </div>
+                     class="project-image"
+                     loading="lazy" decoding="async" width="600" height="300"> </div>
 
             <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
                 <div class="flex-grow">
@@ -219,62 +164,49 @@
                 </div>
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-02%20at%2017.59.25.jpg"
                      alt="Abstract design concept visualization"
-                     class="project-image">
-            </div>
+                     class="project-image"
+                     loading="lazy" decoding="async" width="600" height="300"> </div>
 
             <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
                 <div class="flex-grow">
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">3D Geometric Visualization</h3>
                     <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">Interactive 3D geometry using Three.js. Drag to rotate.</p>
                 </div>
-                <div class="project-3d-container" id="project-3d-container">
-                     <div class="loading-indicator" id="project-3d-loader">Loading 3D Model...</div>
+                <div class="project-3d-container" id="project-3d-container"> <div class="loading-indicator" id="project-3d-loader">Loading 3D Model...</div>
                 </div>
             </div>
 
-            <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
+             <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col">
                 <div class="flex-grow">
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Modern Bathroom</h3>
                     <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A sleek minimalist bathroom design with elegant fixtures and ambient lighting. Created with architectural visualization techniques.</p>
                 </div>
                 <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-04-27%20at%2011.52.29.png"
                      alt="3D render of a modern bathroom"
-                     class="project-image">
-            </div>
+                     class="project-image"
+                     loading="lazy" decoding="async" width="600" height="300"> </div>
+
         </div>
-        <div class="poly-project-container">
-            <a href="https://capodivento.github.io/Poly/" target="_blank" class="external-btn">
-                View Poly Project <i class="fas fa-external-link-alt ml-1"></i>
-            </a>
-        </div>
+         <div class="poly-project-container">
+              <a href="https://capodivento.github.io/Poly/" target="_blank" rel="noopener noreferrer" class="external-btn"> View Poly Project <i class="fas fa-external-link-alt ml-1"></i>
+              </a>
+         </div>
     </section>
 
     <section id="contact" class="p-8 md:p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
         <h2 class="text-3xl md:text-4xl font-bold scientific-text">Contact</h2>
         <p class="mt-4 text-sm md:text-base">Check me out here.</p>
-
         <div class="mt-6 flex justify-center space-x-6">
-            <a href="https://www.instagram.com/" target="_blank"
-               aria-label="Instagram Profile"
-               class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
                  <i class="fab fa-instagram text-3xl"></i>
             </a>
-
-            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank"
-               aria-label="LinkedIn Profile"
-               class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
                  <i class="fab fa-linkedin text-3xl"></i>
             </a>
-
-            <a href="https://github.com/Capodivento" target="_blank"
-               aria-label="GitHub Profile"
-               class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+            <a href="https://github.com/Capodivento" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
                  <i class="fab fa-github text-3xl"></i>
             </a>
-
-            <a href="https://leetcode.com/u/simonecapodivento311/" target="_blank"
-               aria-label="LeetCode Profile"
-               class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+            <a href="https://leetcode.com/u/simonecapodivento311/" target="_blank" rel="noopener noreferrer" aria-label="LeetCode Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
                  <i class="fas fa-code text-3xl"></i>
             </a>
         </div>
@@ -288,148 +220,160 @@
         <span id="busuanzi_value_site_pv"></span> Views
     </div>
 
-    <script>
-        // --- GSAP & General Setup ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Dynamic Copyright Year
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-
-        // --- Three.js Scene Setup for Background ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('scene-container').appendChild(renderer.domElement);
-
-        const shapes = [];
-        const geometries = [
-            new THREE.IcosahedronGeometry(1.2, 0),
-            new THREE.DodecahedronGeometry(1.0, 0),
-            new THREE.OctahedronGeometry(1.1, 0)
-        ];
-
-        for (let i = 0; i < 12; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = new THREE.MeshPhongMaterial({
-                color: Math.random() > 0.5 ? 0x1DD1A1 : 0x48DBF1,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.35,
-                shininess: 10
-            });
-            const shape = new THREE.Mesh(geometry, material);
-            shape.position.x = (Math.random() - 0.5) * 30;
-            shape.position.y = (Math.random() - 0.5) * 30;
-            shape.position.z = (Math.random() - 0.5) * 30 - 10;
-            shape.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-            shape.scale.setScalar(Math.random() * 0.5 + 0.8);
-            shapes.push(shape);
-            scene.add(shape);
-        }
-
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0x48DBF1, 1.2, 100);
-        pointLight.position.set(5, 15, 15);
-        scene.add(pointLight);
-        const directionalLight = new THREE.DirectionalLight(0x1DD1A1, 0.5);
-        directionalLight.position.set(-10, -5, -10);
-        scene.add(directionalLight);
-
-        camera.position.z = 12;
-
-        // --- Background Mouse Interaction ---
-        const mouse = new THREE.Vector2();
-        const targetCameraPos = new THREE.Vector3();
-        function onMouseMove(event) {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            targetCameraPos.x = mouse.x * 1.5;
-            targetCameraPos.y = mouse.y * 1.5;
-        }
-        window.addEventListener('mousemove', onMouseMove, false);
-
-        function animateBackground() {
-            requestAnimationFrame(animateBackground);
-            camera.position.x += (targetCameraPos.x - camera.position.x) * 0.03;
-            camera.position.y += (targetCameraPos.y + 2 - camera.position.y) * 0.03;
-            camera.lookAt(scene.position);
-            shapes.forEach((shape, index) => {
-                shape.rotation.x += 0.001 + index * 0.00005;
-                shape.rotation.y += 0.002 + index * 0.00005;
-            });
-            renderer.render(scene, camera);
-        }
-
-        // --- Particle Effect (GSAP based) ---
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            const size = Math.random() * 3 + 1;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${Math.random() * 100}vw`;
-            particle.style.top = `${Math.random() * 100}vh`;
-            document.body.appendChild(particle);
-            gsap.to(particle, {
-                y: `random(-150, 150)`,
-                x: `random(-150, 150)`,
-                opacity: 0,
-                duration: `random(3, 6)`,
-                ease: "power1.out",
-                onComplete: () => particle.remove()
-            });
-        }
-        setInterval(createParticle, 250);
-
-        // --- GSAP Content Animations ---
-        gsap.from("header", { duration: 1, y: -100, opacity: 0, ease: "power3.out"});
-        gsap.from("#hero h2", { duration: 1.5, y: -50, opacity: 0, ease: "power3.out", delay: 0.5 });
-        gsap.from("#hero p", { duration: 1.5, y: 30, opacity: 0, ease: "power3.out", delay: 0.8, stagger: 0.2 });
-        gsap.from("#hero .fa-chevron-down", { duration: 1, y: -20, opacity: 0, ease: "bounce.out", delay: 1.5 });
-
-        gsap.utils.toArray('.project-card').forEach((card, i) => {
-            gsap.from(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 85%",
-                    toggleActions: "play none none none",
-                },
-                opacity: 0, y: 50, scale: 0.95, duration: 0.8, delay: i * 0.1, ease: "power3.out"
-            });
-        });
-
-         gsap.from("#contact h2", {
-              scrollTrigger: { trigger: "#contact", start: "top 80%" },
-              opacity: 0, y: 30, duration: 1, ease: "power3.out"
-         });
-          gsap.from("#contact p", {
-              scrollTrigger: { trigger: "#contact", start: "top 75%" },
-              opacity: 0, y: 30, duration: 1, delay: 0.2, ease: "power3.out"
-         });
-         gsap.from("#contact .fab, #contact .fas", { // Updated to include both fab and fas icons
-              scrollTrigger: { trigger: "#contact", start: "top 70%" },
-              opacity: 0, scale: 0.5, duration: 0.6, delay: 0.4, stagger: 0.15, ease: "back.out(1.7)"
-         });
-
-
-        // --- Three.js for Project Geometric Visualization ---
+    <script defer>
+        // --- Global Variables & Flags ---
+        let backgroundScene, backgroundCamera, backgroundRenderer, backgroundShapes = [], backgroundMouse = new THREE.Vector2(), targetCameraPos = new THREE.Vector3();
         let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
+        let isProjectDragging = false;
+        let backgroundAnimationId, projectAnimationId;
+        let particleIntervalId;
+
         const projectContainer = document.getElementById('project-3d-container');
         const projectLoader = document.getElementById('project-3d-loader');
-        let isDragging = false; // Moved outside init to be accessible in animateProject
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+            setCopyrightYear();
+            setupHeroAnimation();
+            setupScrollTriggers();
+            setupBackgroundScene();
+            setupProject3DObserver();
+            setupEventListeners();
+            startAnimations(); // Start initially
+            startParticleEffect();
+        });
+
+        // --- Setup Functions ---
+
+        function setCopyrightYear() {
+            const yearSpan = document.getElementById('current-year');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        }
+
+        function setupHeroAnimation() {
+            gsap.from("header", { duration: 1, y: -100, opacity: 0, ease: "power3.out"});
+            gsap.from("#hero h2", { duration: 1.5, y: -50, opacity: 0, ease: "power3.out", delay: 0.5 });
+            gsap.from("#hero p", { duration: 1.5, y: 30, opacity: 0, ease: "power3.out", delay: 0.8, stagger: 0.2 });
+            gsap.from("#hero .fa-chevron-down", { duration: 1, y: -20, opacity: 0, ease: "bounce.out", delay: 1.5 });
+        }
+
+        function setupScrollTriggers() {
+            gsap.utils.toArray('.project-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%", // Start animation slightly later
+                        toggleActions: "play none none none",
+                        once: true // Optional: Animate only once
+                    },
+                    opacity: 0, y: 50, scale: 0.95, duration: 0.7, delay: i * 0.1, ease: "power3.out"
+                });
+            });
+
+            gsap.from("#contact h2", {
+                 scrollTrigger: { trigger: "#contact", start: "top 80%" },
+                 opacity: 0, y: 30, duration: 1, ease: "power3.out"
+            });
+            gsap.from("#contact p", {
+                 scrollTrigger: { trigger: "#contact", start: "top 75%" },
+                 opacity: 0, y: 30, duration: 1, delay: 0.2, ease: "power3.out"
+            });
+            gsap.from("#contact .fab, #contact .fas", {
+                 scrollTrigger: { trigger: "#contact", start: "top 70%" },
+                 opacity: 0, scale: 0.5, duration: 0.6, delay: 0.4, stagger: 0.15, ease: "back.out(1.7)"
+            });
+        }
+
+        function setupBackgroundScene() {
+            const container = document.getElementById('scene-container');
+            if (!container) return;
+
+            backgroundScene = new THREE.Scene();
+            backgroundCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            backgroundRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+            backgroundRenderer.setSize(window.innerWidth, window.innerHeight);
+            backgroundRenderer.setPixelRatio(window.devicePixelRatio); // Added for sharpness
+            container.appendChild(backgroundRenderer.domElement);
+
+            const geometries = [
+                new THREE.IcosahedronGeometry(1.2, 0),
+                new THREE.DodecahedronGeometry(1.0, 0),
+                new THREE.OctahedronGeometry(1.1, 0)
+            ];
+
+            for (let i = 0; i < 12; i++) {
+                const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+                const material = new THREE.MeshPhongMaterial({
+                    color: Math.random() > 0.5 ? 0x1DD1A1 : 0x48DBF1,
+                    wireframe: true, transparent: true, opacity: 0.35, shininess: 10
+                });
+                const shape = new THREE.Mesh(geometry, material);
+                shape.position.set(
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 30 - 10
+                );
+                shape.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+                shape.scale.setScalar(Math.random() * 0.5 + 0.8);
+                backgroundShapes.push(shape);
+                backgroundScene.add(shape);
+            }
+
+            // Lighting
+            backgroundScene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const pointLight = new THREE.PointLight(0x48DBF1, 1.2, 100);
+            pointLight.position.set(5, 15, 15);
+            backgroundScene.add(pointLight);
+            const directionalLight = new THREE.DirectionalLight(0x1DD1A1, 0.5);
+            directionalLight.position.set(-10, -5, -10);
+            backgroundScene.add(directionalLight);
+
+            backgroundCamera.position.z = 12;
+        }
+
+        function setupProject3DObserver() {
+             if (!projectContainer) {
+                 console.error("Project 3D container not found for IntersectionObserver.");
+                 return;
+             }
+            const projectObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Delay slightly to ensure container dimensions are stable
+                        setTimeout(() => {
+                            if (!projectScene) { // Initialize only if not already done
+                                initProject3D();
+                            } else if (!projectAnimationId) { // Resume if already initialized but paused
+                                startProjectAnimation();
+                            }
+                        }, 150);
+                    } else {
+                         // Optional: Pause project animation when it scrolls out of view
+                         // Be careful if you want it to keep animating slightly out of view
+                         // stopProjectAnimation();
+                    }
+                });
+            }, { threshold: 0.1 }); // Trigger when 10% visible
+
+            projectObserver.observe(projectContainer);
+        }
+
 
         function initProject3D() {
-            if (!projectContainer || projectScene) return;
+            if (!projectContainer || projectScene) return; // Don't re-initialize
             if(projectLoader) projectLoader.classList.add('visible');
 
             const projWidth = projectContainer.clientWidth;
             const projHeight = projectContainer.clientHeight;
 
             if (projWidth <= 0 || projHeight <= 0) {
-                console.warn("Project container has zero dimensions. Delaying initialization.");
-                if(projectLoader) projectLoader.classList.remove('visible');
+                console.warn("Project container has zero/invalid dimensions. Cannot initialize 3D scene yet.");
+                 if(projectLoader) projectLoader.classList.remove('visible');
+                // Consider retrying later or logging an error
                 return;
             }
 
@@ -440,44 +384,24 @@
             projectRenderer.setPixelRatio(window.devicePixelRatio);
             projectContainer.appendChild(projectRenderer.domElement);
 
-             function createCustomGeometry() {
-                 const geometry = new THREE.BufferGeometry();
-                 const vertices = new Float32Array([
-                     -1.0, -1.0, 1.0,  1.0, -1.0, 1.0,  1.0,  1.0, 1.0, -1.0,  1.0, 1.0,
-                     -1.0, -1.0,-1.0,  1.0, -1.0,-1.0,  1.0,  1.0,-1.0, -1.0,  1.0,-1.0,
-                      0.0,  2.0, 0.0,  2.0,  0.0, 0.0, -2.0,  0.0, 0.0,  0.0,  0.0, 2.0,
-                      0.0,  0.0,-2.0
-                 ]);
-                 const indices = [ // Ensure indices correctly reference vertices (0 to 12)
-                     0,1,2,  0,2,3,  1,5,6,  1,6,2,  5,4,7,  5,7,6,  4,0,3,  4,3,7,
-                     3,2,8,  2,6,8,  4,5,12, 0,4,10, 1,0,11, 5,1,9,
-                     8,2,9,  8,6,9,  10,0,11, 10,3,11
-                 ];
-                 geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-                 geometry.setIndex(indices);
-                 geometry.computeVertexNormals();
-                 return geometry;
-             }
-
+            // Custom Geometry (as before)
+            const mainGeometry = createCustomGeometry();
             const mainMaterial = new THREE.MeshStandardMaterial({
                 color: 0x48DBF1, metalness: 0.3, roughness: 0.6,
                 transparent: true, opacity: 0.9, side: THREE.DoubleSide
             });
-            const mainGeometry = createCustomGeometry();
             projectMesh = new THREE.Mesh(mainGeometry, mainMaterial);
             projectMesh.scale.set(0.8, 0.8, 0.8);
             projectScene.add(projectMesh);
 
             const edges = new THREE.EdgesGeometry(mainGeometry);
-            const wireMaterial = new THREE.LineBasicMaterial({
-                color: 0xbae6fd, transparent: true, opacity: 0.7
-            });
+            const wireMaterial = new THREE.LineBasicMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.7 });
             projectWireframe = new THREE.LineSegments(edges, wireMaterial);
             projectWireframe.scale.copy(projectMesh.scale);
             projectScene.add(projectWireframe);
 
-            const projAmbientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            projectScene.add(projAmbientLight);
+            // Lighting
+            projectScene.add(new THREE.AmbientLight(0xffffff, 0.5));
             const projPointLight = new THREE.PointLight(0xffffff, 0.8, 100);
             projPointLight.position.set(5, 5, 5);
             projectScene.add(projPointLight);
@@ -487,65 +411,155 @@
 
             projectCamera.position.z = 4;
 
-            // Drag interaction setup
-            let previousMousePosition = { x: 0, y: 0 };
-            projectContainer.style.cursor = 'grab';
+            setupProjectDragInteraction(); // Setup interaction after elements are created
 
-            projectContainer.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-                projectContainer.style.cursor = 'grabbing';
-            });
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging || !projectMesh) return;
-                const currentMousePosition = { x: e.clientX, y: e.clientY };
-                const deltaMove = {
-                    x: currentMousePosition.x - previousMousePosition.x,
-                    y: currentMousePosition.y - previousMousePosition.y
-                };
-                const rotateSpeed = 0.007;
-                const rotationQuaternion = new THREE.Quaternion()
-                    .setFromEuler(new THREE.Euler(deltaMove.y * rotateSpeed, deltaMove.x * rotateSpeed, 0, 'XYZ'));
-                projectMesh.quaternion.multiplyQuaternions(rotationQuaternion, projectMesh.quaternion);
-                projectWireframe.quaternion.copy(projectMesh.quaternion); // Keep wireframe aligned
-                previousMousePosition = currentMousePosition;
-            });
-            document.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    projectContainer.style.cursor = 'grab';
-                }
-            });
-
-            if(projectLoader) projectLoader.classList.remove('visible');
-
-            // Start the animation loop for this specific project
-            animateProject();
+             if(projectLoader) projectLoader.classList.remove('visible');
+             startProjectAnimation(); // Start animation loop for this scene
         }
 
-        // Project animation loop (kept outside init for clarity)
-        function animateProject() {
-            if (!projectScene) return; // Don't run if not initialized
-            requestAnimationFrame(animateProject);
+         function createCustomGeometry() {
+             // Same geometry creation logic as before
+             const geometry = new THREE.BufferGeometry();
+             const vertices = new Float32Array([
+                 -1.0, -1.0, 1.0,  1.0, -1.0, 1.0,  1.0,  1.0, 1.0, -1.0,  1.0, 1.0, // Front face
+                 -1.0, -1.0,-1.0,  1.0, -1.0,-1.0,  1.0,  1.0,-1.0, -1.0,  1.0,-1.0, // Back face
+                  0.0,  2.0, 0.0,  2.0,  0.0, 0.0, -2.0,  0.0, 0.0,  0.0,  0.0, 2.0, // Spikes/Points
+                  0.0,  0.0,-2.0
+             ]);
+             // Indices need careful checking if vertices change. This set assumes 13 vertices (0-12).
+             const indices = [
+                  0, 1, 2,   0, 2, 3,    // Front
+                  1, 5, 6,   1, 6, 2,    // Right
+                  5, 4, 7,   5, 7, 6,    // Back
+                  4, 0, 3,   4, 3, 7,    // Left
+                  // Connections to extra points (adjust if needed based on desired shape)
+                  3, 2, 8,   2, 6, 8,    // Top point connections
+                  4, 5, 12,  0, 4, 10,   // Side/Bottom connections (check vertex indices)
+                  1, 0, 11,  5, 1, 9,
+                  // Example: Connect side points (may need adjustment)
+                  8, 3, 7,   8, 6, 7,    // Connect top point down
+                  9, 1, 2,   9, 5, 6,    // Connect right point
+                  10,4, 0,   10,7, 3,   // Connect left point
+                  11,0, 1,   11,3, 2,   // Connect front point
+                  12,4, 5,   12,7, 6    // Connect back point
+             ];
+             geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+             geometry.setIndex(indices);
+             try {
+                geometry.computeVertexNormals(); // Important for lighting
+             } catch (e) {
+                console.error("Error computing vertex normals, check geometry indices:", e);
+             }
+             return geometry;
+         }
 
-            // *** ADDED: Continuous rotation when not dragging ***
-            if (!isDragging && projectMesh) {
-                 projectMesh.rotation.y += 0.002;
-                 projectWireframe.rotation.y += 0.002; // Rotate wireframe too
+        function setupEventListeners() {
+            // Background mouse move
+            window.addEventListener('mousemove', onBackgroundMouseMove, { passive: true }); // Use passive listener
+
+            // Window Resize
+            window.addEventListener('resize', onWindowResize);
+
+            // Page Visibility
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+        }
+
+         function setupProjectDragInteraction() {
+             if (!projectContainer) return;
+             let previousMousePosition = { x: 0, y: 0 };
+             projectContainer.style.cursor = 'grab';
+
+             projectContainer.addEventListener('mousedown', (e) => {
+                 isProjectDragging = true;
+                 previousMousePosition = { x: e.clientX, y: e.clientY };
+                 projectContainer.style.cursor = 'grabbing';
+                 // Prevent text selection during drag
+                 e.preventDefault();
+             });
+
+             // Use document for mousemove/mouseup to catch events outside the container
+             document.addEventListener('mousemove', (e) => {
+                 if (!isProjectDragging || !projectMesh) return;
+                 const currentMousePosition = { x: e.clientX, y: e.clientY };
+                 const deltaMove = {
+                     x: currentMousePosition.x - previousMousePosition.x,
+                     y: currentMousePosition.y - previousMousePosition.y
+                 };
+                 const rotateSpeed = 0.007;
+                 // Apply rotation relative to the camera's view
+                 const deltaRotationQuaternion = new THREE.Quaternion()
+                     .setFromEuler(new THREE.Euler(deltaMove.y * rotateSpeed, deltaMove.x * rotateSpeed, 0, 'XYZ'));
+                 projectMesh.quaternion.multiplyQuaternions(deltaRotationQuaternion, projectMesh.quaternion);
+                 if (projectWireframe) {
+                    projectWireframe.quaternion.copy(projectMesh.quaternion);
+                 }
+                 previousMousePosition = currentMousePosition;
+             });
+
+             document.addEventListener('mouseup', () => {
+                 if (isProjectDragging) {
+                     isProjectDragging = false;
+                     projectContainer.style.cursor = 'grab';
+                 }
+             });
+
+             // Optional: Touch events for mobile
+              projectContainer.addEventListener('touchstart', (e) => {
+                 if (e.touches.length === 1) {
+                     isProjectDragging = true;
+                     previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                     projectContainer.style.cursor = 'grabbing';
+                     e.preventDefault(); // Prevent scrolling while dragging object
+                 }
+             }, { passive: false }); // Need passive: false to call preventDefault
+
+             document.addEventListener('touchmove', (e) => {
+                 if (!isProjectDragging || !projectMesh || e.touches.length !== 1) return;
+                 const currentMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                 const deltaMove = {
+                     x: currentMousePosition.x - previousMousePosition.x,
+                     y: currentMousePosition.y - previousMousePosition.y
+                 };
+                 const rotateSpeed = 0.008; // Slightly adjust speed for touch if needed
+                  const deltaRotationQuaternion = new THREE.Quaternion()
+                     .setFromEuler(new THREE.Euler(deltaMove.y * rotateSpeed, deltaMove.x * rotateSpeed, 0, 'XYZ'));
+                 projectMesh.quaternion.multiplyQuaternions(deltaRotationQuaternion, projectMesh.quaternion);
+                  if (projectWireframe) {
+                    projectWireframe.quaternion.copy(projectMesh.quaternion);
+                 }
+                 previousMousePosition = currentMousePosition;
+                 e.preventDefault(); // Prevent scrolling while dragging object
+             }, { passive: false }); // Need passive: false to call preventDefault
+
+             document.addEventListener('touchend', () => {
+                 if (isProjectDragging) {
+                     isProjectDragging = false;
+                     projectContainer.style.cursor = 'grab';
+                 }
+             });
+         }
+
+
+        // --- Event Handlers ---
+
+        function onBackgroundMouseMove(event) {
+            backgroundMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            backgroundMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            // Update target camera position slightly based on mouse
+            targetCameraPos.x = backgroundMouse.x * 1.0; // Reduced influence
+            targetCameraPos.y = backgroundMouse.y * 1.0; // Reduced influence
+        }
+
+        function onWindowResize() {
+            // Background resize
+            if (backgroundCamera && backgroundRenderer) {
+                backgroundCamera.aspect = window.innerWidth / window.innerHeight;
+                backgroundCamera.updateProjectionMatrix();
+                backgroundRenderer.setSize(window.innerWidth, window.innerHeight);
+                // No need to setPixelRatio again unless it changes dynamically
             }
 
-            projectRenderer.render(projectScene, projectCamera);
-        }
-
-
-        // --- Resize Handling ---
-        window.addEventListener('resize', () => {
-            // Background scene resize
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-
-            // Project 3D resize (if initialized)
+            // Project 3D resize
             if (projectCamera && projectRenderer && projectContainer) {
                 const projWidth = projectContainer.clientWidth;
                 const projHeight = projectContainer.clientHeight;
@@ -555,27 +569,125 @@
                     projectRenderer.setSize(projWidth, projHeight);
                 }
             }
-        });
-
-        // Initialize project 3D using Intersection Observer
-        const projectObserver = new IntersectionObserver((entries) => {
-             entries.forEach(entry => {
-                 if (entry.isIntersecting) {
-                     setTimeout(initProject3D, 150); // Initialize after a short delay
-                     projectObserver.unobserve(entry.target); // Stop observing once initialized
-                 }
-             });
-         }, { threshold: 0.2 }); // Trigger when 20% visible
-
-        if (projectContainer) {
-            projectObserver.observe(projectContainer);
-        } else {
-            console.error("Project 3D container not found for IntersectionObserver.");
         }
 
-        // --- Start Background Animation ---
-        animateBackground();
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                stopAnimations(); // Pause when tab is hidden
+                stopParticleEffect();
+            } else {
+                startAnimations(); // Resume when tab is visible
+                startParticleEffect();
+            }
+        }
+
+        // --- Animation Control ---
+
+        function startAnimations() {
+            if (!backgroundAnimationId && backgroundScene) {
+                animateBackground();
+            }
+            // Only start project animation if it has been initialized
+            if (!projectAnimationId && projectScene) {
+                 startProjectAnimation();
+            }
+        }
+
+        function stopAnimations() {
+            if (backgroundAnimationId) {
+                cancelAnimationFrame(backgroundAnimationId);
+                backgroundAnimationId = null;
+            }
+             stopProjectAnimation();
+        }
+
+         function startProjectAnimation() {
+            if (!projectAnimationId && projectScene && projectRenderer) {
+                 animateProject();
+            }
+         }
+
+         function stopProjectAnimation() {
+             if (projectAnimationId) {
+                cancelAnimationFrame(projectAnimationId);
+                projectAnimationId = null;
+             }
+         }
+
+        // --- Animation Loops ---
+
+        function animateBackground() {
+            backgroundAnimationId = requestAnimationFrame(animateBackground);
+
+            // Smooth camera movement towards target
+            backgroundCamera.position.x += (targetCameraPos.x - backgroundCamera.position.x) * 0.03;
+            backgroundCamera.position.y += (targetCameraPos.y + 1 - backgroundCamera.position.y) * 0.03; // Adjust vertical offset if needed
+            backgroundCamera.lookAt(backgroundScene.position);
+
+            backgroundShapes.forEach((shape, index) => {
+                shape.rotation.x += 0.001 + index * 0.00005;
+                shape.rotation.y += 0.002 + index * 0.00005;
+            });
+            backgroundRenderer.render(backgroundScene, backgroundCamera);
+        }
+
+        function animateProject() {
+            if (!projectScene) return; // Should not happen if called correctly, but safe check
+            projectAnimationId = requestAnimationFrame(animateProject);
+
+            // Continuous rotation when not dragging
+            if (!isProjectDragging && projectMesh) {
+                projectMesh.rotation.y += 0.002;
+                 if (projectWireframe) projectWireframe.rotation.y += 0.002;
+            }
+
+            projectRenderer.render(projectScene, projectCamera);
+        }
+
+        // --- Particle Effect ---
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const size = Math.random() * 3 + 1;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            // Append to body or a specific container if preferred
+            document.body.appendChild(particle);
+             // Set initial position before animating
+            gsap.set(particle, {
+                 x: `${Math.random() * 100}vw`,
+                 y: `${Math.random() * 100}vh`,
+                 opacity: 1 // Start visible
+            });
+            gsap.to(particle, {
+                y: `random(-150, 150)`, // Relative Y movement
+                x: `random(-150, 150)`, // Relative X movement
+                opacity: 0,
+                duration: `random(3, 7)`, // Slightly longer duration
+                ease: "power1.out",
+                onComplete: () => particle.remove() // Cleanup DOM element
+            });
+        }
+
+        function startParticleEffect() {
+            if (!particleIntervalId) {
+                 // Create one immediately, then set interval
+                 createParticle();
+                 particleIntervalId = setInterval(createParticle, 250);
+            }
+        }
+
+        function stopParticleEffect() {
+             if (particleIntervalId) {
+                 clearInterval(particleIntervalId);
+                 particleIntervalId = null;
+                 // Optional: Remove existing particles immediately?
+                 // document.querySelectorAll('.particle').forEach(p => p.remove());
+             }
+        }
 
     </script>
+
 </body>
 </html>
