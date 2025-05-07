@@ -98,6 +98,29 @@
          .poly-project-container {
              width: 100%; text-align: center; margin-top: 2rem; margin-bottom: 2rem;
          }
+         
+        /* University Notes specific styles */
+        .pdf-card {
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
+        }
+        .pdf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(29, 209, 161, 0.35);
+        }
+        .pdf-icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+        .pdf-card:hover .pdf-icon-container {
+            transform: scale(1.1);
+        }
+        .pdf-btn {
+            box-shadow: 0 4px 12px rgba(72, 219, 251, 0.25);
+        }
     </style>
 </head>
 <body class="bg-transparent text-emerald-100 relative tech-font">
@@ -112,6 +135,7 @@
             <ul class="flex space-x-4 md:space-x-6 text-sm md:text-base">
                 <li><a href="#hero" class="hover:text-emerald-300 transition-colors scientific-text">Home</a></li>
                 <li><a href="#projects" class="hover:text-emerald-300 transition-colors scientific-text">Projects</a></li>
+                <li><a href="#university-notes" class="hover:text-emerald-300 transition-colors scientific-text">Notes</a></li>
                 <li><a href="#contact" class="hover:text-emerald-300 transition-colors scientific-text">Contact</a></li>
             </ul>
         </nav>
@@ -190,166 +214,70 @@
               </a>
          </div>
     </section>
-<!-- UNIVERSITY NOTES SECTION - Place this after the projects section and before the contact section -->
 
-<section id="university-notes" class="p-8 md:p-12">
-    <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-12 text-center">University Notes</h2>
-    <p class="text-center mb-8 text-emerald-200 max-w-2xl mx-auto">
-        Here are some of my university notes and study materials. Click on any button to view the PDF.
-    </p>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center">
-            <div class="flex-grow w-full">
-                <h3 class="text-xl font-semibold mb-3 tech-highlight">Computer Science Notes</h3>
-                <p class="text-sm text-emerald-200 mb-4">Algorithms and data structures fundamentals with examples.</p>
-                <div class="pdf-icon-container mb-4">
-                    <i class="far fa-file-pdf text-5xl text-emerald-400"></i>
-                </div>
-                <a href="https://github.com/Capodivento/Simone-s-Portfolio/raw/main/computer_science_notes.pdf" 
-                   target="_blank" rel="noopener noreferrer" 
-                   class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                           transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                           hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <i class="fas fa-download mr-2"></i> View PDF
-                </a>
-            </div>
-        </div>
+    <!-- University Notes Section -->
+    <section id="university-notes" class="p-8 md:p-12 bg-gray-900 bg-opacity-20 backdrop-blur-md">
+        <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-12 text-center">University Notes</h2>
+        <p class="text-center mb-8 text-emerald-200 max-w-2xl mx-auto">
+            Here are some of my university notes and study materials. Click on any button to view the PDF.
+        </p>
         
-        <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center">
-            <div class="flex-grow w-full">
-                <h3 class="text-xl font-semibold mb-3 tech-highlight">Mathematics</h3>
-                <p class="text-sm text-emerald-200 mb-4">Linear algebra and calculus concepts with proofs.</p>
-                <div class="pdf-icon-container mb-4">
-                    <i class="far fa-file-pdf text-5xl text-emerald-400"></i>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Integrals Note -->
+            <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20">
+                <div class="flex-grow w-full">
+                    <h3 class="text-xl font-semibold mb-3 tech-highlight">Integrals</h3>
+                    <p class="text-sm text-emerald-200 mb-4">Comprehensive notes on integral calculus, covering definite and indefinite integrals, techniques of integration, and applications.</p>
+                    <div class="pdf-icon-container mb-4">
+                        <i class="far fa-file-pdf text-5xl text-emerald-400 transition-transform duration-300 group-hover:scale-110"></i>
+                    </div>
+                    <a href="https://github.com/Capodivento/Simone-s-Portfolio/blob/main/Integrals.pdf" 
+                       target="_blank" rel="noopener noreferrer" 
+                       class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
+                               transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
+                               hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                        <i class="fas fa-download mr-2"></i> View PDF
+                    </a>
                 </div>
-                <a href="https://github.com/Capodivento/Simone-s-Portfolio/raw/main/mathematics_notes.pdf" 
-                   target="_blank" rel="noopener noreferrer" 
-                   class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                           transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                           hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <i class="fas fa-download mr-2"></i> View PDF
-                </a>
+            </div>
+            
+            <!-- Probability & Statistics Note -->
+            <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20">
+                <div class="flex-grow w-full">
+                    <h3 class="text-xl font-semibold mb-3 tech-highlight">Probability & Statistics</h3>
+                    <p class="text-sm text-emerald-200 mb-4">Detailed notes covering probability theory, statistical distributions, hypothesis testing, and data analysis techniques.</p>
+                    <div class="pdf-icon-container mb-4">
+                        <i class="far fa-file-pdf text-5xl text-emerald-400 transition-transform duration-300 group-hover:scale-110"></i>
+                    </div>
+                    <a href="https://github.com/Capodivento/Simone-s-Portfolio/blob/main/Probability_statistics.pdf" 
+                       target="_blank" rel="noopener noreferrer" 
+                       class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
+                               transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
+                               hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                        <i class="fas fa-download mr-2"></i> View PDF
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Vectors Note -->
+            <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20">
+                <div class="flex-grow w-full">
+                    <h3 class="text-xl font-semibold mb-3 tech-highlight">Vectors</h3>
+                    <p class="text-sm text-emerald-200 mb-4">Notes on vectors and their applications in mathematics and physics.</p>
+                    <div class="pdf-icon-container mb-4">
+                        <i class="far fa-file-pdf text-5xl text-emerald-400 transition-transform duration-300 group-hover:scale-110"></i>
+                    </div>
+                    <a href="https://github.com/Capodivento/Simone-s-Portfolio/blob/main/Vectors%20(1).pdf" 
+                       target="_blank" rel="noopener noreferrer" 
+                       class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
+                               transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
+                               hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                        <i class="fas fa-download mr-2"></i> View PDF
+                    </a>
+                </div>
             </div>
         </div>
-        
-        <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center">
-            <div class="flex-grow w-full">
-                <h3 class="text-xl font-semibold mb-3 tech-highlight">Web Development</h3>
-                <p class="text-sm text-emerald-200 mb-4">Frontend and backend development with modern frameworks.</p>
-                <div class="pdf-icon-container mb-4">
-                    <i class="far fa-file-pdf text-5xl text-emerald-400"></i>
-                </div>
-                <a href="https://github.com/Capodivento/Simone-s-Portfolio/raw/main/web_development_notes.pdf" 
-                   target="_blank" rel="noopener noreferrer" 
-                   class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                           transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                           hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <i class="fas fa-download mr-2"></i> View PDF
-                </a>
-            </div>
-        </div>
-        
-        <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center">
-            <div class="flex-grow w-full">
-                <h3 class="text-xl font-semibold mb-3 tech-highlight">Computer Graphics</h3>
-                <p class="text-sm text-emerald-200 mb-4">3D rendering techniques and visualization principles.</p>
-                <div class="pdf-icon-container mb-4">
-                    <i class="far fa-file-pdf text-5xl text-emerald-400"></i>
-                </div>
-                <a href="https://github.com/Capodivento/Simone-s-Portfolio/raw/main/computer_graphics_notes.pdf" 
-                   target="_blank" rel="noopener noreferrer" 
-                   class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                           transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                           hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <i class="fas fa-download mr-2"></i> View PDF
-                </a>
-            </div>
-        </div>
-        
-        <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center">
-            <div class="flex-grow w-full">
-                <h3 class="text-xl font-semibold mb-3 tech-highlight">Android Development</h3>
-                <p class="text-sm text-emerald-200 mb-4">Mobile app architecture and Kotlin programming.</p>
-                <div class="pdf-icon-container mb-4">
-                    <i class="far fa-file-pdf text-5xl text-emerald-400"></i>
-                </div>
-                <a href="https://github.com/Capodivento/Simone-s-Portfolio/raw/main/android_development_notes.pdf" 
-                   target="_blank" rel="noopener noreferrer" 
-                   class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                           transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                           hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <i class="fas fa-download mr-2"></i> View PDF
-                </a>
-            </div>
-        </div>
-
-        <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center">
-            <div class="flex-grow w-full">
-                <h3 class="text-xl font-semibold mb-3 tech-highlight">Vectors Notes</h3>
-                <p class="text-sm text-emerald-200 mb-4">Notes on vectors and their applications.</p>
-                <div class="pdf-icon-container mb-4">
-                    <i class="far fa-file-pdf text-5xl text-emerald-400"></i>
-                </div>
-                <a href="https://github.com/Capodivento/Simone-s-Portfolio/blob/main/Vectors%20(1).pdf" 
-                   target="_blank" rel="noopener noreferrer" 
-                   class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                           transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                           hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <i class="fas fa-download mr-2"></i> View PDF
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <style>
-        .pdf-card {
-            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
-        }
-        .pdf-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(29, 209, 161, 0.35);
-        }
-        .pdf-icon-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 80px;
-            width: 100%;
-            transition: transform 0.3s ease;
-        }
-        .pdf-card:hover .pdf-icon-container {
-            transform: scale(1.1);
-        }
-        .pdf-btn {
-            box-shadow: 0 4px 12px rgba(72, 219, 251, 0.25);
-        }
-    </style>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set up animations for PDF cards when they come into view
-            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-                gsap.utils.toArray('.pdf-card').forEach((card, i) => {
-                    gsap.from(card, {
-                        scrollTrigger: {
-                            trigger: card,
-                            start: "top 85%",
-                            toggleActions: "play none none none",
-                            once: true
-                        },
-                        opacity: 0, 
-                        y: 50, 
-                        scale: 0.95, 
-                        duration: 0.7, 
-                        delay: i * 0.1, 
-                        ease: "power3.out"
-                    });
-                });
-            }
-        });
-    </script>
-</section>
+    </section>
 
     <section id="contact" class="p-8 md:p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
         <h2 class="text-3xl md:text-4xl font-bold scientific-text">Contact</h2>
@@ -428,6 +356,24 @@
                         once: true // Optional: Animate only once
                     },
                     opacity: 0, y: 50, scale: 0.95, duration: 0.7, delay: i * 0.1, ease: "power3.out"
+                });
+            });
+
+            // Add animation for university notes cards
+            gsap.utils.toArray('.pdf-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%",
+                        toggleActions: "play none none none",
+                        once: true
+                    },
+                    opacity: 0, 
+                    y: 50, 
+                    scale: 0.95, 
+                    duration: 0.7, 
+                    delay: i * 0.1, 
+                    ease: "power3.out"
                 });
             });
 
@@ -849,14 +795,6 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
 
