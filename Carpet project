@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Immersive Wave Field Experience</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            /* No background color - handled by Three.js */
+        }
+        canvas {
+            display: block;
+        }
+        .overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            opacity: 0.8;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .info {
+            font-size: 14px;
+        }
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            max-height: calc(100vh - 40px); /* Max height for controls */
+            overflow-y: auto; /* Allow scrolling for controls if too many */
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .control-group label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        input[type="range"] {
+            width: 150px;
+        }
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        button.active { /* Style for active mode button */
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .reset-btn {
+            margin-top: 10px;
+        }
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .audio-btn {
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .audio-icon {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a2a6c 0%, #3080ab 50%, #803aac 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 1000;
+            transition: opacity 0.8s ease-out;
+        }
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6abbff, #ff78d7);
+            transition: width 0.2s;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen">
+        <h2>Wave Field Experience</h2>
+        <p>Preparing your immersive experience...</p>
+        <div class="loading-progress">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="overlay">
+        <div class="info">Move your mouse/touch to interact with the wave field</div>
+        <div class="info">Current mode: <span id="mode-display">Wave</span></div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="wave-intensity">Wave Intensity</label>
+            <input type="range" id="wave-intensity" min="0.1" max="2.0" step="0.1" value="0.4">
+        </div>
+        <div class="control-group">
+            <label for="particle-size">Particle Size</label>
+            <input type="range" id="particle-size" min="0.005" max="0.1" step="0.001" value="0.02">
+        </div>
+        <div class="control-group">
+            <label for="color-speed">Color Shift Speed</label>
+            <input type="range" id="color-speed" min="0.0001" max="0.005" step="0.0001" value="0.001">
+        </div>
+        <div class="control-group">
+            <label for="camera-motion">Camera Motion</label>
+            <input type="range" id="camera-motion" min="0" max="1" step="0.1" value="1">
+        </div>
+        <div class="control-group">
+            <label>Wave Mode</label>
+            <div style="display: flex; gap: 8px;">
+                <button id="mode-wave" class="mode-btn active">Wave</button>
+                <button id="mode-ripple" class="mode-btn">Ripple</button>
+                <button id="mode-fractals" class="mode-btn">Fractals</button>
+            </div>
+        </div>
+        <div class="audio-controls">
+            <button id="audio-toggle" class="audio-btn">
+                <svg class="audio-icon" viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+            </button>
+            <input type="range" id="audio-volume" min="0" max="1" step="0.05" value="0.5">
+        </div>
+        <button id="reset-btn" class="reset-btn">Reset Settings</button>
+    </div>
+
+    <button id="fullscreen-btn" class="fullscreen-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            alpha: true // For transparent background if needed (skybox will cover)
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        document.body.appendChild(renderer.domElement);
+
+        // Initialize loading manager
+        const loadingManager = new THREE.LoadingManager();
+        const progressBar = document.querySelector('.progress-bar');
+        const loadingScreen = document.querySelector('.loading-screen');
+
+        loadingManager.onStart = function (url, itemsLoaded, itemsTotal) {
+            // console.log('Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
+        };
+
+        loadingManager.onProgress = function(url, loaded, total) {
+            progressBar.style.width = (loaded / total * 100) + '%';
+        };
+
+        loadingManager.onLoad = function() {
+            progressBar.style.width = '100%';
+            setTimeout(function() {
+                loadingScreen.style.opacity = 0;
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                }, 800); // Match CSS transition duration
+            }, 500); // Small delay before fading
+        };
+
+        loadingManager.onError = function (url) {
+            console.error('There was an error loading ' + url);
+        };
+
+
+        // Configuration
+        const DEFAULT_CONFIG = {
+            GRID_SIZE: 100,
+            SPACING: 0.3,
+            WAVE_SPEED: 0.4,
+            WAVE_INTENSITY: 0.4, // Added this for UI control
+            MOUSE_INFLUENCE: 15,
+            PARTICLE_SIZE: 0.02,
+            COLOR_SHIFT_SPEED: 0.001,
+            USE_INSTANCING: true,
+            CAMERA_MOTION_INTENSITY: 1.0,
+            WAVE_MODE: 'wave',  // 'wave', 'ripple', 'fractals'
+            AUDIO_ENABLED: false,
+            AUDIO_VOLUME: 0.5
+        };
+        let CONFIG = { ...DEFAULT_CONFIG };
+
+
+        // Audio context and elements
+        let audioContext, gainNode, oscillator;
+        
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                gainNode = audioContext.createGain();
+                gainNode.gain.value = 0; // Start muted
+                gainNode.connect(audioContext.destination);
+                
+                createAmbientSound();
+                
+                CONFIG.AUDIO_ENABLED = false; // Ensure it's off initially
+                updateAudioButton();
+            } catch (e) {
+                console.error("Web Audio API is not supported in this browser");
+                const audioControls = document.querySelector('.audio-controls');
+                if(audioControls) audioControls.style.display = 'none'; // Hide audio controls if not supported
+            }
+        }
+        
+        function createAmbientSound() {
+            if (!audioContext) return;
+            // LFO for modulating frequency
+            const lfo = audioContext.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.value = 0.1; // Slow modulation
+            
+            const lfoGain = audioContext.createGain();
+            lfoGain.gain.value = 20; // Modulation depth
+            
+            lfo.connect(lfoGain);
+            
+            // Base drone oscillator
+            oscillator = audioContext.createOscillator();
+            oscillator.type = 'sine'; // Sine for a smoother base
+            oscillator.frequency.value = 65; // Low C (C2)
+            
+            // Modulate the frequency
+            lfoGain.connect(oscillator.frequency);
+            
+            // Add reverb
+            const convolver = audioContext.createConvolver();
+            createImpulseResponse(audioContext, 2, 3, false).then(buffer => {
+                if (!audioContext) return; // Check if context was closed
+                convolver.buffer = buffer;
+                
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 800; // Cut off some high frequencies for a more ambient tone
+                
+                oscillator.connect(filter);
+                filter.connect(convolver);
+                // oscillator.connect(gainNode); // Direct connection (less reverb)
+                convolver.connect(gainNode); // Reverb connection
+                
+                lfo.start();
+                oscillator.start();
+            }).catch(err => console.error("Error creating impulse response: ", err));
+        }
+        
+        // Create impulse response for reverb
+        function createImpulseResponse(audioCtx, duration, decay, reverse) {
+            return new Promise(resolve => {
+                const sampleRate = audioCtx.sampleRate;
+                const length = sampleRate * duration;
+                const impulse = audioCtx.createBuffer(2, length, sampleRate); // Stereo
+                const impulseL = impulse.getChannelData(0);
+                const impulseR = impulse.getChannelData(1);
+                
+                for (let i = 0; i < length; i++) {
+                    const n = reverse ? length - i : i;
+                    impulseL[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
+                    impulseR[i] = (Math.random() * 2 - 1) * Math.pow(1 - n / length, decay);
+                }
+                
+                resolve(impulse);
+            });
+        }
+        
+        function updateAudioButton() {
+            const audioToggle = document.getElementById('audio-toggle');
+            if (!audioToggle) return;
+            const audioIcon = audioToggle.querySelector('.audio-icon');
+            
+            if (CONFIG.AUDIO_ENABLED) {
+                audioIcon.innerHTML = `<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>`;
+                if (gainNode && audioContext) {
+                     // Resume context if suspended (e.g., by browser auto-play policy)
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+                    gainNode.gain.setTargetAtTime(CONFIG.AUDIO_VOLUME, audioContext.currentTime, 0.2);
+                }
+            } else {
+                audioIcon.innerHTML = `<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>`;
+                if (gainNode && audioContext) {
+                    gainNode.gain.setTargetAtTime(0, audioContext.currentTime, 0.2);
+                }
+            }
+        }
+
+        // Initialize SimplexNoise for fractal mode
+        const simplex = new SimplexNoise();
+
+        // Create immersive environment
+        function createEnvironment() {
+            const skyGeometry = new THREE.SphereGeometry(1000, 48, 48);
+            const skyMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    topColor: { value: new THREE.Color(0x1a2a6c) },
+                    middleColor: { value: new THREE.Color(0x3080ab) },
+                    bottomColor: { value: new THREE.Color(0x803aac) },
+                    cloudColor: { value: new THREE.Color(0xffffff) }
+                },
+                vertexShader: `
+                    varying vec3 vWorldPosition;
+                    varying vec2 vUv;
+                    void main() {
+                        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+                        vWorldPosition = worldPosition.xyz;
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform float time;
+                    uniform vec3 topColor;
+                    uniform vec3 middleColor;
+                    uniform vec3 bottomColor;
+                    uniform vec3 cloudColor;
+                    varying vec3 vWorldPosition;
+                    varying vec2 vUv;
+                    
+                    float noise(vec2 p) {
+                        vec2 i = floor(p);
+                        vec2 f = fract(p);
+                        vec2 u = f * f * (3.0 - 2.0 * f);
+                        float a = sin(dot(i, vec2(12.9898, 78.233))) * 43758.5453;
+                        float b = sin(dot(i + vec2(1.0, 0.0), vec2(12.9898, 78.233))) * 43758.5453;
+                        float c = sin(dot(i + vec2(0.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453;
+                        float d = sin(dot(i + vec2(1.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453;
+                        return mix(mix(sin(a), sin(b), u.x), mix(sin(c), sin(d), u.x), u.y) * 0.5 + 0.5;
+                    }
+                    
+                    float fbm(vec2 p) {
+                        float sum = 0.0;
+                        float amp = 0.5;
+                        float freq = 1.0;
+                        for(int i = 0; i < 6; i++) {
+                            sum += noise(p * freq) * amp;
+                            amp *= 0.5;
+                            freq *= 2.0;
+                        }
+                        return sum;
+                    }
+                    
+                    void main() {
+                        float y = normalize(vWorldPosition).y;
+                        float t = time * 0.03; // Slower cloud movement
+                        
+                        vec3 gradientColor;
+                        if(y > 0.0) {
+                            gradientColor = mix(middleColor, topColor, smoothstep(0.0, 0.8, y));
+                        } else {
+                            gradientColor = mix(middleColor, bottomColor, smoothstep(0.0, 0.8, -y));
+                        }
+                        
+                        float r = gradientColor.r + sin(t * 0.5 + y * 2.0) * 0.05;
+                        float g = gradientColor.g + sin(t * 0.3 + y * 2.0) * 0.05;
+                        float b = gradientColor.b + sin(t * 0.7 + y * 2.0) * 0.05;
+                        
+                        vec2 cloudUv = vUv * 4.0 + vec2(time * 0.005, time * 0.008);
+                        float cloudNoise = fbm(cloudUv);
+                        
+                        vec2 cloudUv2 = vUv * 2.5 + vec2(time * -0.006, time * 0.004);
+                        float cloudNoise2 = fbm(cloudUv2) * 0.5;
+                        
+                        float clouds = smoothstep(0.5, 0.65, cloudNoise + cloudNoise2);
+                        clouds *= smoothstep(0.3, 0.0, abs(y));
+                        
+                        vec3 finalColor = mix(vec3(r,g,b), cloudColor, clouds * 0.25); // Softer clouds
+                        
+                        gl_FragColor = vec4(finalColor, 1.0);
+                    }
+                `,
+                side: THREE.BackSide,
+                fog: false // Skybox should not be affected by scene fog
+            });
+            
+            const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+            scene.add(sky);
+            
+            const starsGeometry = new THREE.BufferGeometry();
+            const starCount = 5000; // Increased star count
+            const positions = new Float32Array(starCount * 3);
+            const sizes = new Float32Array(starCount);
+            const colors = new Float32Array(starCount * 3);
+            
+            for (let i = 0; i < starCount; i++) {
+                const i3 = i * 3;
+                const radius = 400 + Math.random() * 600; // Further stars
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                
+                positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                positions[i3 + 2] = radius * Math.cos(phi);
+                
+                sizes[i] = Math.random() * 1.5 + 0.5; // Slightly smaller base size
+                
+                if (Math.random() > 0.9) { // Less frequent colored stars
+                    const hue = Math.random();
+                    const c = new THREE.Color();
+                    c.setHSL(hue, 0.7 + Math.random() * 0.2, 0.7 + Math.random() * 0.2);
+                    colors[i3] = c.r; colors[i3 + 1] = c.g; colors[i3 + 2] = c.b;
+                } else {
+                    const brightness = 0.8 + Math.random() * 0.2;
+                    colors[i3] = brightness; colors[i3 + 1] = brightness; colors[i3 + 2] = brightness;
+                }
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            starsGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const starsMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    pixelRatio: { value: renderer.getPixelRatio() }
+                },
+                vertexShader: `
+                    attribute float size;
+                    attribute vec3 color;
+                    uniform float time;
+                    uniform float pixelRatio;
+                    varying vec3 vColor;
+                    
+                    void main() {
+                        vColor = color;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        float t = time * 1.5;
+                        float twinkle = sin(t + position.x * 0.1 + position.y * 0.08 + position.z * 0.05) * 0.4 + 0.6;
+                        float dist = length(mvPosition.xyz);
+                        float sizeMod = size * twinkle * pixelRatio * (1500.0 / dist); 
+                        gl_PointSize = max(1.0, sizeMod); // Ensure minimum size
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    void main() {
+                        float dist = length(gl_PointCoord - vec2(0.5));
+                        if (dist > 0.5) discard;
+                        float softness = smoothstep(0.5, 0.4, dist);
+                        float glow = exp(-dist * 3.0) * 0.4 + softness * 0.6;
+                        gl_FragColor = vec4(vColor, softness * glow * (sin(dist * 5.0 + time * 2.0) * 0.1 + 0.9) ); // Slight pulsing
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                depthTest: false,
+                transparent: true,
+                fog: false
+            });
+            
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+            
+            const nebulaCount = 15; // More nebulae
+            const nebulae = [];
+            
+            for(let i = 0; i < nebulaCount; i++) {
+                const nebSize = 100 + Math.random() * 200; // Wider size range
+                const planeCount = 2 + Math.floor(Math.random() * 2); // 2 or 3 planes
+                const nebulaGroup = new THREE.Group();
+                
+                for(let j = 0; j < planeCount; j++) {
+                    const nebulaGeometry = new THREE.PlaneGeometry(nebSize, nebSize, 1, 1);
+                    const hue = Math.random(); // More varied hues
+                    const saturation = 0.3 + Math.random() * 0.3;
+                    const lightness = 0.2 + Math.random() * 0.2;
+                    const c = new THREE.Color().setHSL(hue, saturation, lightness);
+                    
+                    const nebulaMaterial = new THREE.ShaderMaterial({
+                        uniforms: {
+                            time: { value: 0 },
+                            baseColor: { value: c },
+                            opacity: { value: 0.02 + Math.random() * 0.04 } // Lower base opacity
+                        },
+                        vertexShader: `
+                            varying vec2 vUv;
+                            void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+                        `,
+                        fragmentShader: `
+                            uniform float time;
+                            uniform vec3 baseColor;
+                            uniform float opacity;
+                            varying vec2 vUv;
+                            
+                            float hash(vec2 p) { float h = dot(p,vec2(127.1,311.7)); return fract(sin(h)*43758.5453123); }
+                            float noise(vec2 p) {
+                                vec2 i = floor(p); vec2 f = fract(p); vec2 u = f*f*(3.0-2.0*f);
+                                return mix(mix(hash(i+vec2(0.,0.)), hash(i+vec2(1.,0.)),u.x),
+                                           mix(hash(i+vec2(0.,1.)), hash(i+vec2(1.,1.)),u.x),u.y);
+                            }
+                            float fbm(vec2 p) {
+                                float sum = 0.0; float amp = 0.5; float freq = 1.0;
+                                for(int i=0; i<6; i++) { // Fewer octaves for softer nebulae
+                                    sum += noise(p*freq)*amp; amp*=0.5; freq*=2.0;
+                                }
+                                return sum;
+                            }
+                            void main() {
+                                vec2 uv = vUv * 2.0 - 1.0; // Centered UVs
+                                float t = time * 0.02 + opacity * 10.0; // Offset time by opacity for variation
+                                vec2 distortedUv = uv;
+                                distortedUv.x += sin(uv.y * 2.5 + t) * 0.15;
+                                distortedUv.y += cos(uv.x * 2.0 - t) * 0.15;
+                                float edge = length(uv);
+                                float falloff = smoothstep(1.0, 0.3, edge); // Softer falloff
+                                float pattern = fbm(distortedUv * 1.5 + vec2(t*0.1, -t*0.12)); // Lower frequency noise
+                                pattern = smoothstep(0.2, 0.7, pattern) * falloff;
+                                float finalOpacity = pattern * opacity * (sin(time * 0.1 + uv.x * 2.0) * 0.2 + 0.8); // Opacity pulsing
+                                vec3 color = baseColor + vec3(pattern * 0.1, pattern * 0.05, sin(t*0.5)*0.05);
+                                gl_FragColor = vec4(clamp(color,0.0,1.0), finalOpacity);
+                            }
+                        `,
+                        transparent: true, blending: THREE.AdditiveBlending,
+                        side: THREE.DoubleSide, depthWrite: false, fog: false
+                    });
+                    
+                    const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
+                    nebula.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+                    nebulaGroup.add(nebula);
+                }
+                
+                const distance = 600 + Math.random() * 800; // Further nebulae
+                const theta = Math.random()*Math.PI*2; const phi = Math.acos(2*Math.random()-1);
+                nebulaGroup.position.set(distance*Math.sin(phi)*Math.cos(theta), distance*Math.sin(phi)*Math.sin(theta), distance*Math.cos(phi));
+                nebulaGroup.rotation.set(Math.random()*Math.PI*2, Math.random()*Math.PI*2, Math.random()*Math.PI*2);
+                
+                nebulaGroup.userData = {
+                    rotationSpeed: { x:(Math.random()-0.5)*0.0003, y:(Math.random()-0.5)*0.0003, z:(Math.random()-0.5)*0.0003 },
+                    baseTimeOffset: Math.random() * 1000 // Unique time offset for each nebula shader
+                };
+                
+                scene.add(nebulaGroup);
+                nebulae.push(nebulaGroup);
+            }
+            
+            return { sky, stars, nebulae };
+        }
+        
+        const environment = createEnvironment();
+
+        scene.fog = new THREE.FogExp2(0x3080ab, 0.008); // Slightly denser fog
+        
+        function updateFogColor(time) {
+            const cameraHeight = camera.position.y;
+            const normalizedHeight = Math.min(Math.max(cameraHeight / 40, 0), 1); // Adjusted for camera range
+            
+            const bottomFogColor = new THREE.Color(CONFIG.WAVE_MODE === 'fractals' ? 0x401050 : 0x60207c); // More purple for fractals
+            const middleFogColor = new THREE.Color(0x20508b);
+            const topFogColor = new THREE.Color(0x10205c);
+            
+            const fogColor = new THREE.Color();
+            if (normalizedHeight < 0.5) {
+                fogColor.lerpColors(bottomFogColor, middleFogColor, normalizedHeight * 2);
+            } else {
+                fogColor.lerpColors(middleFogColor, topFogColor, (normalizedHeight - 0.5) * 2);
+            }
+            
+            const timeShiftR = Math.sin(time * 0.05) * 0.05;
+            const timeShiftG = Math.cos(time * 0.03) * 0.03;
+            const timeShiftB = Math.sin(time * 0.07) * 0.04;
+            
+            fogColor.r = Math.max(0, fogColor.r + timeShiftR);
+            fogColor.g = Math.max(0, fogColor.g + timeShiftG);
+            fogColor.b = Math.max(0, fogColor.b + timeShiftB);
+            
+            if (scene.fog) scene.fog.color.copy(fogColor);
+            return fogColor;
+        }
+
+        // Touch and mouse interaction
+        const mouse = new THREE.Vector2(0, 0); // For camera movement
+        let interactionPoints = []; // For wave/ripple effects
+        const MAX_INTERACTION_POINTS = 5; // Max simultaneous touch points
+        const INTERACTION_POINT_LIFESPAN = 2000; // ms
+
+        function updateInteractionPoint(x, y, identifier, isPrimary = false) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            const normalizedX = ((x - rect.left) / rect.width) * 2 - 1;
+            const normalizedY = -((y - rect.top) / rect.height) * 2 + 1;
+
+            // Update main mouse for camera if it's the primary interaction (e.g. mouse, first touch)
+            if (isPrimary) {
+                mouse.x = normalizedX;
+                mouse.y = normalizedY;
+            }
+
+            let existingPoint = interactionPoints.find(p => p.id === identifier);
+            if (existingPoint) {
+                existingPoint.position.x = normalizedX;
+                existingPoint.position.y = normalizedY;
+                existingPoint.strength = 1.0; // Reset strength on move
+                existingPoint.lastUpdate = Date.now();
+                existingPoint.dx = (normalizedX - existingPoint.prevPosition.x) * 50; // Velocity estimation
+                existingPoint.dy = (normalizedY - existingPoint.prevPosition.y) * 50;
+                existingPoint.prevPosition.copy(existingPoint.position);
+            } else {
+                if (interactionPoints.length < MAX_INTERACTION_POINTS) {
+                    interactionPoints.push({
+                        id: identifier,
+                        position: new THREE.Vector2(normalizedX, normalizedY),
+                        prevPosition: new THREE.Vector2(normalizedX, normalizedY),
+                        strength: 1.0,
+                        lastUpdate: Date.now(),
+                        dx:0, dy:0,
+                        isNew: true // Flag for initial ripple
+                    });
+                }
+            }
+        }
+
+        function decayInteractionPoints() {
+            const now = Date.now();
+            interactionPoints = interactionPoints.filter(p => {
+                const age = now - p.lastUpdate;
+                if (age > INTERACTION_POINT_LIFESPAN) {
+                    return false; // Remove if too old
+                }
+                // Decay strength over time if not actively updated (e.g. touch held but not moved)
+                // p.strength = Math.max(0, 1.0 - (age / INTERACTION_POINT_LIFESPAN)); // Linear decay
+                return true;
+            });
+             // After processing, mark as not new
+            interactionPoints.forEach(p => p.isNew = false);
+        }
+
+
+        // Particle System
+        let particlesMesh;
+        let instancedGeometry; // For instanced rendering
+        let particleMaterial;
+
+        function createParticles() {
+            if (particlesMesh) {
+                scene.remove(particlesMesh);
+                if (particlesMesh.geometry) particlesMesh.geometry.dispose();
+                if (particlesMesh.material) particlesMesh.material.dispose();
+            }
+
+            const particleCount = CONFIG.GRID_SIZE * CONFIG.GRID_SIZE;
+            const geometry = new THREE.PlaneGeometry(1, 1); // Base geometry for each particle
+
+            if (CONFIG.USE_INSTANCING) {
+                instancedGeometry = new THREE.InstancedBufferGeometry();
+                instancedGeometry.index = geometry.index;
+                instancedGeometry.attributes.position = geometry.attributes.position;
+                instancedGeometry.attributes.uv = geometry.attributes.uv;
+
+                const offsets = new Float32Array(particleCount * 3); // x, y, z for each instance
+                const originalPositions = new Float32Array(particleCount * 3); // Store base positions
+                const colors = new Float32Array(particleCount * 3); // r, g, b for each instance
+
+                let i = 0;
+                const halfGrid = (CONFIG.GRID_SIZE -1) * CONFIG.SPACING / 2;
+                for (let x = 0; x < CONFIG.GRID_SIZE; x++) {
+                    for (let z = 0; z < CONFIG.GRID_SIZE; z++) {
+                        const xPos = x * CONFIG.SPACING - halfGrid;
+                        const zPos = z * CONFIG.SPACING - halfGrid;
+                        offsets[i * 3 + 0] = xPos;
+                        offsets[i * 3 + 1] = 0; // Initial Y position
+                        offsets[i * 3 + 2] = zPos;
+
+                        originalPositions[i*3 + 0] = xPos;
+                        originalPositions[i*3 + 1] = 0; // Base Y is 0
+                        originalPositions[i*3 + 2] = zPos;
+                        
+                        // Initial color (will be updated in shader)
+                        colors[i * 3 + 0] = 1.0;
+                        colors[i * 3 + 1] = 1.0;
+                        colors[i * 3 + 2] = 1.0;
+                        i++;
+                    }
+                }
+                instancedGeometry.setAttribute('offset', new THREE.InstancedBufferAttribute(offsets, 3));
+                instancedGeometry.setAttribute('originalPos', new THREE.InstancedBufferAttribute(originalPositions, 3));
+                instancedGeometry.setAttribute('color', new THREE.InstancedBufferAttribute(colors, 3));
+                instancedGeometry.instanceCount = particleCount;
+
+
+                particleMaterial = new THREE.ShaderMaterial({
+                    uniforms: {
+                        time: { value: 0.0 },
+                        particleSize: { value: CONFIG.PARTICLE_SIZE },
+                        waveIntensity: { value: CONFIG.WAVE_INTENSITY },
+                        waveSpeed: { value: CONFIG.WAVE_SPEED },
+                        mouseInfluence: { value: CONFIG.MOUSE_INFLUENCE },
+                        colorShiftSpeed: { value: CONFIG.COLOR_SHIFT_SPEED },
+                        interactionPoints: { value: [] }, // Will pass formatted interaction data
+                        numInteractionPoints: { value: 0 },
+                        waveMode: { value: CONFIG.WAVE_MODE === 'wave' ? 0 : (CONFIG.WAVE_MODE === 'ripple' ? 1 : 2) }, // 0:wave, 1:ripple, 2:fractals
+                        fogColor: { value: scene.fog.color },
+                        fogNear: { value: scene.fog.near }, // if using THREE.Fog
+                        fogFar: { value: scene.fog.far },   // if using THREE.Fog
+                        fogDensity: { value: scene.fog.density }, // if using THREE.FogExp2
+                        isFogExp2: { value: scene.fog instanceof THREE.FogExp2 }
+                    },
+                    vertexShader: `
+                        uniform float time;
+                        uniform float particleSize;
+                        uniform float waveIntensity;
+                        uniform float waveSpeed;
+                        uniform float mouseInfluence;
+                        uniform vec2 interactionPoints[${MAX_INTERACTION_POINTS}];
+                        uniform float interactionStrengths[${MAX_INTERACTION_POINTS}];
+                        uniform float interactionIsNew[${MAX_INTERACTION_POINTS}];
+                        uniform vec2 interactionVelocity[${MAX_INTERACTION_POINTS}];
+                        uniform int numInteractionPoints;
+                        uniform int waveMode; // 0:wave, 1:ripple, 2:fractals
+
+                        attribute vec3 offset;
+                        attribute vec3 originalPos;
+                        attribute vec3 color; // Instance color
+
+                        varying vec3 vColor;
+                        varying float vFogDepth;
+                        varying float vFinalY;
+
+
+                        // Simplex noise functions (if needed directly in shader, otherwise pass from JS)
+                        vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                        vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                        vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+                        vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+                        float snoise(vec3 v) {
+                            const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+                            const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+                            vec3 i  = floor(v + dot(v, C.yyy));
+                            vec3 x0 = v - i + dot(i, C.xxx);
+                            vec3 g = step(x0.yzx, x0.xyz);
+                            vec3 l = 1.0 - g;
+                            vec3 i1 = min(g.xyz, l.zxy);
+                            vec3 i2 = max(g.xyz, l.zxy);
+                            vec3 x1 = x0 - i1 + C.xxx;
+                            vec3 x2 = x0 - i2 + C.yyy;
+                            vec3 x3 = x0 - D.yyy;
+                            i = mod289(i);
+                            vec4 p = permute(permute(permute(
+                                i.z + vec4(0.0, i1.z, i2.z, 1.0))
+                                + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+                                + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+                            float n_ = 0.142857142857; // 1.0/7.0
+                            vec3 ns = n_ * D.wyz - D.xzx;
+                            vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+                            vec4 x_ = floor(j * ns.z);
+                            vec4 y_ = floor(j - 7.0 * x_);
+                            vec4 x = x_ * ns.x + ns.yyyy;
+                            vec4 y = y_ * ns.x + ns.yyyy;
+                            vec4 h = 1.0 - abs(x) - abs(y);
+                            vec4 b0 = vec4(x.xy, y.xy);
+                            vec4 b1 = vec4(x.zw, y.zw);
+                            vec4 s0 = floor(b0)*2.0 + 1.0;
+                            vec4 s1 = floor(b1)*2.0 + 1.0;
+                            vec4 sh = -step(h, vec4(0.0));
+                            vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+                            vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+                            vec3 p0 = vec3(a0.xy,h.x);
+                            vec3 p1 = vec3(a0.zw,h.y);
+                            vec3 p2 = vec3(a1.xy,h.z);
+                            vec3 p3 = vec3(a1.zw,h.w);
+                            vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+                            p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+                            vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+                            m = m * m;
+                            return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+                        }
+
+
+                        void main() {
+                            vColor = color;
+                            vec3 pos = offset;
+                            float finalY = 0.0;
+                            float commonWave = sin(originalPos.x * 0.3 + time * waveSpeed) * cos(originalPos.z * 0.2 + time * waveSpeed * 0.7);
+
+                            if (waveMode == 0) { // Wave mode
+                                finalY = commonWave * waveIntensity;
+                            } else if (waveMode == 1) { // Ripple mode
+                                // Base subtle wave
+                                finalY = commonWave * waveIntensity * 0.1; // Much subtler base wave
+
+                                for (int i = 0; i < ${MAX_INTERACTION_POINTS}; ++i) {
+                                    if (i >= numInteractionPoints) break;
+
+                                    // Project interaction point onto the XZ plane of the particles
+                                    // This requires knowing the camera's view to correctly map screen space to world space.
+                                    // For simplicity, we'll assume interactionPoints are already in a normalized grid space like mouse coords.
+                                    // Let's scale them to roughly match particle grid dimensions.
+                                    float gridWidth = float(${CONFIG.GRID_SIZE}) * ${CONFIG.SPACING};
+                                    vec2 worldInteractionPos = interactionPoints[i] * gridWidth * 0.5;
+
+
+                                    float distToInteraction = distance(originalPos.xz, worldInteractionPos);
+                                    float rippleEffect = 0.0;
+
+                                    // Ripples expand outwards
+                                    float rippleRadius = time * waveSpeed * mouseInfluence * 0.5; // Speed of ripple expansion
+                                    float rippleWidth = mouseInfluence * 0.5; // Width of a single ripple wave
+
+                                    // Create a wave train
+                                    // Offset the distance by time to make the ripple move
+                                    // Adjust frequency and amplitude based on strength
+                                    float adjustedDist = distToInteraction - rippleRadius * interactionStrengths[i];
+                                    
+                                    // Check if particle is within the ripple's influence
+                                    if (adjustedDist < rippleWidth * 2.0 && adjustedDist > -rippleWidth * 5.0) { // check a wider band
+                                         rippleEffect = cos(adjustedDist * (1.0 / (rippleWidth * 0.2)) ) // Frequency of ripples
+                                                       * (1.0 - smoothstep(0.0, rippleWidth * 5.0, abs(adjustedDist))) // Fade out ripple
+                                                       * waveIntensity * mouseInfluence * 0.2 * interactionStrengths[i];
+
+                                         // Add directional push based on interaction velocity (experimental)
+                                         // vec2 dirToInteraction = normalize(worldInteractionPos - originalPos.xz);
+                                         // float velocityInfluence = dot(dirToInteraction, interactionVelocity[i]) * 0.01 * interactionStrengths[i];
+                                         // rippleEffect += velocityInfluence;
+                                    }
+                                   
+                                    // Initial splash for new interactions
+                                    if (interactionIsNew[i] > 0.5 && distToInteraction < rippleWidth * 0.5) {
+                                        rippleEffect += waveIntensity * mouseInfluence * 0.3 * interactionStrengths[i] * (1.0 - smoothstep(0.0, rippleWidth * 0.5, distToInteraction));
+                                    }
+
+
+                                    finalY += rippleEffect;
+                                }
+
+
+                            } else if (waveMode == 2) { // Fractals mode
+                                float noiseVal = snoise(vec3(originalPos.x * 0.1, originalPos.z * 0.1, time * waveSpeed * 0.2));
+                                float fbmVal = 0.0;
+                                float amp = 0.5;
+                                float freq = 1.0;
+                                for(int k=0; k<4; ++k) {
+                                    fbmVal += snoise(vec3(originalPos.x * freq * 0.05, originalPos.z * freq * 0.05, time * waveSpeed * 0.1 + float(k)*0.5)) * amp;
+                                    amp *= 0.5;
+                                    freq *= 2.0;
+                                }
+                                finalY = fbmVal * waveIntensity * 2.0; // Stronger effect for fractals
+                            }
+
+                            // Apply mouse/touch interaction for general elevation (can be combined with modes)
+                            // This is a simpler global mouse interaction, different from ripple points
+                            // float mouseDistance = distance(pos.xz, vec2(0.0)); // Example: interaction from center
+                            // float mouseFactor = smoothstep(mouseInfluence, 0.0, mouseDistance);
+                            // finalY += mouseFactor * waveIntensity * 2.0 * sin(time*waveSpeed + pos.x * 0.1);
+
+
+                            pos.y = finalY;
+                            vFinalY = finalY; // Pass Y to fragment for color variation
+
+                            vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                            gl_PointSize = particleSize * (300.0 / -mvPosition.z); // Perspective scaling
+                            gl_Position = projectionMatrix * mvPosition;
+                            
+                            #ifdef USE_FOG
+                                vFogDepth = -mvPosition.z;
+                            #endif
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform float time;
+                        uniform float colorShiftSpeed;
+                        uniform vec3 fogColor;
+                        uniform float fogDensity;
+                        uniform bool isFogExp2;
+                        // uniform float fogNear; // if using THREE.Fog
+                        // uniform float fogFar;  // if using THREE.Fog
+
+                        varying vec3 vColor;
+                        varying float vFogDepth;
+                        varying float vFinalY; // Y position from vertex shader
+
+                        void main() {
+                            float hue = mod(time * colorShiftSpeed + vFinalY * 0.05 + (gl_FragCoord.x / 500.0) * 0.1, 1.0);
+                            float saturation = 0.6 + sin(time * colorShiftSpeed * 3.0 + vFinalY * 0.1) * 0.2 + 0.2;
+                            float lightness = 0.5 + cos(time * colorShiftSpeed * 2.0 - vFinalY * 0.08) * 0.15 + 0.15;
+                            
+                            vec3 hsv = vec3(hue, clamp(saturation, 0.5, 1.0), clamp(lightness, 0.4, 0.9));
+                            
+                            // HSV to RGB conversion
+                            vec3 rgbColor;
+                            float C = hsv.z * hsv.y;
+                            float X = C * (1.0 - abs(mod(hsv.x * 6.0, 2.0) - 1.0));
+                            float m = hsv.z - C;
+                            if (hsv.x < 1.0/6.0) rgbColor = vec3(C, X, 0.0);
+                            else if (hsv.x < 2.0/6.0) rgbColor = vec3(X, C, 0.0);
+                            else if (hsv.x < 3.0/6.0) rgbColor = vec3(0.0, C, X);
+                            else if (hsv.x < 4.0/6.0) rgbColor = vec3(0.0, X, C);
+                            else if (hsv.x < 5.0/6.0) rgbColor = vec3(X, 0.0, C);
+                            else rgbColor = vec3(C, 0.0, X);
+                            rgbColor += m;
+
+                            // Circular point
+                            float dist = length(gl_PointCoord - vec2(0.5));
+                            if (dist > 0.5) discard; // Make points circular
+                            float alpha = smoothstep(0.5, 0.45, dist); // Soft edges
+
+                            gl_FragColor = vec4(rgbColor * vColor, alpha); // Modulate with instance color (if used)
+                            
+                            #ifdef USE_FOG
+                                float fogFactor;
+                                if(isFogExp2) {
+                                    fogFactor = 1.0 - exp(-fogDensity * fogDensity * vFogDepth * vFogDepth);
+                                } else {
+                                    // fogFactor = smoothstep(fogNear, fogFar, vFogDepth); // For THREE.Fog
+                                    // Fallback if not FogExp2 and near/far not properly set for this shader:
+                                    fogFactor = 1.0 - exp(-fogDensity * fogDensity * vFogDepth * vFogDepth); 
+                                }
+                                gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, clamp(fogFactor,0.0,1.0));
+                            #endif
+                        }
+                    `,
+                    defines: {
+                        USE_FOG: scene.fog !== undefined,
+                    },
+                    transparent: true,
+                    depthWrite: false, // Usually false for transparent particles unless specific blending
+                    blending: THREE.AdditiveBlending // Or NormalBlending depending on desired effect
+                });
+
+                particlesMesh = new THREE.Points(instancedGeometry, particleMaterial);
+            } else {
+                // Fallback or alternative: non-instanced (less performant for large counts)
+                // This part would require a different setup, typically merging geometries or many draw calls.
+                // For simplicity, this example focuses on instancing.
+                console.warn("Non-instanced particle mode not fully implemented in this example. Using instancing.");
+                CONFIG.USE_INSTANCING = true; // Force instancing
+                return createParticles(); // Re-call with instancing
+            }
+            
+            particlesMesh.frustumCulled = false; // Important for large particle systems
+            scene.add(particlesMesh);
+            loadingManager.itemEnd("particles"); // Signal particles are loaded
+        }
+
+
+        function animateParticles(time) {
+            if (!particlesMesh || !CONFIG.USE_INSTANCING) return;
+
+            particleMaterial.uniforms.time.value = time;
+            particleMaterial.uniforms.particleSize.value = CONFIG.PARTICLE_SIZE;
+            particleMaterial.uniforms.waveIntensity.value = CONFIG.WAVE_INTENSITY;
+            particleMaterial.uniforms.waveSpeed.value = CONFIG.WAVE_SPEED;
+            particleMaterial.uniforms.mouseInfluence.value = CONFIG.MOUSE_INFLUENCE;
+            particleMaterial.uniforms.colorShiftSpeed.value = CONFIG.COLOR_SHIFT_SPEED;
+            particleMaterial.uniforms.waveMode.value = CONFIG.WAVE_MODE === 'wave' ? 0 : (CONFIG.WAVE_MODE === 'ripple' ? 1 : 2);
+
+            // Update interaction points uniform
+            const pointsData = [];
+            const strengthsData = [];
+            const isNewData = [];
+            const velocityData = [];
+
+            for (let i = 0; i < MAX_INTERACTION_POINTS; i++) {
+                if (i < interactionPoints.length) {
+                    const pt = interactionPoints[i];
+                    pointsData.push(pt.position.x, pt.position.y);
+                    strengthsData.push(pt.strength);
+                    isNewData.push(pt.isNew ? 1.0 : 0.0);
+                    velocityData.push(pt.dx, pt.dy);
+                } else { // Fill with zeros if fewer than MAX_INTERACTION_POINTS
+                    pointsData.push(0, 0);
+                    strengthsData.push(0);
+                    isNewData.push(0);
+                    velocityData.push(0,0);
+                }
+            }
+            particleMaterial.uniforms.interactionPoints.value = pointsData;
+            particleMaterial.uniforms.interactionStrengths.value = strengthsData;
+            particleMaterial.uniforms.interactionIsNew.value = isNewData;
+            particleMaterial.uniforms.interactionVelocity.value = velocityData;
+            particleMaterial.uniforms.numInteractionPoints.value = interactionPoints.length;
+
+
+            // Update fog uniforms in particle material
+            if (scene.fog) {
+                particleMaterial.uniforms.fogColor.value = scene.fog.color;
+                if (scene.fog.isFogExp2) {
+                     particleMaterial.uniforms.fogDensity.value = scene.fog.density;
+                     particleMaterial.uniforms.isFogExp2.value = true;
+                } else { // THREE.Fog
+                    // particleMaterial.uniforms.fogNear.value = scene.fog.near;
+                    // particleMaterial.uniforms.fogFar.value = scene.fog.far;
+                    // particleMaterial.uniforms.isFogExp2.value = false;
+                    // Fallback for this shader if only FogExp2 is fully handled for fog params:
+                     particleMaterial.uniforms.fogDensity.value = scene.fog.density || 0.008; // Use a default if not Exp2
+                     particleMaterial.uniforms.isFogExp2.value = true; // Or adapt shader for normal Fog
+                }
+            }
+        }
+
+        // Camera
+        camera.position.set(0, 7, 25); // Initial camera position
+        camera.lookAt(0, 0, 0);
+
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            decayInteractionPoints();
+            animateParticles(elapsedTime);
+
+            // Update environment (sky, stars, nebulae)
+            if (environment.sky) environment.sky.material.uniforms.time.value = elapsedTime;
+            if (environment.stars) environment.stars.material.uniforms.time.value = elapsedTime;
+            if (environment.nebulae) {
+                environment.nebulae.forEach(nebulaGroup => {
+                    nebulaGroup.children.forEach(nebula => {
+                        if (nebula.material.uniforms && nebula.material.uniforms.time) {
+                           nebula.material.uniforms.time.value = elapsedTime + nebulaGroup.userData.baseTimeOffset;
+                        }
+                    });
+                    nebulaGroup.rotation.x += nebulaGroup.userData.rotationSpeed.x;
+                    nebulaGroup.rotation.y += nebulaGroup.userData.rotationSpeed.y;
+                    nebulaGroup.rotation.z += nebulaGroup.userData.rotationSpeed.z;
+                });
+            }
+            
+            // Dynamic camera movement based on mouse (subtle)
+            if (CONFIG.CAMERA_MOTION_INTENSITY > 0) {
+                const cameraX = mouse.x * 2 * CONFIG.CAMERA_MOTION_INTENSITY;
+                const cameraY = mouse.y * 1.5 * CONFIG.CAMERA_MOTION_INTENSITY + 7; // Base height + mouse Y
+                camera.position.x += (cameraX - camera.position.x) * 0.05;
+                camera.position.y += (cameraY - camera.position.y) * 0.05;
+                camera.lookAt(0, 0, 0);
+            }
+
+            updateFogColor(elapsedTime);
+
+            renderer.render(scene, camera);
+        }
+
+        // Event Listeners
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            if (particlesMesh && CONFIG.USE_INSTANCING) {
+                // particleMaterial.uniforms.pixelRatio.value = renderer.getPixelRatio(); // If needed by shader
+            }
+            if (environment.stars && environment.stars.material.uniforms.pixelRatio) {
+                 environment.stars.material.uniforms.pixelRatio.value = renderer.getPixelRatio();
+            }
+        }
+        window.addEventListener('resize', onWindowResize);
+
+        // Mouse move for camera and primary interaction
+        document.addEventListener('mousemove', (event) => {
+            updateInteractionPoint(event.clientX, event.clientY, 'mouse', true);
+        });
+        document.addEventListener('mousedown', (event) => {
+             // Could add a stronger, short-lived interaction on mousedown if desired
+            updateInteractionPoint(event.clientX, event.clientY, 'mouse', true); // Ensure mouse pos is updated
+        });
+
+        // Touch events
+        let activeTouches = {};
+        document.addEventListener('touchstart', (event) => {
+            event.preventDefault(); // Prevent scrolling/default behaviors
+            if (audioContext && audioContext.state === 'suspended') { // Start audio on first touch
+                audioContext.resume();
+            }
+            for (let i = 0; i < event.changedTouches.length; i++) {
+                const touch = event.changedTouches[i];
+                activeTouches[touch.identifier] = { x: touch.clientX, y: touch.clientY };
+                updateInteractionPoint(touch.clientX, touch.clientY, touch.identifier, Object.keys(activeTouches).length === 1);
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (event) => {
+            event.preventDefault();
+            for (let i = 0; i < event.changedTouches.length; i++) {
+                const touch = event.changedTouches[i];
+                if (activeTouches[touch.identifier]) {
+                    activeTouches[touch.identifier] = { x: touch.clientX, y: touch.clientY };
+                    updateInteractionPoint(touch.clientX, touch.clientY, touch.identifier, Object.keys(activeTouches).find(id => parseInt(id) === touch.identifier) === Object.keys(activeTouches)[0]);
+                }
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (event) => {
+            for (let i = 0; i < event.changedTouches.length; i++) {
+                const touch = event.changedTouches[i];
+                // Fade out this interaction point or remove immediately
+                const point = interactionPoints.find(p => p.id === touch.identifier);
+                if (point) {
+                    // Optional: start a fast decay instead of immediate removal
+                    // point.lastUpdate = Date.now() - INTERACTION_POINT_LIFESPAN + 500; // give it 0.5s to fade
+                    // For now, let decayInteractionPoints handle natural removal
+                }
+                delete activeTouches[touch.identifier];
+            }
+        });
+         document.addEventListener('touchcancel', (event) => { // Handle cancelled touches
+            for (let i = 0; i < event.changedTouches.length; i++) {
+                const touch = event.changedTouches[i];
+                 delete activeTouches[touch.identifier];
+            }
+        });
+
+
+        // UI Controls
+        const waveIntensitySlider = document.getElementById('wave-intensity');
+        const particleSizeSlider = document.getElementById('particle-size');
+        const colorSpeedSlider = document.getElementById('color-speed');
+        const cameraMotionSlider = document.getElementById('camera-motion');
+        const modeDisplay = document.getElementById('mode-display');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const audioToggleBtn = document.getElementById('audio-toggle');
+        const audioVolumeSlider = document.getElementById('audio-volume');
+        const resetBtn = document.getElementById('reset-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+        function updateControlsFromConfig() {
+            waveIntensitySlider.value = CONFIG.WAVE_INTENSITY;
+            particleSizeSlider.value = CONFIG.PARTICLE_SIZE;
+            colorSpeedSlider.value = CONFIG.COLOR_SHIFT_SPEED;
+            cameraMotionSlider.value = CONFIG.CAMERA_MOTION_INTENSITY;
+            audioVolumeSlider.value = CONFIG.AUDIO_VOLUME;
+            
+            modeDisplay.textContent = CONFIG.WAVE_MODE.charAt(0).toUpperCase() + CONFIG.WAVE_MODE.slice(1);
+            modeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.id === `mode-${CONFIG.WAVE_MODE}`);
+            });
+            updateAudioButton();
+        }
+
+        waveIntensitySlider.addEventListener('input', (e) => CONFIG.WAVE_INTENSITY = parseFloat(e.target.value));
+        particleSizeSlider.addEventListener('input', (e) => CONFIG.PARTICLE_SIZE = parseFloat(e.target.value));
+        colorSpeedSlider.addEventListener('input', (e) => CONFIG.COLOR_SHIFT_SPEED = parseFloat(e.target.value));
+        cameraMotionSlider.addEventListener('input', (e) => CONFIG.CAMERA_MOTION_INTENSITY = parseFloat(e.target.value));
+        
+        modeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                CONFIG.WAVE_MODE = button.id.split('-')[1];
+                modeDisplay.textContent = CONFIG.WAVE_MODE.charAt(0).toUpperCase() + CONFIG.WAVE_MODE.slice(1);
+                modeButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+
+        audioToggleBtn.addEventListener('click', () => {
+            if (!audioContext) initAudio(); // Initialize audio if not already
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume().then(() => { // Ensure context is running before toggling
+                    CONFIG.AUDIO_ENABLED = !CONFIG.AUDIO_ENABLED;
+                    updateAudioButton();
+                });
+            } else {
+                CONFIG.AUDIO_ENABLED = !CONFIG.AUDIO_ENABLED;
+                updateAudioButton();
+            }
+        });
+
+        audioVolumeSlider.addEventListener('input', (e) => {
+            CONFIG.AUDIO_VOLUME = parseFloat(e.target.value);
+            if (CONFIG.AUDIO_ENABLED && gainNode && audioContext) {
+                gainNode.gain.setTargetAtTime(CONFIG.AUDIO_VOLUME, audioContext.currentTime, 0.1);
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            CONFIG = { ...DEFAULT_CONFIG };
+            updateControlsFromConfig();
+            // Optionally re-create particles if grid size/spacing changes on reset
+            // createParticles(); 
+        });
+        
+        // Fullscreen
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+                 fullscreenBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2h-3M3 16h3a2 2 0 0 0 2-2v-3"></path></svg>`;
+
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                     fullscreenBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
+                }
+            }
+        });
+         document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                 fullscreenBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
+            } else {
+                 fullscreenBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2h-3M3 16h3a2 2 0 0 0 2-2v-3"></path></svg>`;
+            }
+        });
+
+
+        // Initial setup
+        initAudio(); // Initialize audio system (muted by default)
+        updateControlsFromConfig(); // Set initial UI states
+        loadingManager.itemStart("particles"); // Expect particles to load
+        createParticles(); // Create the main particle field
+        animate(); // Start the animation loop
+
+    </script>
+</body>
+</html>
