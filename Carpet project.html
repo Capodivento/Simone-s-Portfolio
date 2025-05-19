@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Improved Interactive Wave Particles</title>
+    <title>Professional Interactive Wave Particles</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
             background-color: #000; /* Black background */
             color: white; /* For info text */
+            font-family: 'Arial', sans-serif; /* Consistent font */
         }
         canvas {
             display: block;
@@ -18,104 +19,163 @@
             position: absolute;
             bottom: 20px;
             left: 20px;
-            font-family: Arial, sans-serif;
+            font-size: 14px;
             pointer-events: none;
             opacity: 0.7;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        /* Simple loader style (optional) */
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 1.2em;
+            display: none; /* Hidden by default */
         }
     </style>
 </head>
 <body>
     <div class="info">Move your mouse to interact with the particles</div>
-    
+    <div class="loader" id="loader">Loading...</div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
     <script>
         // --- Configuration ---
         const CONFIG = {
             GRID_SIZE: 80,
             SPACING: 0.4,
-            WAVE_SPEED: 0.5,
-            MOUSE_INFLUENCE_RADIUS: 8.0,
-            MOUSE_EFFECT_STRENGTH: 2.5,
-            PARTICLE_BASE_SIZE: 175.0,   // Adjusted for visibility (was 30.0)
-            COLOR_SHIFT_SPEED: 0.001,
+            WAVE_SPEED: 0.4,
+            MOUSE_INFLUENCE_RADIUS: 7.0,
+            MOUSE_EFFECT_STRENGTH: 2.8,
+            PARTICLE_BASE_SIZE: 180.0,
+            COLOR_SHIFT_SPEED: 0.0008,
             CAMERA_Z: 35,
-            SCENE_ROTATION_SPEED: 0.1,
-            SCENE_ROTATION_AMOUNT: 0.1
+            SCENE_ROTATION_SPEED: 0.08,
+            SCENE_ROTATION_AMOUNT: 0.07,
+            MOUSE_LERP_FACTOR: 0.1, // For smoother mouse follow
+            MAX_PIXEL_RATIO: 2, // Cap pixel ratio for performance
+            PARTICLE_ALPHA: 0.85 // Base alpha for particles
         };
 
+        // --- Global Variables ---
+        let scene, camera, renderer, particlePoints, particleMaterial, clock;
+        const mouse = new THREE.Vector2(-10000, -10000); // World coordinates
+        const targetMouse = new THREE.Vector2(-10000, -10000); // Target for lerping
+        // Reusable vectors for mouse projection to avoid creating them in the event listener
+        const reusableVec = new THREE.Vector3();
+        const reusablePos = new THREE.Vector3();
+
+        // --- Initialization ---
+        function init() {
+            setupScene();
+            setupEventListeners();
+            createParticles();
+            startAnimationLoop();
+
+            // Optional: GUI for tweaking parameters
+            // setupGUI();
+        }
+
         // --- Scene Setup ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.body.appendChild(renderer.domElement);
+        function setupScene() {
+            const loaderElement = document.getElementById('loader');
+            if(loaderElement) loaderElement.style.display = 'block';
 
-        // --- Mouse Interaction ---
-        const mouse = new THREE.Vector2(-10000, -10000); // Initialize far off-screen
-        // const normalizedMouse = new THREE.Vector2(-10000,-10000); // Available if needed
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
 
-        window.addEventListener('mousemove', (event) => {
-            const vec = new THREE.Vector3();
-            const pos = new THREE.Vector3();
-            vec.set(
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // Cap pixel ratio for performance on high DPI screens
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONFIG.MAX_PIXEL_RATIO));
+            document.body.appendChild(renderer.domElement);
+
+            camera.position.set(0, 18, CONFIG.CAMERA_Z);
+            camera.lookAt(0, 0, 0);
+
+            clock = new THREE.Clock();
+
+            if(loaderElement) loaderElement.style.display = 'none';
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseout', onMouseOut);
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onMouseMove(event) {
+            reusableVec.set(
                 (event.clientX / window.innerWidth) * 2 - 1,
                 -(event.clientY / window.innerHeight) * 2 + 1,
-                0.5 
+                0.5
             );
-            vec.unproject(camera);
-            vec.sub(camera.position).normalize();
-            const distance = -camera.position.z / vec.z;
-            pos.copy(camera.position).add(vec.multiplyScalar(distance));
-            mouse.set(pos.x, pos.y);
+            reusableVec.unproject(camera);
+            reusableVec.sub(camera.position).normalize();
+            const distance = -camera.position.z / reusableVec.z;
+            reusablePos.copy(camera.position).add(reusableVec.multiplyScalar(distance));
+            targetMouse.set(reusablePos.x, reusablePos.y);
+        }
 
-            // normalizedMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            // normalizedMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        });
+        function onMouseOut() {
+            targetMouse.set(-10000, -10000);
+        }
 
-        window.addEventListener('mouseout', () => {
-            mouse.set(-10000, -10000);
-            // normalizedMouse.set(-10000, -10000);
-        });
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // Recalculate pixel ratio on resize, still capped
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONFIG.MAX_PIXEL_RATIO));
+        }
 
         // --- Particle Shaders ---
         const particleVertexShader = `
-            attribute vec3 initialPosition;
-            attribute float randomOffset;
+            attribute vec3 initialPosition; // Store the initial grid position
+            attribute float randomOffset;    // Random value for individual particle animation timing
 
-            uniform float uTime;
-            uniform vec2 uMouse;
-            uniform float uWaveSpeed;
-            uniform float uMouseInfluenceRadius;
-            uniform float uMouseEffectStrength;
-            uniform float uParticleBaseSize;
+            uniform float uTime;                // Time for animation
+            uniform vec2 uMouse;                // Current mouse position in world space
+            uniform float uWaveSpeed;           // How fast the base wave animates
+            uniform float uMouseInfluenceRadius;// Radius of mouse effect
+            uniform float uMouseEffectStrength; // How strongly mouse displaces particles vertically
+            uniform float uParticleBaseSize;    // Base size of particles
 
-            varying float vElevation;
-            varying float vMouseEffect;
-            varying vec3 vInitialPosition;
+            varying float vElevation;          // Pass elevation (y-position) to fragment shader
+            varying float vMouseEffect;        // Pass mouse effect strength (0 to 1) to fragment shader
+            varying vec3 vInitialPosition;     // Pass initial position for color calculations
 
             void main() {
                 vInitialPosition = initialPosition;
+
+                // Calculate distance from particle to mouse in the XZ plane
                 float dx = uMouse.x - initialPosition.x;
-                float dy = uMouse.y - initialPosition.z;
-                float distanceToMouse = sqrt(dx * dx + dy * dy);
-                
+                float dz = uMouse.y - initialPosition.z; // Note: mouse.y corresponds to world Z
+                float distanceToMouse = sqrt(dx * dx + dz * dz);
+
+                // Mouse effect strength, smoothed
                 vMouseEffect = smoothstep(uMouseInfluenceRadius, 0.0, distanceToMouse);
 
+                // Calculate distance from the center of the grid (XZ plane)
                 float distFromCenter = length(initialPosition.xz);
 
+                // Base wave motion: combination of two sine waves for more complex movement
                 float waveHeight = sin(uTime * uWaveSpeed + distFromCenter * 0.5 + randomOffset) * 0.5;
                 waveHeight += sin(uTime * uWaveSpeed * 0.5 - distFromCenter * 0.3 + randomOffset) * 0.3;
-                
+
                 vec3 newPosition = initialPosition;
+                // Apply wave height and mouse interaction effect to Y position
                 newPosition.y = waveHeight + vMouseEffect * uMouseEffectStrength;
                 vElevation = newPosition.y;
 
                 vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
-                
+
+                // Particle size based on distance from camera (perspective) and mouse effect
                 gl_PointSize = uParticleBaseSize * (1.0 / -mvPosition.z);
-                gl_PointSize *= (1.0 + vMouseEffect * 0.5);
+                gl_PointSize *= (1.0 + vMouseEffect * 0.5); // Particles get slightly larger near mouse
 
                 gl_Position = projectionMatrix * mvPosition;
             }
@@ -124,58 +184,63 @@
         const particleFragmentShader = `
             uniform float uTime;
             uniform float uColorShiftSpeed;
-            
+            uniform float uParticleAlpha;
+
             varying float vElevation;
             varying float vMouseEffect;
             varying vec3 vInitialPosition;
 
+            // Function to convert HSL color to RGB
             vec3 hsl2rgb(vec3 c) {
                 vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
                 return c.z + c.y * (rgb - 0.5) * (1.0 - abs(2.0 * c.z - 1.0));
             }
 
             void main() {
-                float dist = length(gl_PointCoord - vec2(0.5));
-                if (dist > 0.5) discard;
+                // Make particles circular
+                float distToCenterCoord = length(gl_PointCoord - vec2(0.5));
+                if (distToCenterCoord > 0.5) discard; // Discard pixels outside the circle
 
-                float distFromCenter = length(vInitialPosition.xz);
-                float hue = mod(uTime * uColorShiftSpeed + distFromCenter * 0.02, 1.0);
-                float saturation = 0.6 + vMouseEffect * 0.4;
-                float lightness = 0.45 + vElevation * 0.1 + vMouseEffect * 0.15;
+                float distFromGridCenter = length(vInitialPosition.xz);
 
-                vec3 color = hsl2rgb(vec3(hue, clamp(saturation, 0.4, 1.0), clamp(lightness, 0.2, 0.8)));
-                
-                float alpha = smoothstep(0.5, 0.45 - vMouseEffect * 0.1, dist);
+                // Color calculation based on time and distance from center
+                float hue = mod(uTime * uColorShiftSpeed + distFromGridCenter * 0.015, 1.0);
+                float saturation = 0.65 + vMouseEffect * 0.35; // More saturated near mouse
+                float lightness = 0.4 + vElevation * 0.1 + vMouseEffect * 0.1; // Brighter with elevation and mouse
+
+                vec3 color = hsl2rgb(vec3(hue, clamp(saturation, 0.5, 1.0), clamp(lightness, 0.25, 0.75)));
+
+                // Alpha based on distance to particle center (soft edges) and mouse effect
+                float alpha = smoothstep(0.5, 0.45 - vMouseEffect * 0.1, distToCenterCoord) * uParticleAlpha;
 
                 gl_FragColor = vec4(color, alpha);
             }
         `;
 
         // --- Create Particles ---
-        let particlePoints;
-        let particleMaterial;
-
         function createParticles() {
             if (particlePoints) {
                 scene.remove(particlePoints);
-                particlePoints.geometry.dispose();
+                if (particlePoints.geometry) particlePoints.geometry.dispose();
+                if (particleMaterial) particleMaterial.dispose();
             }
 
             const numParticles = CONFIG.GRID_SIZE * CONFIG.GRID_SIZE;
             const geometry = new THREE.InstancedBufferGeometry();
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute([0,0,0], 3)); 
+            // A single point as the base for instancing
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute([0,0,0], 3));
 
             const initialPositions = new Float32Array(numParticles * 3);
             const randomOffsets = new Float32Array(numParticles);
 
             for (let i = 0, i3 = 0; i < numParticles; i++, i3 += 3) {
-                const x = ( (i % CONFIG.GRID_SIZE) - CONFIG.GRID_SIZE / 2) * CONFIG.SPACING;
-                const z = ( Math.floor(i / CONFIG.GRID_SIZE) - CONFIG.GRID_SIZE / 2) * CONFIG.SPACING;
-                
+                const x = ((i % CONFIG.GRID_SIZE) - CONFIG.GRID_SIZE / 2) * CONFIG.SPACING;
+                const z = (Math.floor(i / CONFIG.GRID_SIZE) - CONFIG.GRID_SIZE / 2) * CONFIG.SPACING;
+
                 initialPositions[i3 + 0] = x;
-                initialPositions[i3 + 1] = 0;
+                initialPositions[i3 + 1] = 0; // Initial Y is 0, animated in shader
                 initialPositions[i3 + 2] = z;
-                randomOffsets[i] = Math.random() * Math.PI * 2;
+                randomOffsets[i] = Math.random() * Math.PI * 2; // For wave variation
             }
 
             geometry.setAttribute('initialPosition', new THREE.InstancedBufferAttribute(initialPositions, 3));
@@ -184,55 +249,75 @@
             particleMaterial = new THREE.ShaderMaterial({
                 uniforms: {
                     uTime: { value: 0.0 },
-                    uMouse: { value: mouse },
+                    uMouse: { value: mouse }, // Will be updated with lerped value
                     uWaveSpeed: { value: CONFIG.WAVE_SPEED },
                     uMouseInfluenceRadius: { value: CONFIG.MOUSE_INFLUENCE_RADIUS },
                     uMouseEffectStrength: { value: CONFIG.MOUSE_EFFECT_STRENGTH },
                     uParticleBaseSize: { value: CONFIG.PARTICLE_BASE_SIZE },
-                    uColorShiftSpeed: { value: CONFIG.COLOR_SHIFT_SPEED }
+                    uColorShiftSpeed: { value: CONFIG.COLOR_SHIFT_SPEED },
+                    uParticleAlpha: { value: CONFIG.PARTICLE_ALPHA }
                 },
                 vertexShader: particleVertexShader,
                 fragmentShader: particleFragmentShader,
                 transparent: true,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
+                blending: THREE.AdditiveBlending, // Good for glowing particles
+                depthWrite: false // Important for blending transparent objects
             });
 
             particlePoints = new THREE.Points(geometry, particleMaterial);
             scene.add(particlePoints);
         }
-        
-        createParticles();
 
-        // --- Camera ---
-        camera.position.set(0, 18, CONFIG.CAMERA_Z);
-        camera.lookAt(0, 0, 0);
+        // --- Animation Loop ---
+        function startAnimationLoop() {
+            animate();
+        }
 
-        // --- Animation ---
-        const clock = new THREE.Clock();
         function animate() {
             requestAnimationFrame(animate);
             const elapsedTime = clock.getElapsedTime();
-            
+
+            // Lerp mouse position for smoother interaction
+            mouse.x += (targetMouse.x - mouse.x) * CONFIG.MOUSE_LERP_FACTOR;
+            mouse.y += (targetMouse.y - mouse.y) * CONFIG.MOUSE_LERP_FACTOR;
+
             if (particleMaterial) {
                 particleMaterial.uniforms.uTime.value = elapsedTime;
-                particleMaterial.uniforms.uMouse.value.copy(mouse);
+                // The uMouse uniform directly uses the 'mouse' object which is being lerped
             }
-            
+
+            // Subtle scene rotation
             scene.rotation.y = Math.sin(elapsedTime * CONFIG.SCENE_ROTATION_SPEED) * CONFIG.SCENE_ROTATION_AMOUNT;
-            
+             // Optional: Add a slight tilt on another axis for more complex movement
+            // scene.rotation.x = Math.cos(elapsedTime * CONFIG.SCENE_ROTATION_SPEED * 0.7) * CONFIG.SCENE_ROTATION_AMOUNT * 0.5;
+
+
             renderer.render(scene, camera);
         }
 
-        // --- Handle window resize ---
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        // --- Optional: GUI for parameters ---
+        /*
+        function setupGUI() {
+            if (typeof lil === 'undefined') return; // Check if lil-gui is loaded
+            const gui = new lil.GUI();
+            gui.add(CONFIG, 'GRID_SIZE', 30, 150, 1).onFinishChange(createParticles);
+            gui.add(CONFIG, 'SPACING', 0.1, 1.0, 0.01).onFinishChange(createParticles);
+            gui.add(CONFIG, 'WAVE_SPEED', 0.01, 1.0, 0.01);
+            gui.add(CONFIG, 'MOUSE_INFLUENCE_RADIUS', 1, 20, 0.1);
+            gui.add(CONFIG, 'MOUSE_EFFECT_STRENGTH', 0.1, 5, 0.1);
+            gui.add(CONFIG, 'PARTICLE_BASE_SIZE', 50, 500, 1);
+            gui.add(CONFIG, 'COLOR_SHIFT_SPEED', 0.0001, 0.01, 0.0001);
+            gui.add(CONFIG, 'CAMERA_Z', 10, 100, 1).onChange(val => camera.position.z = val);
+            gui.add(CONFIG, 'SCENE_ROTATION_SPEED', 0, 0.5, 0.01);
+            gui.add(CONFIG, 'SCENE_ROTATION_AMOUNT', 0, 0.5, 0.01);
+            gui.add(CONFIG, 'MOUSE_LERP_FACTOR', 0.01, 0.3, 0.01);
+            gui.add(CONFIG, 'PARTICLE_ALPHA', 0.1, 1.0, 0.01);
+        }
+        */
 
-        // Start animation
-        animate();
+        // --- Start ---
+        init();
+
     </script>
 </body>
 </html>
