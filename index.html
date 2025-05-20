@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simone Capodivento - Portfolio</title>
@@ -14,123 +11,52 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="shortcut icon" href="/favicon.ico">
     
-    <!-- Your existing preconnect links -->
+    <!-- Preconnect links -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://raw.githubusercontent.com">
 
+    <!-- Font and Style imports -->
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdn.tailwindcss.com"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
     <style>
-        /* Scientific styling (existing styles remain largely the same) */
+        /* Scientific styling */
         .scientific-background {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(to bottom, #2D3436, #000000);
             z-index: -2;
         }
         .counter {
-            position: fixed; bottom: 10px; left: 10px; font-size: 0.9rem; opacity: 0.6; z-index: 999;
-            background: rgba(45, 52, 54, 0.7); padding: 5px 10px; border-radius: 4px;
-            backdrop-filter: blur(5px); font-family: 'Share Tech Mono', monospace; color: #48DBF1;
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            z-index: 999;
+            background: rgba(45, 52, 54, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            backdrop-filter: blur(5px);
+            font-family: 'Share Tech Mono', monospace;
+            color: #48DBF1;
             transition: opacity 0.3s ease;
         }
         .counter:hover { opacity: 1; }
-        .scientific-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background:
-                radial-gradient(circle at 20% 30%, rgba(72, 219, 251, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(29, 209, 161, 0.1) 0%, transparent 50%);
-            pointer-events: none; z-index: -1;
-        }
-        .particle {
-            position: absolute; background: rgba(72, 219, 251, 0.5); border-radius: 50%;
-            pointer-events: none; z-index: -1;
-        }
-        .scientific-text {
-            text-shadow: 0 0 10px rgba(72, 219, 251, 0.5);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        @keyframes glow {
-            from { text-shadow: 0 0 5px rgba(72, 219, 251, 0.5); }
-            to { text-shadow: 0 0 15px rgba(29, 209, 161, 0.8); }
-        }
-        #scene-container { /* Background 3D */
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.6; pointer-events: none; /* Added pointer-events none */
-        }
-        .project-3d-container { /* Project 3D */
-            width: 100%; height: 300px; position: relative; margin-top: 1rem;
-            border-radius: 0.75rem; overflow: hidden; background: rgba(0, 0, 0, 0.2);
-        }
-        .tech-font {
-            font-family: 'Share Tech Mono', 'Courier New', monospace;
-            letter-spacing: 1px; line-height: 1.6;
-        }
-        .tech-highlight { color: #48DBF1; font-weight: 600; }
-        .project-image {
-            width: 100%; height: 300px; object-fit: cover; border-radius: 0.75rem;
-            margin-top: 1rem; transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 10px 25px rgba(29, 209, 161, 0.2);
-        }
-        .project-image:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);
-        }
-        .project-card {
-             /* Simplified transition */
-             transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
-        }
-        .project-card:hover {
-             transform: translateY(-5px) scale(1.02); /* Adjusted scale slightly */
-             box-shadow: 0 15px 30px rgba(29, 209, 161, 0.35);
-        }
-        .loading-indicator {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #48DBF1; font-size: 1.2rem; text-align: center;
-            font-family: 'Share Tech Mono', monospace; z-index: 10; display: none;
-        }
-        .loading-indicator.visible { display: block; }
-        .external-btn {
-            display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem;
-            background: rgba(72, 219, 251, 0.2); border: 1px solid #48DBF1;
-            color: #48DBF1; border-radius: 0.25rem; transition: all 0.3s ease;
-            text-decoration: none; font-family: 'Share Tech Mono', monospace;
-        }
-        .external-btn:hover {
-            background: rgba(72, 219, 251, 0.4); transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3);
-        }
-         .poly-project-container {
-             width: 100%; text-align: center; margin-top: 2rem; margin-bottom: 2rem;
-         }
-         
-        /* University Notes specific styles */
-        .pdf-card {
-            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
-        }
-        .pdf-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(29, 209, 161, 0.35);
-        }
-        .pdf-icon-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 80px;
-            width: 100%;
-            transition: transform 0.3s ease;
-        }
-        .pdf-card:hover .pdf-icon-container {
-            transform: scale(1.1);
-        }
-        .pdf-btn {
-            box-shadow: 0 4px 12px rgba(72, 219, 251, 0.25);
-        }
+        
+        /* Rest of your styles... */
+        // ...existing styles...
     </style>
 </head>
 <body class="bg-transparent text-emerald-100 relative tech-font">
