@@ -3,552 +3,541 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio-Responsive Wave Particles</title>
+    <title>Wave Visualizer</title>
     <style>
-        body {
+        * {
             margin: 0;
-            overflow: hidden;
-            background: radial-gradient(ellipse at center, #0f0f23 0%, #000000 70%);
-            color: white;
-            font-family: 'Arial', sans-serif;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #0a0a15 0%, #000000 100%);
+            font-family: 'Arial', sans-serif;
+            cursor: none;
+        }
+        
         canvas {
             display: block;
         }
-        .controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
+        
+        .play-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
             display: flex;
             flex-direction: column;
-            gap: 15px;
-        }
-        .audio-controls {
-            background: rgba(15, 15, 35, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.5s ease;
         }
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .control-group:last-child {
-            margin-bottom: 0;
-        }
-        label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        input[type="file"] {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            color: white;
-            padding: 8px;
-            font-size: 12px;
-        }
-        input[type="file"]::file-selector-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        
+        .play-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             border: none;
-            border-radius: 4px;
             color: white;
-            padding: 6px 12px;
-            margin-right: 10px;
+            font-size: 48px;
             cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            padding: 10px 16px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            box-shadow: 0 0 50px rgba(102, 126, 234, 0.5);
+            position: relative;
+            overflow: hidden;
         }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .visualizer-info {
-            background: rgba(15, 15, 35, 0.6);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.8);
-            max-width: 200px;
-        }
-        .info {
+        
+        .play-button::before {
+            content: '';
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            font-size: 13px;
-            opacity: 0.7;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px 15px;
-            border-radius: 8px;
-            backdrop-filter: blur(5px);
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            border-radius: 50%;
+            z-index: -1;
+            animation: rotate 3s linear infinite;
         }
-        .frequency-bars {
-            position: absolute;
-            bottom: 60px;
-            left: 20px;
+        
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 80px rgba(102, 126, 234, 0.8);
+        }
+        
+        .play-button .play-icon {
+            margin-left: 8px;
+        }
+        
+        .status-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .audio-info {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 300;
+            z-index: 100;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .frequency-display {
+            position: fixed;
+            top: 30px;
+            right: 30px;
             display: flex;
-            gap: 2px;
-            height: 40px;
-            opacity: 0.8;
+            gap: 3px;
+            z-index: 100;
         }
+        
         .freq-bar {
-            width: 3px;
+            width: 4px;
+            height: 2px;
             background: linear-gradient(to top, #ff006e, #fb5607, #ffbe0b);
             border-radius: 2px;
             transition: height 0.1s ease;
+            opacity: 0.8;
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <div class="audio-controls">
-            <div class="control-group">
-                <label>Load Audio File</label>
-                <input type="file" id="audioFile" accept="audio/*">
-            </div>
-            <div class="control-group">
-                <button id="playPauseBtn" disabled>Play</button>
-            </div>
-        </div>
-        <div class="visualizer-info">
-            <strong>Audio Visualizer</strong><br>
-            Load an audio file to see the particles dance to your music. The visualization responds to bass, mids, and treble frequencies.
-        </div>
+    <div class="play-overlay" id="playOverlay">
+        <button class="play-button" id="startButton">
+            <div class="play-icon">▶</div>
+        </button>
+        <div class="status-text" id="statusText">Click to start the experience</div>
     </div>
-
-    <div class="frequency-bars" id="frequencyBars"></div>
-    <div class="info">Audio-responsive particles • Move mouse for interaction</div>
-
+    
+    <div class="frequency-display" id="frequencyDisplay"></div>
+    <div class="audio-info">Move mouse to interact • Audio Visualizer</div>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- Configuration ---
+        // Configuration
         const CONFIG = {
             GRID_SIZE: 100,
             SPACING: 0.35,
-            WAVE_SPEED: 0.3,
-            MOUSE_INFLUENCE_RADIUS: 6.0,
-            MOUSE_EFFECT_STRENGTH: 3.5,
-            PARTICLE_BASE_SIZE: 150.0,
-            COLOR_SHIFT_SPEED: 0.001,
-            CAMERA_Z: 40,
-            SCENE_ROTATION_SPEED: 0.05,
-            SCENE_ROTATION_AMOUNT: 0.08,
-            MOUSE_LERP_FACTOR: 0.12,
-            MAX_PIXEL_RATIO: 2,
-            PARTICLE_ALPHA: 0.9,
-            // Audio-specific config
-            AUDIO_SENSITIVITY: 2.5,
-            BASS_BOOST: 3.0,
-            MID_BOOST: 1.8,
-            TREBLE_BOOST: 1.2,
-            FREQUENCY_SMOOTHING: 0.8
+            WAVE_SPEED: 0.4,
+            MOUSE_INFLUENCE: 4.0,
+            MOUSE_STRENGTH: 2.8,
+            PARTICLE_SIZE: 140.0,
+            COLOR_SPEED: 0.002,
+            CAMERA_Z: 35,
+            AUDIO_SENSITIVITY: 3.2,
+            BASS_BOOST: 4.0,
+            MID_BOOST: 2.2,
+            TREBLE_BOOST: 1.5
         };
 
-        // --- Global Variables ---
-        let scene, camera, renderer, particlePoints, particleMaterial, clock;
-        const mouse = new THREE.Vector2(-10000, -10000);
-        const targetMouse = new THREE.Vector2(-10000, -10000);
-        const reusableVec = new THREE.Vector3();
-        const reusablePos = new THREE.Vector3();
-
-        // Audio variables
-        let audioContext, analyser, audioBuffer, source, gainNode;
-        let frequencyData, timeData;
-        let audioElement, isPlaying = false;
+        // Global variables
+        let scene, camera, renderer, particles, material, clock;
+        let audioContext, analyser, audio, source;
+        let frequencyData, isPlaying = false, audioLoaded = false;
         let bassLevel = 0, midLevel = 0, trebleLevel = 0;
         let smoothedBass = 0, smoothedMid = 0, smoothedTreble = 0;
-
-        // --- Audio Setup ---
-        function setupAudio() {
+        
+        const mouse = new THREE.Vector2(0, 0);
+        const targetMouse = new THREE.Vector2(0, 0);
+        
+        // Status text element
+        const statusText = document.getElementById('statusText');
+        
+        // Audio setup
+        function initAudio() {
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
-                analyser.fftSize = 256;
-                analyser.smoothingTimeConstant = CONFIG.FREQUENCY_SMOOTHING;
+                analyser.fftSize = 512;
+                analyser.smoothingTimeConstant = 0.75;
                 
                 frequencyData = new Uint8Array(analyser.frequencyBinCount);
-                timeData = new Uint8Array(analyser.frequencyBinCount);
-
-                gainNode = audioContext.createGain();
-                gainNode.connect(audioContext.destination);
-                analyser.connect(gainNode);
-
-                setupFrequencyBars();
+                
+                // Create audio element
+                audio = new Audio();
+                audio.crossOrigin = 'anonymous';
+                audio.loop = true;
+                audio.volume = 0.7;
+                
+                // Try multiple audio sources
+                const audioSources = [
+                    'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+                    'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3',
+                    'https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg'
+                ];
+                
+                let currentSourceIndex = 0;
+                
+                function tryLoadAudio() {
+                    if (currentSourceIndex >= audioSources.length) {
+                        statusText.textContent = 'Audio unavailable - Visual mode only';
+                        audioLoaded = false;
+                        return;
+                    }
+                    
+                    audio.src = audioSources[currentSourceIndex];
+                    statusText.textContent = 'Loading audio...';
+                }
+                
+                audio.addEventListener('canplaythrough', () => {
+                    audioLoaded = true;
+                    statusText.textContent = 'Click to start the experience';
+                    console.log('Audio loaded successfully');
+                });
+                
+                audio.addEventListener('error', (e) => {
+                    console.warn('Audio loading failed, trying next source...');
+                    currentSourceIndex++;
+                    setTimeout(tryLoadAudio, 100);
+                });
+                
+                tryLoadAudio();
+                
             } catch (error) {
-                console.error('Audio setup failed:', error);
+                console.error('Audio context creation failed:', error);
+                statusText.textContent = 'Audio unavailable - Visual mode only';
+                audioLoaded = false;
             }
         }
-
-        function setupFrequencyBars() {
-            const barsContainer = document.getElementById('frequencyBars');
-            for (let i = 0; i < 32; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'freq-bar';
-                bar.style.height = '2px';
-                barsContainer.appendChild(bar);
+        
+        function connectAudio() {
+            if (source || !audioLoaded) return;
+            try {
+                source = audioContext.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+            } catch (error) {
+                console.error('Audio connection failed:', error);
             }
         }
-
-        function connectAudioSource(audioEl) {
-            if (source) source.disconnect();
-            source = audioContext.createMediaElementSource(audioEl);
-            source.connect(analyser);
-        }
-
+        
         function analyzeAudio() {
-            if (!analyser || !isPlaying) return;
-
-            analyser.getByteFrequencyData(frequencyData);
-            analyser.getByteTimeDomainData(timeData);
-
-            // Calculate frequency ranges
-            const bassEnd = Math.floor(frequencyData.length * 0.1);
-            const midEnd = Math.floor(frequencyData.length * 0.4);
+            if (!analyser || !isPlaying || !audioLoaded) {
+                // Generate some visual movement even without audio
+                const time = clock.getElapsedTime();
+                bassLevel = Math.sin(time * 0.5) * 0.3 + 0.2;
+                midLevel = Math.sin(time * 0.8) * 0.2 + 0.1;
+                trebleLevel = Math.sin(time * 1.2) * 0.1 + 0.05;
+                return;
+            }
             
-            bassLevel = getAverageVolume(frequencyData, 0, bassEnd) * CONFIG.BASS_BOOST;
-            midLevel = getAverageVolume(frequencyData, bassEnd, midEnd) * CONFIG.MID_BOOST;
-            trebleLevel = getAverageVolume(frequencyData, midEnd, frequencyData.length) * CONFIG.TREBLE_BOOST;
-
-            // Smooth the levels
-            smoothedBass += (bassLevel - smoothedBass) * 0.3;
-            smoothedMid += (midLevel - smoothedMid) * 0.25;
-            smoothedTreble += (trebleLevel - smoothedTreble) * 0.2;
-
+            analyser.getByteFrequencyData(frequencyData);
+            
+            // Calculate frequency bands
+            const bassEnd = Math.floor(frequencyData.length * 0.15);
+            const midEnd = Math.floor(frequencyData.length * 0.5);
+            
+            const rawBass = getAverage(frequencyData, 0, bassEnd) * CONFIG.BASS_BOOST;
+            const rawMid = getAverage(frequencyData, bassEnd, midEnd) * CONFIG.MID_BOOST;
+            const rawTreble = getAverage(frequencyData, midEnd, frequencyData.length) * CONFIG.TREBLE_BOOST;
+            
+            // Smooth the values
+            smoothedBass += (rawBass - smoothedBass) * 0.3;
+            smoothedMid += (rawMid - smoothedMid) * 0.25;
+            smoothedTreble += (rawTreble - smoothedTreble) * 0.2;
+            
+            bassLevel = smoothedBass;
+            midLevel = smoothedMid;
+            trebleLevel = smoothedTreble;
+            
             updateFrequencyBars();
         }
-
-        function getAverageVolume(data, start, end) {
+        
+        function getAverage(data, start, end) {
             let sum = 0;
             for (let i = start; i < end; i++) {
-                sum += data[i];
+                sum += data[i] || 0;
             }
             return (sum / (end - start)) / 255;
         }
-
+        
         function updateFrequencyBars() {
             const bars = document.querySelectorAll('.freq-bar');
-            const step = Math.floor(frequencyData.length / bars.length);
+            if (bars.length === 0) return;
+            
+            const step = Math.max(1, Math.floor(frequencyData.length / bars.length));
             
             bars.forEach((bar, i) => {
-                const value = frequencyData[i * step] / 255;
-                bar.style.height = `${2 + value * 38}px`;
-                bar.style.opacity = 0.5 + value * 0.5;
+                const index = Math.min(i * step, frequencyData.length - 1);
+                const value = (frequencyData[index] || 0) / 255;
+                bar.style.height = `${2 + value * 60}px`;
+                bar.style.opacity = 0.4 + value * 0.6;
             });
         }
-
-        // --- Event Listeners ---
-        function setupEventListeners() {
+        
+        // Create frequency bars
+        function createFrequencyBars() {
+            const container = document.getElementById('frequencyDisplay');
+            for (let i = 0; i < 24; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'freq-bar';
+                container.appendChild(bar);
+            }
+        }
+        
+        // Event handlers
+        function setupEvents() {
+            document.getElementById('startButton').addEventListener('click', startExperience);
             window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mouseout', onMouseOut);
-            window.addEventListener('resize', onWindowResize);
-
-            document.getElementById('audioFile').addEventListener('change', handleFileLoad);
-            document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+            window.addEventListener('resize', onResize);
+            document.addEventListener('click', () => {
+                document.body.style.cursor = 'none';
+            });
         }
-
+        
+        async function startExperience() {
+            try {
+                if (audioContext && audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+                
+                if (audioLoaded) {
+                    connectAudio();
+                    await audio.play();
+                }
+                
+                isPlaying = true;
+                document.getElementById('playOverlay').classList.add('hidden');
+                
+                // Start the visual experience even without audio
+                console.log('Experience started');
+            } catch (error) {
+                console.error('Failed to start audio:', error);
+                // Continue without audio
+                isPlaying = true;
+                document.getElementById('playOverlay').classList.add('hidden');
+            }
+        }
+        
         function onMouseMove(event) {
-            reusableVec.set(
-                (event.clientX / window.innerWidth) * 2 - 1,
-                -(event.clientY / window.innerHeight) * 2 + 1,
-                0.5
-            );
-            reusableVec.unproject(camera);
-            reusableVec.sub(camera.position).normalize();
-            const distance = -camera.position.z / reusableVec.z;
-            reusablePos.copy(camera.position).add(reusableVec.multiplyScalar(distance));
-            targetMouse.set(reusablePos.x, reusablePos.y);
+            const x = (event.clientX / window.innerWidth) * 2 - 1;
+            const y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            // Convert screen coordinates to world coordinates
+            const vector = new THREE.Vector3(x, y, 0.5);
+            vector.unproject(camera);
+            vector.sub(camera.position).normalize();
+            const distance = -camera.position.z / vector.z;
+            const pos = new THREE.Vector3().copy(camera.position).add(vector.multiplyScalar(distance));
+            
+            targetMouse.set(pos.x, pos.y);
         }
-
-        function onMouseOut() {
-            targetMouse.set(-10000, -10000);
-        }
-
-        function onWindowResize() {
+        
+        function onResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONFIG.MAX_PIXEL_RATIO));
         }
-
-        function handleFileLoad(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (audioElement) {
-                audioElement.pause();
-                audioElement = null;
-            }
-
-            const url = URL.createObjectURL(file);
-            audioElement = new Audio(url);
-            audioElement.crossOrigin = 'anonymous';
-            
-            audioElement.addEventListener('canplaythrough', () => {
-                if (audioContext && audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
-                connectAudioSource(audioElement);
-                document.getElementById('playPauseBtn').disabled = false;
-            });
-
-            audioElement.addEventListener('ended', () => {
-                isPlaying = false;
-                document.getElementById('playPauseBtn').textContent = 'Play';
-            });
-        }
-
-        function togglePlayPause() {
-            if (!audioElement) return;
-
-            if (isPlaying) {
-                audioElement.pause();
-                isPlaying = false;
-                document.getElementById('playPauseBtn').textContent = 'Play';
-            } else {
-                audioElement.play();
-                isPlaying = true;
-                document.getElementById('playPauseBtn').textContent = 'Pause';
-            }
-        }
-
-        // --- Scene Setup ---
-        function setupScene() {
+        
+        // Scene setup
+        function initScene() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-
+            
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONFIG.MAX_PIXEL_RATIO));
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             document.body.appendChild(renderer.domElement);
-
-            camera.position.set(0, 20, CONFIG.CAMERA_Z);
+            
+            camera.position.set(0, 15, CONFIG.CAMERA_Z);
             camera.lookAt(0, 0, 0);
-
+            
             clock = new THREE.Clock();
         }
-
-        // --- Enhanced Particle Shaders ---
-        const particleVertexShader = `
-            attribute vec3 initialPosition;
-            attribute float randomOffset;
-
-            uniform float uTime;
-            uniform vec2 uMouse;
-            uniform float uWaveSpeed;
-            uniform float uMouseInfluenceRadius;
-            uniform float uMouseEffectStrength;
-            uniform float uParticleBaseSize;
-            uniform float uBassLevel;
-            uniform float uMidLevel;
-            uniform float uTrebleLevel;
-            uniform float uAudioSensitivity;
-
+        
+        // Shaders
+        const vertexShader = `
+            attribute vec3 initialPos;
+            attribute float randomSeed;
+            
+            uniform float time;
+            uniform vec2 mousePos;
+            uniform float bassLevel;
+            uniform float midLevel;
+            uniform float trebleLevel;
+            
             varying float vElevation;
             varying float vMouseEffect;
             varying float vAudioEffect;
-            varying vec3 vInitialPosition;
-
+            varying vec3 vWorldPos;
+            
             void main() {
-                vInitialPosition = initialPosition;
-
-                float dx = uMouse.x - initialPosition.x;
-                float dz = uMouse.y - initialPosition.z;
-                float distanceToMouse = sqrt(dx * dx + dz * dz);
-                vMouseEffect = smoothstep(uMouseInfluenceRadius, 0.0, distanceToMouse);
-
-                float distFromCenter = length(initialPosition.xz);
+                vWorldPos = initialPos;
                 
-                // Enhanced wave with audio response
-                float baseWave = sin(uTime * uWaveSpeed + distFromCenter * 0.5 + randomOffset) * 0.4;
-                baseWave += sin(uTime * uWaveSpeed * 0.7 - distFromCenter * 0.3 + randomOffset) * 0.25;
+                float mouseDistance = distance(mousePos, initialPos.xz);
+                vMouseEffect = smoothstep(4.0, 0.0, mouseDistance);
+                
+                float centerDistance = length(initialPos.xz);
+                
+                // Wave calculations
+                float wave1 = sin(time * 0.4 + centerDistance * 0.4 + randomSeed) * 0.5;
+                float wave2 = sin(time * 0.24 - centerDistance * 0.2 + randomSeed) * 0.3;
                 
                 // Audio-responsive waves
-                float bassWave = sin(uTime * 2.0 + distFromCenter * 0.2) * uBassLevel * uAudioSensitivity * 0.8;
-                float midWave = sin(uTime * 4.0 + distFromCenter * 0.4) * uMidLevel * uAudioSensitivity * 0.5;
-                float trebleWave = sin(uTime * 8.0 + distFromCenter * 0.8) * uTrebleLevel * uAudioSensitivity * 0.3;
+                float bassWave = sin(time * 1.5 + centerDistance * 0.15) * bassLevel * 3.2;
+                float midWave = sin(time * 3.0 + centerDistance * 0.3) * midLevel * 2.24;
+                float trebleWave = sin(time * 6.0 + centerDistance * 0.6) * trebleLevel * 1.28;
                 
-                // Combine all effects
-                vAudioEffect = (uBassLevel + uMidLevel + uTrebleLevel) / 3.0;
+                vAudioEffect = (bassLevel + midLevel + trebleLevel) / 3.0;
                 
-                vec3 newPosition = initialPosition;
-                newPosition.y = baseWave + bassWave + midWave + trebleWave + vMouseEffect * uMouseEffectStrength;
-                vElevation = newPosition.y;
-
-                vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
-
-                // Dynamic particle size based on audio
-                gl_PointSize = uParticleBaseSize * (1.0 / -mvPosition.z);
-                gl_PointSize *= (1.0 + vMouseEffect * 0.4 + vAudioEffect * 0.6);
-
+                vec3 pos = initialPos;
+                pos.y = wave1 + wave2 + bassWave + midWave + trebleWave + vMouseEffect * 2.8;
+                vElevation = pos.y;
+                
+                vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                gl_PointSize = 140.0 * (1.0 / -mvPosition.z);
+                gl_PointSize *= (1.0 + vMouseEffect * 0.5 + vAudioEffect * 0.8);
+                
                 gl_Position = projectionMatrix * mvPosition;
             }
         `;
-
-        const particleFragmentShader = `
-            uniform float uTime;
-            uniform float uColorShiftSpeed;
-            uniform float uParticleAlpha;
-            uniform float uBassLevel;
-            uniform float uMidLevel;
-            uniform float uTrebleLevel;
-
+        
+        const fragmentShader = `
+            uniform float time;
+            uniform float bassLevel;
+            uniform float midLevel;
+            uniform float trebleLevel;
+            
             varying float vElevation;
             varying float vMouseEffect;
             varying float vAudioEffect;
-            varying vec3 vInitialPosition;
-
-            vec3 hsl2rgb(vec3 c) {
-                vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
-                return c.z + c.y * (rgb - 0.5) * (1.0 - abs(2.0 * c.z - 1.0));
+            varying vec3 vWorldPos;
+            
+            vec3 hsv2rgb(vec3 c) {
+                vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+                vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+                return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
             }
-
+            
             void main() {
-                float distToCenterCoord = length(gl_PointCoord - vec2(0.5));
-                if (distToCenterCoord > 0.5) discard;
-
-                float distFromGridCenter = length(vInitialPosition.xz);
-
-                // Dynamic color based on audio frequencies
-                float bassHue = 0.8 + uBassLevel * 0.2; // Purple to red
-                float midHue = 0.5 + uMidLevel * 0.3;  // Cyan to yellow
-                float trebleHue = 0.1 + uTrebleLevel * 0.2; // Red to orange
+                float dist = length(gl_PointCoord - vec2(0.5));
+                if (dist > 0.5) discard;
                 
-                float hue = mod(uTime * uColorShiftSpeed + distFromGridCenter * 0.02 + 
-                             bassHue * 0.4 + midHue * 0.3 + trebleHue * 0.3, 1.0);
+                float centerDist = length(vWorldPos.xz);
                 
-                float saturation = 0.6 + vMouseEffect * 0.4 + vAudioEffect * 0.3;
-                float lightness = 0.35 + vElevation * 0.15 + vMouseEffect * 0.1 + vAudioEffect * 0.2;
-
-                vec3 color = hsl2rgb(vec3(hue, clamp(saturation, 0.4, 1.0), clamp(lightness, 0.2, 0.8)));
-
-                // Enhanced glow effect for audio response
-                float glowIntensity = 1.0 + vAudioEffect * 2.0;
-                color *= glowIntensity;
-
-                float alpha = smoothstep(0.5, 0.4 - vMouseEffect * 0.1 - vAudioEffect * 0.05, distToCenterCoord) * uParticleAlpha;
-
+                // Dynamic colors based on audio
+                float hue = mod(time * 0.002 + centerDist * 0.03 + 
+                              bassLevel * 0.3 + midLevel * 0.4 + trebleLevel * 0.2, 1.0);
+                float saturation = 0.7 + vMouseEffect * 0.3 + vAudioEffect * 0.2;
+                float brightness = 0.4 + vElevation * 0.2 + vMouseEffect * 0.15 + vAudioEffect * 0.3;
+                
+                vec3 color = hsv2rgb(vec3(hue, saturation, brightness));
+                
+                // Enhanced glow for audio response
+                color *= (1.0 + vAudioEffect * 1.5);
+                
+                float alpha = smoothstep(0.5, 0.35 - vMouseEffect * 0.1, dist) * 0.9;
+                
                 gl_FragColor = vec4(color, alpha);
             }
         `;
-
-        // --- Create Particles ---
+        
+        // Create particles
         function createParticles() {
-            if (particlePoints) {
-                scene.remove(particlePoints);
-                if (particlePoints.geometry) particlePoints.geometry.dispose();
-                if (particleMaterial) particleMaterial.dispose();
-            }
-
-            const numParticles = CONFIG.GRID_SIZE * CONFIG.GRID_SIZE;
-            const geometry = new THREE.InstancedBufferGeometry();
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute([0,0,0], 3));
-
-            const initialPositions = new Float32Array(numParticles * 3);
-            const randomOffsets = new Float32Array(numParticles);
-
-            for (let i = 0, i3 = 0; i < numParticles; i++, i3 += 3) {
+            const count = CONFIG.GRID_SIZE * CONFIG.GRID_SIZE;
+            const geometry = new THREE.BufferGeometry();
+            
+            const positions = new Float32Array(count * 3);
+            const initialPositions = new Float32Array(count * 3);
+            const randomSeeds = new Float32Array(count);
+            
+            for (let i = 0; i < count; i++) {
                 const x = ((i % CONFIG.GRID_SIZE) - CONFIG.GRID_SIZE / 2) * CONFIG.SPACING;
                 const z = (Math.floor(i / CONFIG.GRID_SIZE) - CONFIG.GRID_SIZE / 2) * CONFIG.SPACING;
-
-                initialPositions[i3 + 0] = x;
-                initialPositions[i3 + 1] = 0;
-                initialPositions[i3 + 2] = z;
-                randomOffsets[i] = Math.random() * Math.PI * 2;
+                
+                positions[i * 3] = x;
+                positions[i * 3 + 1] = 0;
+                positions[i * 3 + 2] = z;
+                
+                initialPositions[i * 3] = x;
+                initialPositions[i * 3 + 1] = 0;
+                initialPositions[i * 3 + 2] = z;
+                
+                randomSeeds[i] = Math.random() * Math.PI * 2;
             }
-
-            geometry.setAttribute('initialPosition', new THREE.InstancedBufferAttribute(initialPositions, 3));
-            geometry.setAttribute('randomOffset', new THREE.InstancedBufferAttribute(randomOffsets, 1));
-
-            particleMaterial = new THREE.ShaderMaterial({
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('initialPos', new THREE.BufferAttribute(initialPositions, 3));
+            geometry.setAttribute('randomSeed', new THREE.BufferAttribute(randomSeeds, 1));
+            
+            material = new THREE.ShaderMaterial({
                 uniforms: {
-                    uTime: { value: 0.0 },
-                    uMouse: { value: mouse },
-                    uWaveSpeed: { value: CONFIG.WAVE_SPEED },
-                    uMouseInfluenceRadius: { value: CONFIG.MOUSE_INFLUENCE_RADIUS },
-                    uMouseEffectStrength: { value: CONFIG.MOUSE_EFFECT_STRENGTH },
-                    uParticleBaseSize: { value: CONFIG.PARTICLE_BASE_SIZE },
-                    uColorShiftSpeed: { value: CONFIG.COLOR_SHIFT_SPEED },
-                    uParticleAlpha: { value: CONFIG.PARTICLE_ALPHA },
-                    uBassLevel: { value: 0.0 },
-                    uMidLevel: { value: 0.0 },
-                    uTrebleLevel: { value: 0.0 },
-                    uAudioSensitivity: { value: CONFIG.AUDIO_SENSITIVITY }
+                    time: { value: 0.0 },
+                    mousePos: { value: mouse },
+                    bassLevel: { value: 0.0 },
+                    midLevel: { value: 0.0 },
+                    trebleLevel: { value: 0.0 }
                 },
-                vertexShader: particleVertexShader,
-                fragmentShader: particleFragmentShader,
+                vertexShader,
+                fragmentShader,
                 transparent: true,
                 blending: THREE.AdditiveBlending,
                 depthWrite: false
             });
-
-            particlePoints = new THREE.Points(geometry, particleMaterial);
-            scene.add(particlePoints);
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
         }
-
-        // --- Animation Loop ---
+        
+        // Animation loop
         function animate() {
             requestAnimationFrame(animate);
-            const elapsedTime = clock.getElapsedTime();
-
+            
+            const elapsed = clock.getElapsedTime();
+            
             analyzeAudio();
-
-            mouse.x += (targetMouse.x - mouse.x) * CONFIG.MOUSE_LERP_FACTOR;
-            mouse.y += (targetMouse.y - mouse.y) * CONFIG.MOUSE_LERP_FACTOR;
-
-            if (particleMaterial) {
-                particleMaterial.uniforms.uTime.value = elapsedTime;
-                particleMaterial.uniforms.uBassLevel.value = smoothedBass;
-                particleMaterial.uniforms.uMidLevel.value = smoothedMid;
-                particleMaterial.uniforms.uTrebleLevel.value = smoothedTreble;
+            
+            // Smooth mouse movement
+            mouse.lerp(targetMouse, 0.1);
+            
+            // Update uniforms
+            if (material) {
+                material.uniforms.time.value = elapsed;
+                material.uniforms.bassLevel.value = bassLevel;
+                material.uniforms.midLevel.value = midLevel;
+                material.uniforms.trebleLevel.value = trebleLevel;
             }
-
-            // Dynamic scene rotation based on audio
-            const audioRotation = (smoothedBass + smoothedMid) * 0.1;
-            scene.rotation.y = Math.sin(elapsedTime * CONFIG.SCENE_ROTATION_SPEED) * 
-                              (CONFIG.SCENE_ROTATION_AMOUNT + audioRotation);
+            
+            // Dynamic scene rotation
+            const audioRotation = (bassLevel + midLevel) * 0.05;
+            scene.rotation.y = Math.sin(elapsed * 0.03) * (0.06 + audioRotation);
             
             renderer.render(scene, camera);
         }
-
-        // --- Initialization ---
+        
+        // Initialize everything
         function init() {
-            setupScene();
-            setupAudio();
-            setupEventListeners();
+            initScene();
+            initAudio();
+            createFrequencyBars();
             createParticles();
+            setupEvents();
             animate();
         }
-
-        init();
+        
+        // Start when page loads
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
