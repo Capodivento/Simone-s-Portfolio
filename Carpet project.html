@@ -3,122 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wave Visualizer</title>
+    <title>Enhanced Wave Visualizer</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             overflow: hidden;
-            background: radial-gradient(ellipse at center, #0a0a15 0%, #000000 100%);
-            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a0033 25%, #000511 50%, #0a0a15 100%);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             cursor: none;
+            position: relative;
         }
-        
+
         canvas {
             display: block;
         }
-        
+
         .play-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
+            background: radial-gradient(ellipse at center, rgba(10, 10, 21, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(10px);
-            transition: opacity 0.5s ease;
+            backdrop-filter: blur(20px) saturate(180%);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .play-button {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             border: none;
             color: white;
-            font-size: 48px;
+            font-size: 56px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 50px rgba(102, 126, 234, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 0 60px rgba(102, 126, 234, 0.6),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
         }
-        
+
         .play-button::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: conic-gradient(from 0deg, #667eea, #764ba2, #f093fb, #f5576c, #667eea);
             border-radius: 50%;
             z-index: -1;
-            animation: rotate 3s linear infinite;
+            animation: rotate 4s linear infinite;
+            filter: blur(2px);
         }
-        
+
+        .play-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 30%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
         .play-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 80px rgba(102, 126, 234, 0.8);
+            transform: scale(1.15) translateY(-5px);
+            box-shadow:
+                0 0 100px rgba(102, 126, 234, 0.9),
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
-        
+
+        .play-button:hover::after {
+            opacity: 1;
+        }
+
         .play-button .play-icon {
-            margin-left: 8px;
+            margin-left: 10px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
-        
+
         .status-text {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            font-weight: 300;
+            margin-top: 30px;
             text-align: center;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
-        
+
         @keyframes rotate {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
         .audio-info {
             position: fixed;
-            bottom: 30px;
-            left: 30px;
-            color: rgba(255, 255, 255, 0.6);
+            bottom: 40px;
+            left: 40px;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
             font-weight: 300;
             z-index: 100;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .frequency-display {
             position: fixed;
-            top: 30px;
-            right: 30px;
+            top: 40px;
+            right: 40px;
             display: flex;
             gap: 3px;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .freq-bar {
             width: 4px;
-            height: 2px;
-            background: linear-gradient(to top, #ff006e, #fb5607, #ffbe0b);
+            height: 4px;
+            background: linear-gradient(to top, #ff006e, #fb5607, #ffbe0b, #8338ec);
             border-radius: 2px;
-            transition: height 0.1s ease;
-            opacity: 0.8;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.6;
+            box-shadow: 0 0 8px rgba(255, 0, 110, 0.3);
         }
-        
+
+        .controls {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .control-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .performance-info {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         .hidden {
             opacity: 0;
             pointer-events: none;
+            transform: scale(0.9);
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.8) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 50;
+            transition: all 0.1s ease-out;
+            mix-blend-mode: screen;
+            opacity: 0; /* Start hidden */
+        }
+
+        @media (max-width: 768px) {
+            .audio-info, .frequency-display, .controls, .performance-info {
+                display: none;
+            }
+
+            .play-button {
+                width: 120px;
+                height: 120px;
+                font-size: 48px;
+            }
         }
     </style>
 </head>
@@ -127,102 +239,116 @@
         <button class="play-button" id="startButton">
             <div class="play-icon">▶</div>
         </button>
-        <div class="status-text" id="statusText">Click to start the experience</div>
+        <div class="status-text" id="statusText">Click to start the enhanced experience</div>
     </div>
-    
+
+    <div class="cursor-trail" id="cursorTrail"></div>
     <div class="frequency-display" id="frequencyDisplay"></div>
-    <div class="audio-info">Move mouse to interact • Audio Visualizer</div>
-    
+    <div class="audio-info">Move mouse to interact • Enhanced Audio Visualizer</div>
+
+    <div class="controls">
+        <button class="control-button" id="pauseBtn" title="Pause/Resume">⏸</button>
+        <button class="control-button" id="fullscreenBtn" title="Fullscreen">⛶</button>
+    </div>
+
+    <div class="performance-info" id="performanceInfo">
+        FPS: <span id="fpsCounter">60</span><br>
+        Particles: <span id="particleCount">10000</span>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Configuration
+        // Enhanced Configuration
         const CONFIG = {
-            GRID_SIZE: 100,
-            SPACING: 0.35,
-            WAVE_SPEED: 0.4,
-            MOUSE_INFLUENCE: 4.0,
-            MOUSE_STRENGTH: 2.8,
-            PARTICLE_SIZE: 140.0,
-            COLOR_SPEED: 0.002,
-            CAMERA_Z: 35,
-            AUDIO_SENSITIVITY: 3.2,
-            BASS_BOOST: 4.0,
-            MID_BOOST: 2.2,
-            TREBLE_BOOST: 1.5
+            GRID_SIZE: 120,
+            SPACING: 0.3,
+            WAVE_SPEED: 0.5,
+            MOUSE_INFLUENCE: 5.0,
+            MOUSE_STRENGTH: 3.5,
+            PARTICLE_SIZE: 160.0,
+            COLOR_SPEED: 0.003,
+            CAMERA_Z: 32,
+            AUDIO_SENSITIVITY: 4.0,
+            BASS_BOOST: 5.0,
+            MID_BOOST: 3.0,
+            TREBLE_BOOST: 2.0,
+            PERFORMANCE_MODE: false
         };
 
         // Global variables
-        let scene, camera, renderer, particles, material, clock;
+        let scene, camera, renderer, particles, material, clock, composer;
         let audioContext, analyser, audio, source;
-        let frequencyData, isPlaying = false, audioLoaded = false;
+        let frequencyData, isPlaying = false, audioLoaded = false, isPaused = false;
         let bassLevel = 0, midLevel = 0, trebleLevel = 0;
         let smoothedBass = 0, smoothedMid = 0, smoothedTreble = 0;
-        
+        let frameCount = 0, lastTime = performance.now(), fps = 60;
+
         const mouse = new THREE.Vector2(0, 0);
         const targetMouse = new THREE.Vector2(0, 0);
-        
-        // Status text element
+        const mouseHistory = [];
+
+        // Status elements
         const statusText = document.getElementById('statusText');
-        
-        // Audio setup
+        const fpsCounter = document.getElementById('fpsCounter');
+        const particleCount = document.getElementById('particleCount');
+        const cursorTrail = document.getElementById('cursorTrail');
+
+        // Enhanced Audio setup
         function initAudio() {
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
-                analyser.fftSize = 512;
-                analyser.smoothingTimeConstant = 0.75;
-                
+                analyser.fftSize = 1024;
+                analyser.smoothingTimeConstant = 0.8;
+
                 frequencyData = new Uint8Array(analyser.frequencyBinCount);
-                
-                // Create audio element
+
                 audio = new Audio();
                 audio.crossOrigin = 'anonymous';
                 audio.loop = true;
-                audio.volume = 0.7;
-                
-                // Try multiple audio sources
+                audio.volume = 0.8;
+
                 const audioSources = [
                     'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
                     'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3',
                     'https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg'
                 ];
-                
+
                 let currentSourceIndex = 0;
-                
+
                 function tryLoadAudio() {
                     if (currentSourceIndex >= audioSources.length) {
-                        statusText.textContent = 'Audio unavailable - Visual mode only';
+                        statusText.textContent = 'Audio unavailable - Enhanced visual mode';
                         audioLoaded = false;
                         return;
                     }
-                    
+
                     audio.src = audioSources[currentSourceIndex];
-                    statusText.textContent = 'Loading audio...';
+                    statusText.textContent = 'Loading enhanced audio...';
                 }
-                
+
                 audio.addEventListener('canplaythrough', () => {
                     audioLoaded = true;
-                    statusText.textContent = 'Click to start the experience';
-                    console.log('Audio loaded successfully');
+                    statusText.textContent = 'Click to start the enhanced experience';
                 });
-                
+
                 audio.addEventListener('error', (e) => {
-                    console.warn('Audio loading failed, trying next source...');
+                    console.warn(`Failed to load audio source: ${audioSources[currentSourceIndex]}`, e);
                     currentSourceIndex++;
                     setTimeout(tryLoadAudio, 100);
                 });
-                
+
                 tryLoadAudio();
-                
+
             } catch (error) {
                 console.error('Audio context creation failed:', error);
-                statusText.textContent = 'Audio unavailable - Visual mode only';
+                statusText.textContent = 'Audio unavailable - Enhanced visual mode';
                 audioLoaded = false;
             }
         }
-        
+
         function connectAudio() {
-            if (source || !audioLoaded) return;
+            if (source || !audioLoaded || !audioContext) return; // Added !audioContext check
             try {
                 source = audioContext.createMediaElementSource(audio);
                 source.connect(analyser);
@@ -231,39 +357,36 @@
                 console.error('Audio connection failed:', error);
             }
         }
-        
+
         function analyzeAudio() {
-            if (!analyser || !isPlaying || !audioLoaded) {
-                // Generate some visual movement even without audio
+            if (!analyser || !isPlaying || !audioLoaded || isPaused) {
                 const time = clock.getElapsedTime();
-                bassLevel = Math.sin(time * 0.5) * 0.3 + 0.2;
-                midLevel = Math.sin(time * 0.8) * 0.2 + 0.1;
-                trebleLevel = Math.sin(time * 1.2) * 0.1 + 0.05;
+                bassLevel = Math.sin(time * 0.6) * 0.4 + 0.3;
+                midLevel = Math.sin(time * 1.0) * 0.3 + 0.2;
+                trebleLevel = Math.sin(time * 1.5) * 0.2 + 0.1;
                 return;
             }
-            
+
             analyser.getByteFrequencyData(frequencyData);
-            
-            // Calculate frequency bands
-            const bassEnd = Math.floor(frequencyData.length * 0.15);
-            const midEnd = Math.floor(frequencyData.length * 0.5);
-            
+
+            const bassEnd = Math.floor(frequencyData.length * 0.12);
+            const midEnd = Math.floor(frequencyData.length * 0.45);
+
             const rawBass = getAverage(frequencyData, 0, bassEnd) * CONFIG.BASS_BOOST;
             const rawMid = getAverage(frequencyData, bassEnd, midEnd) * CONFIG.MID_BOOST;
             const rawTreble = getAverage(frequencyData, midEnd, frequencyData.length) * CONFIG.TREBLE_BOOST;
-            
-            // Smooth the values
-            smoothedBass += (rawBass - smoothedBass) * 0.3;
-            smoothedMid += (rawMid - smoothedMid) * 0.25;
-            smoothedTreble += (rawTreble - smoothedTreble) * 0.2;
-            
+
+            smoothedBass += (rawBass - smoothedBass) * 0.35;
+            smoothedMid += (rawMid - smoothedMid) * 0.3;
+            smoothedTreble += (rawTreble - smoothedTreble) * 0.25;
+
             bassLevel = smoothedBass;
             midLevel = smoothedMid;
             trebleLevel = smoothedTreble;
-            
+
             updateFrequencyBars();
         }
-        
+
         function getAverage(data, start, end) {
             let sum = 0;
             for (let i = start; i < end; i++) {
@@ -271,223 +394,362 @@
             }
             return (sum / (end - start)) / 255;
         }
-        
+
         function updateFrequencyBars() {
             const bars = document.querySelectorAll('.freq-bar');
-            if (bars.length === 0) return;
-            
+            if (bars.length === 0 || !frequencyData) return; // Added !frequencyData check
+
             const step = Math.max(1, Math.floor(frequencyData.length / bars.length));
-            
+
             bars.forEach((bar, i) => {
                 const index = Math.min(i * step, frequencyData.length - 1);
                 const value = (frequencyData[index] || 0) / 255;
-                bar.style.height = `${2 + value * 60}px`;
-                bar.style.opacity = 0.4 + value * 0.6;
+                const height = 4 + value * 80;
+
+                bar.style.height = `${height}px`;
+                bar.style.opacity = (0.6 + value * 0.4).toString();
+                bar.style.boxShadow = `0 0 ${8 + value * 12}px rgba(${255 * value}, ${110 * (1 - value)}, 255, ${0.3 + value * 0.4})`;
             });
         }
-        
-        // Create frequency bars
+
         function createFrequencyBars() {
             const container = document.getElementById('frequencyDisplay');
-            for (let i = 0; i < 24; i++) {
+            if (!container) return; // Check if container exists
+            for (let i = 0; i < 32; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'freq-bar';
                 container.appendChild(bar);
             }
         }
-        
-        // Event handlers
+
+        // Enhanced Event handlers
         function setupEvents() {
             document.getElementById('startButton').addEventListener('click', startExperience);
+            document.getElementById('pauseBtn').addEventListener('click', togglePause);
+            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+
             window.addEventListener('mousemove', onMouseMove);
             window.addEventListener('resize', onResize);
+            window.addEventListener('keydown', onKeyDown);
+
             document.addEventListener('click', () => {
-                document.body.style.cursor = 'none';
+                if (isPlaying) { // Only hide cursor if experience has started
+                    document.body.style.cursor = 'none';
+                }
             });
         }
-        
-        async function startExperience() {
-            try {
-                if (audioContext && audioContext.state === 'suspended') {
-                    await audioContext.resume();
-                }
-                
-                if (audioLoaded) {
-                    connectAudio();
-                    await audio.play();
-                }
-                
-                isPlaying = true;
-                document.getElementById('playOverlay').classList.add('hidden');
-                
-                // Start the visual experience even without audio
-                console.log('Experience started');
-            } catch (error) {
-                console.error('Failed to start audio:', error);
-                // Continue without audio
-                isPlaying = true;
-                document.getElementById('playOverlay').classList.add('hidden');
-            }
-        }
-        
+
         function onMouseMove(event) {
             const x = (event.clientX / window.innerWidth) * 2 - 1;
             const y = -(event.clientY / window.innerHeight) * 2 + 1;
-            
-            // Convert screen coordinates to world coordinates
-            const vector = new THREE.Vector3(x, y, 0.5);
-            vector.unproject(camera);
-            vector.sub(camera.position).normalize();
-            const distance = -camera.position.z / vector.z;
-            const pos = new THREE.Vector3().copy(camera.position).add(vector.multiplyScalar(distance));
-            
-            targetMouse.set(pos.x, pos.y);
+
+            if (camera) { // Check if camera is initialized
+                const vector = new THREE.Vector3(x, y, 0.5);
+                vector.unproject(camera);
+                vector.sub(camera.position).normalize();
+                const distance = -camera.position.z / vector.z;
+                const pos = new THREE.Vector3().copy(camera.position).add(vector.multiplyScalar(distance));
+
+                targetMouse.set(pos.x, pos.y);
+
+                // Mouse history for enhanced effects
+                if (clock) { // Check if clock is initialized
+                     mouseHistory.push({ x: pos.x, y: pos.y, time: clock.getElapsedTime() });
+                     if (mouseHistory.length > 10) mouseHistory.shift();
+                }
+            }
+
+
+            // Update cursor trail
+            if (cursorTrail) { // Check if cursorTrail element exists
+                cursorTrail.style.left = event.clientX - 10 + 'px';
+                cursorTrail.style.top = event.clientY - 10 + 'px';
+                cursorTrail.style.opacity = '1';
+            }
         }
-        
+
+        function onKeyDown(event) {
+            switch(event.key) {
+                case ' ':
+                    event.preventDefault();
+                    togglePause();
+                    break;
+                case 'f':
+                case 'F':
+                    toggleFullscreen();
+                    break;
+                case 'p':
+                case 'P':
+                    CONFIG.PERFORMANCE_MODE = !CONFIG.PERFORMANCE_MODE;
+                    // Potentially re-initialize renderer or material settings based on performance mode
+                    if (renderer) {
+                        renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONFIG.PERFORMANCE_MODE ? 1 : 2));
+                        // renderer.antialias = !CONFIG.PERFORMANCE_MODE; // This cannot be changed on the fly, set at init
+                    }
+                    if (material) {
+                         material.uniforms.globalIntensity.value = CONFIG.PERFORMANCE_MODE ? 0.8 : 1.0;
+                    }
+                    console.log("Performance mode:", CONFIG.PERFORMANCE_MODE);
+                    break;
+            }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('pauseBtn');
+            if (!btn) return;
+
+            if (isPaused) {
+                if (audio && !audio.paused) audio.pause();
+                btn.innerHTML = '▶';
+            } else {
+                if (audio && audio.paused && audioLoaded) audio.play(); // Check audioLoaded
+                btn.innerHTML = '⏸';
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        async function startExperience() {
+            try {
+                const playOverlay = document.getElementById('playOverlay');
+                if (!playOverlay) return;
+
+
+                if (audioContext && audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+
+                if (audioLoaded && audio) { // Check if audio is defined
+                    connectAudio(); // Ensure audio is connected before playing
+                    await audio.play();
+                } else if (!audioLoaded) {
+                    console.warn("Audio not loaded, starting in visual-only mode.");
+                }
+
+
+                isPlaying = true;
+                playOverlay.classList.add('hidden');
+                document.body.style.cursor = 'none'; // Hide cursor immediately
+
+            } catch (error) {
+                console.error('Failed to start audio:', error);
+                // Fallback to visual only if audio fails to start
+                isPlaying = true;
+                const playOverlay = document.getElementById('playOverlay');
+                if (playOverlay) playOverlay.classList.add('hidden');
+                document.body.style.cursor = 'none';
+            }
+        }
+
         function onResize() {
+            if (!camera || !renderer) return; // Check if camera and renderer are initialized
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            if (composer) composer.setSize(window.innerWidth, window.innerHeight); // If post-processing is used
         }
-        
-        // Scene setup
+
+        // Enhanced Scene setup
         function initScene() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            
+            renderer = new THREE.WebGLRenderer({
+                antialias: !CONFIG.PERFORMANCE_MODE,
+                alpha: true, // Keep true for transparent background if needed
+                powerPreference: "high-performance"
+            });
+
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONFIG.PERFORMANCE_MODE ? 1 : 2));
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+
             document.body.appendChild(renderer.domElement);
-            
-            camera.position.set(0, 15, CONFIG.CAMERA_Z);
+
+            camera.position.set(0, 18, CONFIG.CAMERA_Z);
             camera.lookAt(0, 0, 0);
-            
+
             clock = new THREE.Clock();
+
+            // Fog for depth
+            scene.fog = new THREE.FogExp2(0x000511, 0.015);
         }
-        
-        // Shaders
+
+        // Enhanced Shaders
         const vertexShader = `
             attribute vec3 initialPos;
             attribute float randomSeed;
-            
+            attribute float phase;
+
             uniform float time;
             uniform vec2 mousePos;
             uniform float bassLevel;
             uniform float midLevel;
             uniform float trebleLevel;
-            
+            uniform float globalIntensity;
+
             varying float vElevation;
             varying float vMouseEffect;
             varying float vAudioEffect;
             varying vec3 vWorldPos;
-            
+            varying float vDistance;
+            varying float vPhase;
+
             void main() {
                 vWorldPos = initialPos;
-                
+                vPhase = phase;
+
                 float mouseDistance = distance(mousePos, initialPos.xz);
-                vMouseEffect = smoothstep(4.0, 0.0, mouseDistance);
-                
+                vMouseEffect = smoothstep(6.0, 0.0, mouseDistance);
+
                 float centerDistance = length(initialPos.xz);
-                
-                // Wave calculations
-                float wave1 = sin(time * 0.4 + centerDistance * 0.4 + randomSeed) * 0.5;
-                float wave2 = sin(time * 0.24 - centerDistance * 0.2 + randomSeed) * 0.3;
-                
-                // Audio-responsive waves
-                float bassWave = sin(time * 1.5 + centerDistance * 0.15) * bassLevel * 3.2;
-                float midWave = sin(time * 3.0 + centerDistance * 0.3) * midLevel * 2.24;
-                float trebleWave = sin(time * 6.0 + centerDistance * 0.6) * trebleLevel * 1.28;
-                
+                vDistance = centerDistance;
+
+                // Enhanced wave calculations
+                float wave1 = sin(time * 0.5 + centerDistance * 0.4 + randomSeed + phase) * 0.6;
+                float wave2 = sin(time * 0.3 - centerDistance * 0.2 + randomSeed * 2.0) * 0.4;
+                float wave3 = sin(time * 0.8 + centerDistance * 0.1 + randomSeed * 0.5) * 0.2;
+
+                // Audio-responsive waves with enhanced complexity
+                float bassWave = sin(time * 2.0 + centerDistance * 0.15 + phase) * bassLevel * 4.0;
+                float midWave = sin(time * 4.0 + centerDistance * 0.3 + phase * 1.5) * midLevel * 2.8;
+                float trebleWave = sin(time * 8.0 + centerDistance * 0.6 + phase * 2.0) * trebleLevel * 1.6;
+
+                // Harmonic waves
+                float harmonic1 = sin(time * 1.2 + centerDistance * 0.25) * (bassLevel + midLevel) * 0.8;
+                float harmonic2 = cos(time * 2.4 + centerDistance * 0.35) * trebleLevel * 0.6;
+
                 vAudioEffect = (bassLevel + midLevel + trebleLevel) / 3.0;
-                
+
                 vec3 pos = initialPos;
-                pos.y = wave1 + wave2 + bassWave + midWave + trebleWave + vMouseEffect * 2.8;
+                pos.y = wave1 + wave2 + wave3 + bassWave + midWave + trebleWave +
+                        harmonic1 + harmonic2 + vMouseEffect * 3.5;
+
+                // Add mouse ripple effect
+                float ripple = sin(mouseDistance * 2.0 - time * 4.0) * vMouseEffect * 0.8;
+                pos.y += ripple;
+
                 vElevation = pos.y;
-                
+
                 vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-                gl_PointSize = 140.0 * (1.0 / -mvPosition.z);
-                gl_PointSize *= (1.0 + vMouseEffect * 0.5 + vAudioEffect * 0.8);
-                
+                float pointSizeBase = ${CONFIG.PARTICLE_SIZE.toFixed(1)}; // Use config
+                float pointSize = pointSizeBase * (1.0 / -mvPosition.z);
+                pointSize *= (1.0 + vMouseEffect * 0.8 + vAudioEffect * 1.2);
+                pointSize *= globalIntensity;
+
+                gl_PointSize = clamp(pointSize, 1.0, 300.0); // Clamp point size
                 gl_Position = projectionMatrix * mvPosition;
             }
         `;
-        
+
         const fragmentShader = `
             uniform float time;
             uniform float bassLevel;
             uniform float midLevel;
             uniform float trebleLevel;
-            
+            uniform float globalIntensity;
+
             varying float vElevation;
             varying float vMouseEffect;
             varying float vAudioEffect;
             varying vec3 vWorldPos;
-            
+            varying float vDistance;
+            varying float vPhase;
+
             vec3 hsv2rgb(vec3 c) {
                 vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
                 vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
                 return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
             }
-            
+
             void main() {
-                float dist = length(gl_PointCoord - vec2(0.5));
+                vec2 coord = gl_PointCoord - vec2(0.5);
+                float dist = length(coord);
                 if (dist > 0.5) discard;
-                
-                float centerDist = length(vWorldPos.xz);
-                
-                // Dynamic colors based on audio
-                float hue = mod(time * 0.002 + centerDist * 0.03 + 
-                              bassLevel * 0.3 + midLevel * 0.4 + trebleLevel * 0.2, 1.0);
-                float saturation = 0.7 + vMouseEffect * 0.3 + vAudioEffect * 0.2;
-                float brightness = 0.4 + vElevation * 0.2 + vMouseEffect * 0.15 + vAudioEffect * 0.3;
-                
-                vec3 color = hsv2rgb(vec3(hue, saturation, brightness));
-                
-                // Enhanced glow for audio response
-                color *= (1.0 + vAudioEffect * 1.5);
-                
-                float alpha = smoothstep(0.5, 0.35 - vMouseEffect * 0.1, dist) * 0.9;
-                
-                gl_FragColor = vec4(color, alpha);
+
+                // Enhanced color calculation
+                float hue = mod(time * ${CONFIG.COLOR_SPEED.toFixed(4)} + vDistance * 0.02 + vPhase * 0.1 +
+                                bassLevel * 0.4 + midLevel * 0.3 + trebleLevel * 0.2, 1.0);
+
+                float saturation = clamp(0.8 + vMouseEffect * 0.2 + vAudioEffect * 0.15, 0.5, 1.0); // Clamped
+                float brightness = clamp(0.5 + vElevation * 0.15 + vMouseEffect * 0.2 + vAudioEffect * 0.4, 0.2, 1.0); // Clamped
+
+                // Color shifting based on audio frequencies
+                vec3 baseColor = hsv2rgb(vec3(hue, saturation, brightness));
+
+                // Add frequency-specific color tints
+                baseColor.r = clamp(baseColor.r + bassLevel * 0.3, 0.0, 1.0);
+                baseColor.g = clamp(baseColor.g + midLevel * 0.2, 0.0, 1.0);
+                baseColor.b = clamp(baseColor.b + trebleLevel * 0.4, 0.0, 1.0);
+
+                // Enhanced glow and intensity
+                float intensity = 1.0 + vAudioEffect * 2.0 + vMouseEffect * 1.5;
+                baseColor *= intensity * globalIntensity;
+
+                // Improved alpha with soft edges
+                float alpha = smoothstep(0.5, 0.3 - vMouseEffect * 0.15, dist);
+                alpha *= (0.7 + vAudioEffect * 0.3);
+                alpha *= globalIntensity;
+
+                // Add sparkle effect
+                float sparkle = sin(time * 10.0 + vDistance * 5.0 + vPhase * 3.0) * 0.1 + 0.9;
+                alpha *= sparkle;
+
+                gl_FragColor = vec4(baseColor, clamp(alpha, 0.0, 1.0)); // Clamp final alpha
             }
         `;
-        
-        // Create particles
+
+        // Enhanced particle creation
         function createParticles() {
             const count = CONFIG.GRID_SIZE * CONFIG.GRID_SIZE;
             const geometry = new THREE.BufferGeometry();
-            
+
             const positions = new Float32Array(count * 3);
             const initialPositions = new Float32Array(count * 3);
             const randomSeeds = new Float32Array(count);
-            
+            const phases = new Float32Array(count);
+
             for (let i = 0; i < count; i++) {
                 const x = ((i % CONFIG.GRID_SIZE) - CONFIG.GRID_SIZE / 2) * CONFIG.SPACING;
                 const z = (Math.floor(i / CONFIG.GRID_SIZE) - CONFIG.GRID_SIZE / 2) * CONFIG.SPACING;
-                
+
                 positions[i * 3] = x;
                 positions[i * 3 + 1] = 0;
                 positions[i * 3 + 2] = z;
-                
+
                 initialPositions[i * 3] = x;
                 initialPositions[i * 3 + 1] = 0;
                 initialPositions[i * 3 + 2] = z;
-                
+
                 randomSeeds[i] = Math.random() * Math.PI * 2;
+                phases[i] = Math.random() * Math.PI * 2;
             }
-            
+
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             geometry.setAttribute('initialPos', new THREE.BufferAttribute(initialPositions, 3));
             geometry.setAttribute('randomSeed', new THREE.BufferAttribute(randomSeeds, 1));
-            
+            geometry.setAttribute('phase', new THREE.BufferAttribute(phases, 1));
+
             material = new THREE.ShaderMaterial({
                 uniforms: {
                     time: { value: 0.0 },
                     mousePos: { value: mouse },
                     bassLevel: { value: 0.0 },
                     midLevel: { value: 0.0 },
-                    trebleLevel: { value: 0.0 }
+                    trebleLevel: { value: 0.0 },
+                    globalIntensity: { value: CONFIG.PERFORMANCE_MODE ? 0.8 : 1.0 }
                 },
                 vertexShader,
                 fragmentShader,
@@ -495,49 +757,93 @@
                 blending: THREE.AdditiveBlending,
                 depthWrite: false
             });
-            
+
             particles = new THREE.Points(geometry, material);
             scene.add(particles);
+
+            // Update particle count display
+            if (particleCount) particleCount.textContent = count.toLocaleString();
         }
-        
-        // Animation loop
+
+        // Performance monitoring
+        function updatePerformance() {
+            frameCount++;
+            const currentTime = performance.now();
+
+            if (currentTime >= lastTime + 1000) {
+                fps = frameCount;
+                frameCount = 0;
+                lastTime = currentTime;
+                if (fpsCounter) fpsCounter.textContent = fps;
+            }
+        }
+
+        // Enhanced Animation loop
         function animate() {
             requestAnimationFrame(animate);
-            
-            const elapsed = clock.getElapsedTime();
-            
-            analyzeAudio();
-            
+            if (!clock || !material || !renderer || !scene || !camera) return; // Ensure all are initialized
+
+
+            const elapsedTime = clock.getElapsedTime();
+
             // Smooth mouse movement
-            mouse.lerp(targetMouse, 0.1);
-            
-            // Update uniforms
-            if (material) {
-                material.uniforms.time.value = elapsed;
-                material.uniforms.bassLevel.value = bassLevel;
-                material.uniforms.midLevel.value = midLevel;
-                material.uniforms.trebleLevel.value = trebleLevel;
+            mouse.x += (targetMouse.x - mouse.x) * 0.1;
+            mouse.y += (targetMouse.y - mouse.y) * 0.1;
+
+            analyzeAudio();
+
+            material.uniforms.time.value = elapsedTime;
+            material.uniforms.mousePos.value.copy(mouse); // Ensure vector2 is copied correctly
+            material.uniforms.bassLevel.value = bassLevel * CONFIG.AUDIO_SENSITIVITY;
+            material.uniforms.midLevel.value = midLevel * CONFIG.AUDIO_SENSITIVITY;
+            material.uniforms.trebleLevel.value = trebleLevel * CONFIG.AUDIO_SENSITIVITY;
+            // globalIntensity is updated in onKeyDown or init
+
+            // Camera movement based on audio and mouse
+            if (isPlaying && !isPaused) {
+                const audioInfluence = (bassLevel + midLevel + trebleLevel) / 3;
+                // Dampen camera movement to prevent excessive motion sickness
+                const targetZ = CONFIG.CAMERA_Z - audioInfluence * 8; // Reduced influence
+                const targetX = mouse.x * 0.03 + Math.sin(elapsedTime * 0.15) * audioInfluence * 1.5; // Reduced influence
+                const targetY = 18 + mouse.y * 0.03 + Math.cos(elapsedTime * 0.20) * audioInfluence * 1.0; // Reduced influence
+
+                camera.position.z += (targetZ - camera.position.z) * 0.05;
+                camera.position.x += (targetX - camera.position.x) * 0.05;
+                camera.position.y += (targetY - camera.position.y) * 0.05;
+
+                camera.lookAt(0, 0, 0);
             }
-            
-            // Dynamic scene rotation
-            const audioRotation = (bassLevel + midLevel) * 0.05;
-            scene.rotation.y = Math.sin(elapsed * 0.03) * (0.06 + audioRotation);
-            
+
+
             renderer.render(scene, camera);
+            updatePerformance();
+
+            // Fade out cursor trail
+            if (cursorTrail) {
+                let currentOpacity = parseFloat(cursorTrail.style.opacity || '0');
+                if (currentOpacity > 0) {
+                    cursorTrail.style.opacity = Math.max(0, currentOpacity - 0.05).toString();
+                }
+            }
         }
-        
-        // Initialize everything
+
+        // Initialization
         function init() {
-            initScene();
-            initAudio();
-            createFrequencyBars();
-            createParticles();
-            setupEvents();
-            animate();
+            initAudio(); // Initialize audio first
+            initScene(); // Then scene
+            createParticles(); // Then particles that depend on scene and config
+            createFrequencyBars(); // UI elements
+            setupEvents(); // Event listeners
+            animate(); // Start the animation loop
         }
-        
-        // Start when page loads
-        window.addEventListener('load', init);
+
+        // Defensive check for critical features
+        if (typeof THREE === 'undefined') {
+            statusText.textContent = 'Error: THREE.js library not loaded. Visualizer cannot start.';
+            console.error('THREE.js library not loaded.');
+        } else {
+            init();
+        }
     </script>
 </body>
 </html>
