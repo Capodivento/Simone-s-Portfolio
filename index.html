@@ -25,6 +25,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         /* Scientific styling (existing styles remain largely the same) */
+
+
+.particle {
+    will-change: transform, opacity;
+    pointer-events: none;
+}
+
+#scene-container canvas {
+    will-change: transform;
+}
+
+.project-card {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
         .scientific-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, #2D3436, #000000);
@@ -148,6 +164,7 @@
         </nav>
     </header>
 
+    <main>
     <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-12">
         <div>
             <h2 class="text-4xl sm:text-5xl font-extrabold scientific-text mb-6">I'M SIMO</h2>
@@ -419,6 +436,7 @@
         </a>
     </div>
 </section>
+</main> 
 
     <footer class="p-6 text-center text-emerald-300 backdrop-blur-sm bg-opacity-20 bg-gray-900 text-sm">
         <p>&copy; <span id="current-year"></span> Simone Capodivento. All rights reserved.</p>
@@ -877,47 +895,101 @@
         }
 
         // --- Particle Effect ---
+// Replace your current particle effect code with this optimized version:
 
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            const size = Math.random() * 3 + 1;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            // Append to body or a specific container if preferred
-            document.body.appendChild(particle);
-             // Set initial position before animating
-            gsap.set(particle, {
-                 x: `${Math.random() * 100}vw`,
-                 y: `${Math.random() * 100}vh`,
-                 opacity: 1 // Start visible
-            });
-            gsap.to(particle, {
-                y: `random(-150, 150)`, // Relative Y movement
-                x: `random(-150, 150)`, // Relative X movement
-                opacity: 0,
-                duration: `random(3, 7)`, // Slightly longer duration
-                ease: "power1.out",
-                onComplete: () => particle.remove() // Cleanup DOM element
-            });
-        }
+function createParticle() {
+    // Limit total particles
+    const maxParticles = 50;
+    const currentParticles = document.querySelectorAll('.particle').length;
+    
+    if (currentParticles >= maxParticles) return;
 
-        function startParticleEffect() {
-            if (!particleIntervalId) {
-                 // Create one immediately, then set interval
-                 createParticle();
-                 particleIntervalId = setInterval(createParticle, 250);
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    const size = Math.random() * 3 + 1;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    // Create particles only in viewport
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    
+    gsap.set(particle, {
+        x: Math.random() * viewportWidth,
+        y: Math.random() * viewportHeight,
+        opacity: 1
+    });
+
+    document.body.appendChild(particle);
+
+    gsap.to(particle, {
+        y: `random(-100, 100)`,
+        x: `random(-100, 100)`,
+        opacity: 0,
+        duration: 3,
+        ease: "power1.out",
+        onComplete: () => particle.remove()
+    });
+}
+
+function startParticleEffect() {
+    if (!particleIntervalId) {
+        createParticle();
+        // Increase interval time to reduce frequency
+        particleIntervalId = setInterval(createParticle, 500);
+    }
+}
+
+// Add this new function for scroll performance
+function handleScroll() {
+    // Throttle scroll events
+    if (!handleScroll.throttleTimer) {
+        handleScroll.throttleTimer = setTimeout(() => {
+            // Check if near bottom
+            const bottomThreshold = 100;
+            const isNearBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - bottomThreshold;
+            
+            if (isNearBottom) {
+                // Reduce animations when near bottom
+                stopParticleEffect();
+            } else {
+                // Resume animations when not near bottom
+                startParticleEffect();
             }
-        }
+            handleScroll.throttleTimer = null;
+        }, 100);
+    }
+}
 
-        function stopParticleEffect() {
-             if (particleIntervalId) {
-                 clearInterval(particleIntervalId);
-                 particleIntervalId = null;
-                 // Optional: Remove existing particles immediately?
-                 // document.querySelectorAll('.particle').forEach(p => p.remove());
-             }
-        }
+// Add this to your setupEventListeners function:
+function setupEventListeners() {
+    // ...existing listeners...
+    
+    // Add scroll listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+}
+
+// Optimize animation loops
+function animateBackground() {
+    if (!document.hidden && backgroundScene) {
+        backgroundAnimationId = requestAnimationFrame(animateBackground);
+        
+        // Reduce calculations
+        const lerpFactor = 0.03;
+        backgroundCamera.position.x += (targetCameraPos.x - backgroundCamera.position.x) * lerpFactor;
+        backgroundCamera.position.y += (targetCameraPos.y + 1 - backgroundCamera.position.y) * lerpFactor;
+        backgroundCamera.lookAt(backgroundScene.position);
+
+        // Optimize shape rotations
+        const baseRotation = 0.001;
+        backgroundShapes.forEach((shape, index) => {
+            shape.rotation.x += baseRotation;
+            shape.rotation.y += baseRotation;
+        });
+        
+        backgroundRenderer.render(backgroundScene, backgroundCamera);
+    }
+}
 
     </script>
 
