@@ -27,6 +27,32 @@
         /* Scientific styling (existing styles remain largely the same) */
 
 
+
+        .particle {
+    will-change: transform, opacity;
+    pointer-events: none;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.pdf-card {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+#contact {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* Reduce animation complexity at the bottom */
+@media (max-height: 1000px) {
+    .particle {
+        display: none;
+    }
+}
+
 .particle {
     will-change: transform, opacity;
     pointer-events: none;
@@ -199,14 +225,13 @@
                 <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">MY DESK RIGHT NOW</h3>
                 <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A 3D visualization of my desk setup.</p>
             </div>
-            <div class="w-full h-64">
-                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png"
-                     alt="Blender 3D render of a desk setup"
-                     class="w-full h-full object-cover rounded-lg"
-                     loading="lazy" decoding="async" width="600" height="300">
-            </div>
+           <div class="aspect-video w-full overflow-hidden rounded-lg">
+            <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png"
+                 alt="Blender 3D render of a desk setup"
+                 class="w-full h-full object-contain bg-black/20 rounded-lg transition-transform duration-300 hover:scale-105"
+                 loading="lazy">
         </div>
-
+    </div>
         <!-- Amsterdam Bedroom -->
         <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col h-full">
             <div class="flex-grow">
@@ -942,7 +967,73 @@ function startParticleEffect() {
 
 // Add this new function for scroll performance
 function handleScroll() {
+
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const scrollThreshold = document.documentElement.scrollHeight - 500; // Increased threshold
+    
+    if (scrollPosition > scrollThreshold) {
+        stopAllAnimations();
+    } else {
+        resumeAllAnimations();
+    }
+}
+
+function stopAllAnimations() {
+    // Stop particles
+    stopParticleEffect();
+    // Reduce background animation framerate
+    if (backgroundScene) {
+        backgroundRenderer.setAnimationLoop(null);
+    }
+    // Stop project animation if visible
+    if (projectScene) {
+        projectRenderer.setAnimationLoop(null);
+    }
+}
+function resumeAllAnimations() {
+    // Resume particles with reduced count
+    startParticleEffect(30); // Reduced particle count
+    // Resume background animation
+    if (backgroundScene) {
+        backgroundRenderer.setAnimationLoop(animateBackground);
+    }
+    // Resume project animation if visible
+    if (projectScene) {
+        projectRenderer.setAnimationLoop(animateProject);
+    }
+}
+
+// Optimize particle effect
+function startParticleEffect(maxCount = 30) {
+    if (particleIntervalId) return;
+    
+    particleIntervalId = setInterval(() => {
+        const currentParticles = document.querySelectorAll('.particle').length;
+        if (currentParticles < maxCount) {
+            createParticle();
+        }
+    }, 1000); // Increased interval
+}
+
     // Throttle scroll events
+
+
+    // Add throttle function
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            requestAnimationFrame(() => inThrottle = false);
+        }
+    }
+}
+
+// Use throttled scroll handler
+window.addEventListener('scroll', throttle(handleScroll, 100), { passive: true });
+
+
     if (!handleScroll.throttleTimer) {
         handleScroll.throttleTimer = setTimeout(() => {
             // Check if near bottom
@@ -969,6 +1060,7 @@ function setupEventListeners() {
     window.addEventListener('scroll', handleScroll, { passive: true });
 }
 
+
 // Optimize animation loops
 function animateBackground() {
     if (!document.hidden && backgroundScene) {
@@ -989,6 +1081,31 @@ function animateBackground() {
         
         backgroundRenderer.render(backgroundScene, backgroundCamera);
     }
+}
+function updateBackgroundComplexity() {
+    if (!backgroundScene) return;
+    
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const scrollThreshold = document.documentElement.scrollHeight - 500;
+    
+    if (scrollPosition > scrollThreshold) {
+        // Reduce number of visible shapes
+        backgroundShapes.forEach((shape, index) => {
+            if (index > 5) shape.visible = false;
+        });
+        // Lower render quality
+        backgroundRenderer.setPixelRatio(1.0);
+    } else {
+        // Restore shapes and quality
+        backgroundShapes.forEach(shape => shape.visible = true);
+        backgroundRenderer.setPixelRatio(window.devicePixelRatio);
+    }
+}
+
+// Add to your scroll handler
+function handleScroll() {
+    // ...existing code...
+    updateBackgroundComplexity();
 }
 
     </script>
