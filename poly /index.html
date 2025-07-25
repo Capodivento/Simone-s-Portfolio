@@ -90,50 +90,9 @@
         .checkbox-label input {
             margin-right: 8px;
         }
-        /* Audio player styles */
-        .audio-player {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background-color: rgba(0,0,0,0.7);
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-        }
-        .audio-player button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 5px;
-        }
-        .audio-player button:hover {
-            color: #7fdbff;
-        }
-        .audio-player input[type="range"] {
-            width: 100px;
-            margin: 0;
-        }
-        .song-title {
-            font-size: 12px;
-            margin-right: 10px;
-        }
-        .audio-loading {
-            color: #7fdbff;
-            font-size: 12px;
-        }
-        .audio-error {
-            color: #ff6b6b;
-            font-size: 12px;
-        }
     </style>
 </head>
 <body>
-    <div class="info">Drag to rotate | Scroll to zoom | Right-click to pan</div>
     <div class="controls">
         <div class="control-group">
             <h3>Shape Controls</h3>
@@ -220,69 +179,10 @@
         <button id="reset">Reset Defaults</button>
     </div>
     
-    <!-- Audio Player -->
-    <div class="audio-player">
-        <span class="song-title">ALBA (feat. Rapanaro)</span>
-        <span id="audioStatus" class="audio-loading">Loading...</span>
-        <button id="playPauseBtn" disabled>▶</button>
-        <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.5">
-    </div>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    
     <script>
-        // Audio setup with GitHub raw URL
-        const audio = new Audio('https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/ALBA%20(feat.%20Rapanaro).mp3');
-        audio.loop = true;
-        
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const volumeControl = document.getElementById('volumeControl');
-        const audioStatus = document.getElementById('audioStatus');
-        
-        // Enable play button when audio is ready
-        audio.addEventListener('canplaythrough', () => {
-            playPauseBtn.disabled = false;
-            audioStatus.textContent = "Ready";
-            audioStatus.className = "";
-        });
-        
-        // Handle audio loading errors
-        audio.addEventListener('error', (e) => {
-            console.error('Audio error:', e);
-            audioStatus.textContent = "Error loading audio";
-            audioStatus.className = "audio-error";
-            playPauseBtn.disabled = true;
-            playPauseBtn.textContent = '❌';
-        });
-        
-        // Handle audio loading progress
-        audio.addEventListener('progress', () => {
-            audioStatus.textContent = "Loading...";
-            audioStatus.className = "audio-loading";
-        });
-        
-        playPauseBtn.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play().then(() => {
-                    playPauseBtn.textContent = '❚❚';
-                }).catch(e => {
-                    console.error('Playback failed:', e);
-                    audioStatus.textContent = "Click to enable audio";
-                    audioStatus.className = "audio-error";
-                });
-            } else {
-                audio.pause();
-                playPauseBtn.textContent = '▶';
-            }
-        });
-        
-        volumeControl.addEventListener('input', () => {
-            audio.volume = volumeControl.value;
-        });
-        
-        // Set initial volume
-        audio.volume = volumeControl.value;
-        
         // Scene setup
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x16213e, 0.02);
