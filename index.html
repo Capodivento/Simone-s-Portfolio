@@ -170,6 +170,27 @@
         .pdf-btn {
             box-shadow: 0 4px 12px rgba(72, 219, 251, 0.25);
         }
+        
+        .outerContainer {
+    width: 100%;
+    padding: 20px;
+    border: 1px solid green;
+    margin-bottom: 48px;
+}
+
+.innerContainer {
+    width: 100%;
+}     
+}   
+.outerContainer {
+    width: 100%;
+    padding: 20px;
+    border: 1px solid green;
+    margin-bottom: 48px;
+    background: rgba(0, 0, 0, 0.2); /* Optional: adds slight background */
+    backdrop-filter: blur(8px); /* Optional: adds blur effect */
+    border-radius: 8px; /* Optional: rounds corners */
+}
     </style>
 </head>
 <body class="bg-transparent text-emerald-100 relative tech-font">
@@ -214,12 +235,35 @@
              </div>
         </div>
     </section>
+    <section id="intro" class="min-h-[50vh] flex justify-center items-center p-8 md:p-12">
+    <div class="outerContainer max-w-2xl">
+        <div class="innerContainer">
+            <div class="flex items-center justify-center">
+                <img src='https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-10-12%20at%2016.39.53.png' 
+     height="50" 
+     width="270" 
+     class="mr-4">
+                <p class="text-sm">I like Engineering, i am a junior software engineer, my inner political compas in im left wing</p>
+            </div>
+        </div>
+    </div>
+</section>
 
     <section id="projects" class="p-8 md:p-12">
     <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- put on this section right here a paragraph about your specific wants with an immage on the left of a sunshine and a text on the right with a play button of my song alba -->
+<!-- Watch you see is watch you get, add a pic of you 
+ I like Engineering, i am a junior software engineer, my inner political compas in im left wing-->
 
-        <!-- Desk Project -->
+
+
+
+
+
+
+
+ <!-- Desk Project -->
         <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col h-full">
             <div class="flex-grow">
                 <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">MY DESK RIGHT NOW</h3>
@@ -263,9 +307,10 @@
             </div>
         </div>
 -->
-
+        <!-- make it in a way that if you click in the pic you open a window where you see the immage in a bigger way and have a little description, -->
         <!-- Dutch Houses -->
 <!-- Dutch Houses -->
+
 <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col h-full">
     <div class="flex-grow">
         <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">DUTCH HOUSES</h3>
@@ -1064,6 +1109,7 @@ function animateBackground() {
         backgroundRenderer.render(backgroundScene, backgroundCamera);
     }
 }
+//section about projects like poly 
 function updateBackgroundComplexity() {
     if (!backgroundScene) return;
     
