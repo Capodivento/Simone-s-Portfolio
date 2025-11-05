@@ -1,0 +1,677 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{biblatex}
+\usepackage{tocbibind}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{tocloft}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{xskak}  % For chessboards and positions
+\usepackage{chessboard}
+
+% Define colors for code highlighting
+\definecolor{codebg}{rgb}{0.95,0.95,0.95} % Light gray background for code
+\definecolor{keywordcolor}{rgb}{0,0,0.6} % Dark blue for keywords
+\definecolor{commentcolor}{rgb}{0.4,0.4,0.4} % Gray for comments
+\definecolor{stringcolor}{rgb}{0.58,0,0.58} % Purple for strings
+\definecolor{headercolor}{rgb}{0.2,0.4,0.6} % Blue for section headers
+
+% Configure code style for Python
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{keywordcolor}\bfseries,
+    commentstyle=\color{commentcolor}\itshape,
+    stringstyle=\color{stringcolor},
+    frame=single,
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=5pt,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4
+}
+
+% Set default listing style
+\lstset{style=pythonstyle}
+
+% Adjust page margins
+\geometry{a4paper, margin=1in}
+
+% Customize table of contents
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\contentsname}{\centerline{\large\bfseries CONTENTS}}
+
+% Hyperref configuration for better navigation
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Python 1: Regular Expressions},
+    pdfauthor={Simone Capodivento}
+}
+
+% Header and footer configuration
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Python 1: Regular Expressions}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{© 2025 Simone Capodivento}
+
+% Title and Author Information
+\title{\textbf{\Huge Python 1: Regular Expressions}}
+\author{\Large\textbf{Simone Capodivento}}
+\date{\textbf{March 2025}}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge \bfseries Python 1\\[0.5cm]}
+    {\huge A Self-Learning Guide\\[0.5cm]}
+    {\Large Part 3}\\[1.5cm]
+    {\large Prepared by}\: {\LARGE Simone Capodivento} \\[2cm]
+    \includegraphics[width=0.5\textwidth]{IMG_8857.png} \\[2cm]
+    {\large \today}\\
+    \vfill
+    \begin{abstract}
+        This guide explores fundamental Python programming concepts including functions, lists, dictionaries, and control structures. It provides practical examples and projects to reinforce learning through hands-on practice.
+    \end{abstract}
+\end{titlepage}
+
+\tableofcontents  % Table of Contents
+\newpage
+
+\section{Introduction to Regular Expressions}
+
+Regular expressions (regex) provide a powerful way to search, match, and manipulate text patterns. Python's \texttt{re} module offers comprehensive support for working with regular expressions, making it an essential tool for text processing tasks.
+
+\section{Getting Started with Regular Expressions}
+
+\subsection{The re Module}
+
+Python's \texttt{re} module is the foundation for working with regular expressions. Below is a basic example demonstrating how to find a digit in a string:
+
+\begin{lstlisting}
+import re
+# Basic regex example to find a digit
+digit_regex = re.compile(r'\d')
+mo_digit = digit_regex.search('The number is 42')
+if mo_digit:
+    print("Digit found:", mo_digit.group())  # Output: Digit found: 4
+\end{lstlisting}
+
+This example illustrates the typical workflow:
+\begin{enumerate}
+    \item Import the \texttt{re} module
+    \item Create a regex pattern using \texttt{re.compile()}
+    \item Use the pattern to search within a string
+    \item Retrieve matching text with the \texttt{group()} method
+\end{enumerate}
+
+\subsection{Grouping with Parentheses}
+
+Groups allow you to extract specific parts of a matched pattern. Parentheses \texttt{()} are used to create groups:
+
+\begin{lstlisting}
+# Example of using groups() method
+phone_regex = re.compile(r'(\d{3})-(\d{3})-(\d{4})')
+mo_phone = phone_regex.search('Cell: 415-555-9999 Ufficio: 212-555-0000')
+if mo_phone:
+    print("Phone number groups:", mo_phone.groups())  # Output: ('415', '555', '9999')
+\end{lstlisting}
+
+In this example:
+\begin{itemize}
+    \item The first group \texttt{(\d\{3\})} captures the area code
+    \item The second group captures the three middle digits
+    \item The third group captures the last four digits
+    \item The \texttt{groups()} method returns all captured groups as a tuple
+\end{itemize}
+
+\section{Pattern Matching Options}
+
+\subsection{The Pipe Character: Matching Multiple Patterns}
+
+The pipe character \texttt{|} functions as an OR operator in regular expressions, allowing you to match one pattern or another:
+
+\begin{lstlisting}
+# Example of using the pipe character (|) for OR operation in regex
+or_regex = re.compile(r'Bottom|Inp Fey')
+mo_or = or_regex.search('This is a Bottom example')
+if mo_or:
+    print("Match found:", mo_or.group())  # Output: Match found: Bottom
+\end{lstlisting}
+
+This regex will match either "Bottom" or "Inp Fey" in the text.
+
+\section{Quantifiers and Character Classes}
+
+\subsection{Finding Patterns with Quantifiers}
+
+Quantifiers specify how many instances of a character, group, or character class must be present in the input for a match:
+
+\begin{lstlisting}
+# Example of finding numbers followed by words
+xmas_regex = re.compile(r'\d+\s\w+')
+matches = xmas_regex.findall('12 drummers, 11 pipers, 10 lords, 9 ladies, 8 maids, 7 swans, 6 geese, 5 rings, 4 birds, 3 hens, 2 doves, 1 partridge')
+print("Matches found:", matches)  # Output: ['12 drummers', '11 pipers', '10 lords', '9 ladies', '8 maids', '7 swans', '6 geese', '5 rings', '4 birds', '3 hens', '2 doves', '1 partridge']
+\end{lstlisting}
+
+In this example:
+\begin{itemize}
+    \item \texttt{\textbackslash d+} matches one or more digits
+    \item \texttt{\textbackslash s} matches a whitespace character
+    \item \texttt{\textbackslash w+} matches one or more word characters
+    \item \texttt{findall()} returns all non-overlapping matches in the string
+\end{itemize}
+
+\section{Common Regex Patterns}
+
+\subsection{Pattern Explanation}
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Pattern} & \textbf{Meaning} \\
+\hline
+\texttt{\textbackslash d} & Any numeric digit (0-9) \\
+\hline
+\texttt{\textbackslash D} & Any character that is not a numeric digit \\
+\hline
+\texttt{\textbackslash w} & Any letter, numeric digit, or underscore character (word character) \\
+\hline
+\texttt{\textbackslash W} & Any character that is not a letter, numeric digit, or underscore \\
+\hline
+\texttt{\textbackslash s} & Any space, tab, or newline character (whitespace) \\
+\hline
+\texttt{\textbackslash S} & Any character that is not a space, tab, or newline \\
+\hline
+\end{tabularx}
+
+\subsection{Quantifiers}
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Quantifier} & \textbf{Meaning} \\
+\hline
+\texttt{*} & Match zero or more of the preceding group \\
+\hline
+\texttt{+} & Match one or more of the preceding group \\
+\hline
+\texttt{?} & Match zero or one of the preceding group \\
+\hline
+\texttt{\{n\}} & Match exactly n of the preceding group \\
+\hline
+\texttt{\{n,\}} & Match n or more of the preceding group \\
+\hline
+\texttt{\{,m\}} & Match 0 to m of the preceding group \\
+\hline
+\texttt{\{n,m\}} & Match at least n and at most m of the preceding group \\
+\hline
+\end{tabularx}
+
+\section{Advanced Matching Techniques}
+
+\subsection{Greedy vs. Non-Greedy Matching}
+
+By default, regex quantifiers are greedy, meaning they match as much text as possible. Adding a question mark after a quantifier makes it non-greedy (matching as little text as possible):
+
+\begin{lstlisting}
+# Greedy matching (default)
+greedy_regex = re.compile(r'<.*>')
+greedy_match = greedy_regex.search('<To serve humans> for dinner.>')
+print("Greedy match:", greedy_match.group())  # Output: <To serve humans> for dinner.>
+
+# Non-greedy matching
+non_greedy_regex = re.compile(r'<.*?>')
+non_greedy_match = non_greedy_regex.search('<To serve humans> for dinner.>')
+print("Non-greedy match:", non_greedy_match.group())  # Output: <To serve humans>
+\end{lstlisting}
+
+\section{Practical Example: USA Phone Number Validator}
+
+Building on the examples shown earlier, here's a comprehensive function to validate USA phone numbers in the format XXX-XXX-XXXX:
+
+\begin{lstlisting}
+def isPhoneNumber(text):
+    # Remove leading/trailing spaces
+    text = text.strip()
+    
+    # Check if the string is the right length
+    if len(text) != 12:
+        return False
+    
+    # Check the first 3 characters for digits
+    for i in range(0, 3):
+        if not text[i].isdecimal():
+            return False
+    
+    # Check the hyphen at index 3
+    if text[3] != '-':
+        return False
+    
+    # Check the next 3 characters for digits
+    for i in range(4, 7):
+        if not text[i].isdecimal():
+            return False
+    
+    # Check the hyphen at index 7
+    if text[7] != '-':
+        return False
+    
+    # Check the last 4 characters for digits
+    for i in range(8, 12):
+        if not text[i].isdecimal():
+            return False
+    
+    # If all checks pass, it's a valid phone number
+    return True
+
+# Test cases
+print('415-555-4242 is a telephone number:', isPhoneNumber('415-555-4242 '))
+print('Moschi moschi is a telephone number:', isPhoneNumber('Moschi moschi'))
+\end{lstlisting}
+
+\subsection{Finding Phone Numbers in Text}
+
+The following example demonstrates how to search for phone numbers within a larger text:
+
+\begin{lstlisting}
+message = 'Call me at 415-555-1011 tomorrow. 415-555-9999 is my office.'
+for i in range(len(message) - 11):  # Ensure there is enough text left
+    chunk = message[i:i+12]  # Slice the message to get 12 characters
+    if isPhoneNumber(chunk):
+        print('Telephone number found: ' + chunk)
+
+# Output:
+# Telephone number found: 415-555-1011
+# Telephone number found: 415-555-9999
+\end{lstlisting}
+
+\section{Improved Phone Number Validation with Regex}
+
+While the manual validation approach works, using regular expressions makes the code more concise and flexible:
+
+\begin{lstlisting}
+import re
+
+def isPhoneNumberRegex(text):
+    # Create a regex pattern for XXX-XXX-XXXX format
+    phone_regex = re.compile(r'\d{3}-\d{3}-\d{4}')
+    
+    # Check if the pattern matches the entire string
+    match = phone_regex.fullmatch(text.strip())
+    return bool(match)
+
+# Test with the same examples
+print('415-555-4242 is a telephone number (regex):', 
+      isPhoneNumberRegex('415-555-4242 '))
+print('Moschi moschi is a telephone number (regex):', 
+      isPhoneNumberRegex('Moschi moschi'))
+
+# Find all phone numbers in a message using regex
+phone_regex = re.compile(r'\d{3}-\d{3}-\d{4}')
+message = 'Call me at 415-555-1011 tomorrow. 415-555-9999 is my office.'
+matches = phone_regex.findall(message)
+for match in matches:
+    print('Phone number found (regex):', match)
+\end{lstlisting}
+
+\section{Project: Complete Phone Number and Email Extractor}
+
+This utility uses regular expressions to find and extract all phone numbers and email addresses from text:
+
+\begin{lstlisting}
+#! python3
+# phoneAndEmail.py - Finds phone numbers and email addresses on the clipboard.
+
+import re, pyperclip
+
+# Phone regex - matches different phone number formats
+phone_regex = re.compile(r'''(
+    (\d{3}|\(\d{3}\))?                  # area code (optional)
+    (\s|-|\.)?                          # separator (optional)
+    (\d{3})                             # first 3 digits
+    (\s|-|\.)                           # separator
+    (\d{4})                             # last 4 digits
+    (\s*(ext|x|ext.)\s*(\d{2,5}))?      # extension (optional)
+    )''', re.VERBOSE)
+
+# Email regex
+email_regex = re.compile(r'''(
+    [a-zA-Z0-9._%+-]+                   # username
+    @                                   # @ symbol
+    [a-zA-Z0-9.-]+                      # domain name
+    (\.[a-zA-Z]{2,})                    # dot-something (TLD)
+    )''', re.VERBOSE)
+
+# Get text from clipboard
+text = pyperclip.paste()
+matches = []
+
+# Find all phone numbers
+for groups in phone_regex.findall(text):
+    phone_num = '-'.join([groups[phone_num = '-'.join([groups[1] if groups[1] else '', groups[3], groups[5]])
+    if groups[8]:  # If there's an extension
+        phone_num += ' x' + groups[8]
+    matches.append(phone_num)
+
+# Find all email addresses
+for groups in email_regex.findall(text):
+    matches.append(groups[0])
+
+# Copy results to clipboard
+if matches:
+    pyperclip.copy('\n'.join(matches))
+    print('Copied to clipboard:')
+    print('\n'.join(matches))
+else:
+    print('No phone numbers or email addresses found.')
+\end{lstlisting}
+
+\section{Using Regular Expression Flags}
+
+Python's \texttt{re} module provides several flags that modify how patterns are interpreted:
+
+\begin{lstlisting}
+import re
+
+# Case-insensitive matching with re.IGNORECASE or re.I
+name_regex = re.compile(r'python', re.IGNORECASE)
+matches = name_regex.findall('Python is great. PYTHON is powerful.')
+print("Case-insensitive matches:", matches)  # ['Python', 'PYTHON']
+
+# Using re.VERBOSE for more readable patterns
+phone_regex = re.compile(r'''
+    # Don't match beginning of string, number can start anywhere
+    (\d{3})     # Area code is 3 digits (e.g. '415')
+    \D*         # Optional separator is any number of non-digits
+    (\d{3})     # Trunk is 3 digits (e.g. '555')
+    \D*         # Optional separator
+    (\d{4})     # Rest of number is 4 digits (e.g. '9887')
+    \s*         # Optional whitespace
+    (ext|x|ext.)\s*(\d{2,5})?  # Optional extension
+    ''', re.VERBOSE)
+\end{lstlisting}
+
+\section{Common Regular Expression Examples}
+
+\subsection{Validating Email Addresses}
+
+\begin{lstlisting}
+def is_valid_email(email):
+    """Validate an email address using regex."""
+    email_regex = re.compile(r'''
+        ^[a-zA-Z0-9._%+-]+             # username
+        @                              # @ symbol
+        [a-zA-Z0-9.-]+                 # domain name
+        \.[a-zA-Z]{2,}$                # dot-something (TLD)
+        ''', re.VERBOSE)
+    
+    return bool(email_regex.match(email))
+
+# Test cases
+emails = ['user@example.com', 'invalid@', 'name.lastname@domain.co.uk']
+for email in emails:
+    print(f"'{email}' is valid: {is_valid_email(email)}")
+\end{lstlisting}
+
+\subsection{Finding URLs in Text}
+
+\begin{lstlisting}
+def extract_urls(text):
+    """Extract all URLs from text."""
+    url_regex = re.compile(r'''
+        https?://                      # http:// or https://
+        (?:www\.)?                     # optional www.
+        [a-zA-Z0-9.-]+                 # domain name
+        \.[a-zA-Z]{2,}                 # TLD (.com, .org, etc.)
+        (?:/[^\s]*)?                   # optional path
+        ''', re.VERBOSE)
+    
+    return url_regex.findall(text)
+
+# Example
+sample_text = "Visit our website at https://example.com/page or http://www.another-site.org."
+urls = extract_urls(sample_text)
+print("Found URLs:", urls)
+\end{lstlisting}
+
+\subsection{Date Extraction}
+
+\begin{lstlisting}
+def extract_dates(text):
+    """Extract dates in MM/DD/YYYY format."""
+    date_regex = re.compile(r'''
+        (0?[1-9]|1[0-2])               # month (01-12 or 1-12)
+        /                              # separator
+        (0?[1-9]|[12][0-9]|3[01])      # day (01-31 or 1-31)
+        /                              # separator
+        (19|20)\d\d                    # year (1900-2099)
+        ''', re.VERBOSE)
+    
+    matches = date_regex.findall(text)
+    return [f"{m}/{d}/{y}" for m, d, y in matches]
+
+# Example
+text_with_dates = "Important dates: 12/25/2024 is Christmas, 01/01/2025 is New Year's Day."
+dates = extract_dates(text_with_dates)
+print("Found dates:", dates)
+\end{lstlisting}
+
+\section{Replacing Text with Regular Expressions}
+
+The \texttt{sub()} method allows you to replace text that matches a pattern:
+
+\begin{lstlisting}
+import re
+
+# Basic substitution
+text = "My phone number is 415-555-9999."
+censored = re.sub(r'\d{3}-\d{3}-\d{4}', 'XXX-XXX-XXXX', text)
+print("Censored text:", censored)
+
+# Using groups in substitutions
+def obscure_phone(match):
+    """Obscure middle digits of phone numbers."""
+    return f"{match.group(1)}-XXX-{match.group(3)}"
+
+phone_regex = re.compile(r'(\d{3})-(\d{3})-(\d{4})')
+text = "Contact me at 415-555-9999 or 212-555-1234."
+obscured = phone_regex.sub(obscure_phone, text)
+print("Obscured numbers:", obscured)
+\end{lstlisting}
+
+\section{Practical Exercise: Password Strength Checker}
+
+This utility evaluates password strength using regular expressions:
+
+\begin{lstlisting}
+import re
+
+def check_password_strength(password):
+    """
+    Check password strength based on several criteria.
+    Returns a score (0-5) and feedback.
+    """
+    score = 0
+    feedback = []
+    
+    # Length check
+    if len(password) >= 8:
+        score += 1
+    else:
+        feedback.append("Password should be at least 8 characters long.")
+    
+    # Check for uppercase letters
+    if re.search(r'[A-Z]', password):
+        score += 1
+    else:
+        feedback.append("Add uppercase letters.")
+    
+    # Check for lowercase letters
+    if re.search(r'[a-z]', password):
+        score += 1
+    else:
+        feedback.append("Add lowercase letters.")
+    
+    # Check for digits
+    if re.search(r'\d', password):
+        score += 1
+    else:
+        feedback.append("Add numbers.")
+    
+    # Check for special characters
+    if re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        score += 1
+    else:
+        feedback.append("Add special characters (e.g., !@#$%^&*).")
+    
+    # Determine strength rating
+    strength_ratings = [
+        "Very Weak", "Weak", "Moderate", "Strong", "Very Strong", "Excellent"
+    ]
+    
+    result = {
+        "score": score,
+        "strength": strength_ratings[score],
+        "feedback": feedback
+    }
+    
+    return result
+
+# Example usage
+passwords = [
+    "password123",
+    "Password",
+    "P@ssw0rd",
+    "UltraSecure@Pass123!"
+]
+
+for pwd in passwords:
+    result = check_password_strength(pwd)
+    print(f"Password: {pwd}")
+    print(f"Strength: {result['strength']} ({result['score']}/5)")
+    if result['feedback']:
+        print("Feedback:", ", ".join(result['feedback']))
+    print()
+\end{lstlisting}
+
+\section{Case-Insensitive Matching}
+
+Python's \texttt{re} module allows for case-insensitive matching using the \texttt{re.I} or \texttt{re.IGNORECASE} flag:
+
+\begin{lstlisting}
+import re
+
+robocop = re.compile(r'robocop', re.I)
+match = robocop.search('RoboCop is part man, part machine, all cop.')
+
+if match:
+    print(match.group())  # Should print "RoboCop"
+else:
+    print("No match found!")
+
+# Another example
+result = robocop.search('ROBOCOP protects the innocent.').group()
+print(result)  # Prints "ROBOCOP"
+\end{lstlisting}
+
+\section{String Substitution with the sub() Method}
+
+The \texttt{sub()} method is used to replace matching patterns in strings:
+
+\begin{lstlisting}
+import re
+
+namesRegex = re.compile(r'Agent (\w)', re.I)
+text = 'Agent Alice gave the secret documents to Agent Bob and Agent Charlie.'
+
+result = namesRegex.sub(r'Agent \1****', text)
+print(result)
+
+# More complex substitution example
+agentNamesRegex = re.compile(r'Agent (\w)\w*')
+result = agentNamesRegex.sub(r'Agent \1****', 'Agent Alice told Agent Carol that Agent Eve knew Agent Bob was a double agent.')
+
+print(result)
+\end{lstlisting}
+
+\section{Managing Complex Regular Expressions}
+
+The \texttt{re.VERBOSE} flag allows you to write more readable complex patterns by ignoring whitespace and allowing comments:
+
+\begin{lstlisting}
+import re
+
+# Using multiple flags together
+someRegexValue = re.compile('foo', re.IGNORECASE | re.DOTALL)
+
+# Combining multiple flags
+someRegexValue = re.compile('foo', re.IGNORECASE | re.DOTALL | re.VERBOSE)
+\end{lstlisting}
+
+\section{Project: Clipboard Email and Phone Number Extractor}
+
+This practical project demonstrates how to create a utility that extracts all email addresses and phone numbers from the clipboard:
+
+\begin{lstlisting}
+#! python3
+# phoneAndEmail.py - Finds phone numbers and email addresses on the clipboard.
+
+import re
+import pyperclip
+
+# Phone regex pattern
+phoneRegex = re.compile(r'''(
+    (\d{3}|\(\d{3}\))?                # area code
+    (\s|-|\.)?                        # separator
+    (\d{3})                           # first 3 digits
+    (\s|-|\.)                         # separator
+    (\d{4})                           # last 4 digits
+    (\s*(ext|x|ext.)\s*(\d{2,5}))?    # extension
+    )''', re.VERBOSE)
+
+# Email regex pattern
+emailRegex = re.compile(r'''(
+    [a-zA-Z0-9._%+-]+                 # username
+    @                                 # @ symbol
+    [a-zA-Z0-9.-]+                    # domain name
+    \.[a-zA-Z]{2,4}                   # dot-something
+    )''', re.VERBOSE)
+
+# Find matches in clipboard text
+text = pyperclip.paste()
+matches = []
+
+for groups in phoneRegex.findall(text):
+    phoneNum = '-'.join([groups[1], groups[3], groups[5]])
+    if groups[8]:
+        phoneNum += ' x' + groups[8]
+    matches.append(phoneNum)
+
+for groups in emailRegex.findall(text):
+    matches.append(groups[0])
+
+# Copy results to clipboard
+if len(matches) > 0:
+    pyperclip.copy('\n'.join(matches))
+    print('Copied to clipboard:')
+    print('\n'.join(matches))
+else:
+    print('No phone numbers or email addresses found.')
+\end{lstlisting}
+
+\end{document}
