@@ -4,19 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simone Capodivento - Portfolio</title>
-    
-    <!-- Favicon setup -->
-    <!-- fix the favicon problem{it does not show correctly the shape}-->
-    
-
    <link rel="icon" type="image/png" href="/favicon.png"/>
-    <!-- Your existing preconnect links -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://raw.githubusercontent.com">
-
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.tailwindcss.com"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -24,11 +16,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <style>
-        /* Scientific styling (existing styles remain largely the same) */
 
-
-
-        .particle {
+.particle {
     will-change: transform, opacity;
     pointer-events: none;
     transform: translateZ(0);
@@ -46,7 +35,6 @@
     transform: translateZ(0);
 }
 
-/* Reduce animation complexity at the bottom */
 @media (max-height: 1000px) {
     .particle {
         display: none;
@@ -86,6 +74,7 @@
                 radial-gradient(circle at 80% 70%, rgba(29, 209, 161, 0.1) 0%, transparent 50%);
             pointer-events: none; z-index: -1;
         }
+        
         .particle {
             position: absolute; background: rgba(72, 219, 251, 0.5); border-radius: 50%;
             pointer-events: none; z-index: -1;
@@ -98,11 +87,11 @@
             from { text-shadow: 0 0 5px rgba(72, 219, 251, 0.5); }
             to { text-shadow: 0 0 15px rgba(29, 209, 161, 0.8); }
         }
-        #scene-container { /* Background 3D */
+        #scene-container { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.6; pointer-events: none; /* Added pointer-events none */
+            z-index: -1; opacity: 0.6; pointer-events: none; 
         }
-        .project-3d-container { /* Project 3D */
+        .project-3d-container { 
             width: 100%; height: 300px; position: relative; margin-top: 1rem;
             border-radius: 0.75rem; overflow: hidden; background: rgba(0, 0, 0, 0.2);
         }
@@ -121,11 +110,11 @@
             box-shadow: 0 15px 35px rgba(29, 209, 161, 0.3);
         }
         .project-card {
-             /* Simplified transition */
+             
              transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
         }
         .project-card:hover {
-             transform: translateY(-5px) scale(1.02); /* Adjusted scale slightly */
+             transform: translateY(-5px) scale(1.02); 
              box-shadow: 0 15px 30px rgba(29, 209, 161, 0.35);
         }
         .loading-indicator {
@@ -144,11 +133,6 @@
             background: rgba(72, 219, 251, 0.4); transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3);
         }
-         .poly-project-container {
-             width: 100%; text-align: center; margin-top: 2rem; margin-bottom: 2rem;
-         }
-         
-        /* University Notes specific styles */
         .pdf-card {
             transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
         }
@@ -176,21 +160,37 @@
     padding: 20px;
     border: 1px solid green;
     margin-bottom: 48px;
+    background: rgba(0, 0, 0, 0.2); 
+    backdrop-filter: blur(8px); 
+    border-radius: 8px; 
 }
 
 .innerContainer {
     width: 100%;
-}     
-}   
-.outerContainer {
-    width: 100%;
-    padding: 20px;
-    border: 1px solid green;
-    margin-bottom: 48px;
-    background: rgba(0, 0, 0, 0.2); /* Optional: adds slight background */
-    backdrop-filter: blur(8px); /* Optional: adds blur effect */
-    border-radius: 8px; /* Optional: rounds corners */
 }
+ .accordion {
+    background-color: #eee;
+    cursor: pointer;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    transition: 0.4s;
+    font-size: 16px;
+  }
+
+  .active, .accordion:hover {
+    background-color: #ccc;
+  }
+
+  .panel {
+    padding: 0 15px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+  }
+
     </style>
 </head>
 <body class="bg-transparent text-emerald-100 relative tech-font">
@@ -210,7 +210,7 @@
             </ul>
         </nav>
     </header>
-<!-- here i'll add the breadcrum and the-->
+
     <main>
     <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-12">
         <div>
@@ -224,6 +224,8 @@
                 <span class="tech-highlight">ANDROID DEVELOPMENT</span>,
                 <span class="tech-highlight">COMPUTER GRAPHICS</span> AND
                 <span class="tech-highlight">ANIMATION</span>.
+                <div class="mt-8 mb-8">
+            
             </p>
             <p class="mt-8 text-base sm:text-lg">
                 YOU CAN FIND HERE SOME OF THE PROJECTS I'VE WORKED ON.
@@ -234,6 +236,15 @@
                  </a>
              </div>
         </div>
+        <a href="https://docs.google.com/document/d/1iptm3vXesle0KNOpQxi8hINLR9IG-mM65qIDHqWeg_Q/edit?usp=sharing" 
+               target="_blank" rel="noopener noreferrer" 
+               class="inline-block px-6 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
+                      transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
+                      hover:shadow-cyan-500/30 font-semibold hover:scale-105">
+                <i class="fas fa-file-pdf mr-2"></i> View My Curriculum here
+            </a>
+        </div>
+        
     </section>
     <section id="intro" class="min-h-[50vh] flex justify-center items-center p-8 md:p-12">
     <div class="outerContainer max-w-2xl">
@@ -243,7 +254,7 @@
      height="50" 
      width="270" 
      class="mr-4">
-                <p class="text-sm">I like Engineering, i am a junior software engineer, my inner political compas in im left wing</p>
+                <p class="text-sm">I like Engineering, i am a junior software engineer, my political compass is left wing</p>
             </div>
         </div>
     </div>
@@ -252,32 +263,21 @@
     <section id="projects" class="p-8 md:p-12">
     <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-12 text-center">Projects</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-<!-- put on this section right here a paragraph about your specific wants with an immage on the left of a sunshine and a text on the right with a play button of my song alba -->
-<!-- Watch you see is watch you get, add a pic of you 
- I like Engineering, i am a junior software engineer, my inner political compas in im left wing-->
 
-
-
-
-
-
-
-
- <!-- Desk Project -->
         <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col h-full">
             <div class="flex-grow">
                 <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">MY DESK RIGHT NOW</h3>
                 <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A 3D visualization of my desk setup.</p>
             </div>
             <div class="w-full h-64 flex items-center justify-center overflow-hidden rounded-lg bg-black/20">
-                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png"
+                  <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-03-27%20at%2018.38.40.png"
                      alt="Blender 3D render of a desk setup"
                      class="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105"
                      loading="lazy" decoding="async" width="600" height="300"
                      style="object-position: center 40%;">
             </div>
         </div>
-        <!-- Amsterdam Bedroom -->
+        
         <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col h-full">
             <div class="flex-grow">
                 <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">AMSTERDAM BEDROOM</h3>
@@ -290,26 +290,6 @@
                      loading="lazy" decoding="async" width="600" height="300">
             </div>
         </div>
-
-        <!-- Modern House -->
-       <!--
-        
-        <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col h-full">
-            <div class="flex-grow">
-                <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">MODERN HOUSE</h3>
-                <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">A detailed 3D render of a modern house created in Blender.</p>
-            </div>
-            <div class="w-full h-64">
-                <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot%202025-05-12%20at%2017.28.15.png"
-                     alt="Blender 3D render of a dining room interior"
-                     class="w-full h-full object-cover rounded-lg"
-                     loading="lazy" decoding="async" width="600" height="300">
-            </div>
-        </div>
--->
-        <!-- make it in a way that if you click in the pic you open a window where you see the immage in a bigger way and have a little description, -->
-        <!-- Dutch Houses -->
-<!-- Dutch Houses -->
 
 <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col h-full">
     <div class="flex-grow">
@@ -328,7 +308,6 @@
 </div>
     </section>
 
-    <!-- Fixed University Notes Section -->
    <section id="university-notes" class="p-8 md:p-12 bg-gray-900 bg-opacity-20 backdrop-blur-md">
         <h2 class="text-3xl md:text-4xl font-bold scientific-text mb-12 text-center">University Notes</h2>
         <p class="text-center mb-8 text-emerald-200 max-w-2xl mx-auto">
@@ -366,36 +345,19 @@
                            class="pdf-btn flex-1 py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
                                   transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
                                   hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                            <i class="fas fa-download mr-2"></i> Part 1
+                            <i class="fas fa-download mr-2"></i> # 1
                         </a>
                         <a href="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/statistic%20%26%20probability%232.pdf" 
                            target="_blank" rel="noopener noreferrer" 
                            class="pdf-btn flex-1 py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
                                   transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
                                   hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                            <i class="fas fa-download mr-2"></i> Part 2
+                            <i class="fas fa-download mr-2"></i> # 2
                         </a>
                     </div>
                 </div>
             </div>
-<!--
-            <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20">
-                <div class="flex-grow w-full">
-                    <h3 class="text-xl font-semibold mb-3 tech-highlight">Vectors</h3>
-                    <p class="text-sm text-emerald-200 mb-4">Notes on vectors and their applications in mathematics and physics.</p>
-                    <div class="pdf-icon-container mb-4">
-                        <i class="far fa-file-pdf text-5xl text-emerald-400 transition-transform duration-300 group-hover:scale-110"></i>
-                    </div>
-                    <a href="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Vectors%20(1).pdf" 
-                       target="_blank" rel="noopener noreferrer" 
-                       class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                              transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                              hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                        <i class="fas fa-download mr-2"></i> Download PDF
-                    </a>
-                </div>
-            </div>
-        -->
+
             <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20">
                 <div class="flex-grow w-full">
                     <h3 class="text-xl font-semibold mb-3 tech-highlight">Trigonometry</h3>
@@ -430,24 +392,6 @@
                 </div>
             </div>
 
-<!-- https://github.com/Capodivento/Simone-s-Portfolio/blob/main/Function.pdf https://github.com/Capodivento/Simone-s-Portfolio/blob/main/Alternate_coordinate_systems__bases__exercises.pdf
-            <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20">
-                <div class="flex-grow w-full">
-                    <h3 class="text-xl font-semibold mb-3 tech-highlight">Alternate Coordinate Systems</h3>
-                    <p class="text-sm text-emerald-200 mb-4">Notes covering different coordinate systems.</p>
-                    <div class="pdf-icon-container mb-4">
-                        <i class="far fa-file-pdf text-5xl text-emerald-400 transition-transform duration-300 group-hover:scale-110"></i>
-                    </div>
-                    <a href="https://github.com/Capodivento/Simone-s-Portfolio/blob/main/Alternate_coordinate_systems.pdf" 
-                       target="_blank" rel="noopener noreferrer" 
-                       class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                              transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                              hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                        <i class="fas fa-download mr-2"></i> Download PDF
-                    </a>
-                </div>
-            </div>
--->
             <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20">
                 <div class="flex-grow w-full">
                     <h3 class="text-xl font-semibold mb-3 tech-highlight">Differential Equations & Integrals</h3>
@@ -465,34 +409,13 @@
                 </div>
             </div>
             
-<!--            <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20 h-full">
-                <div class="flex flex-col justify-between flex-grow w-full">
-                    <div>
-                        <h3 class="text-xl md:text-2xl font-semibold mb-3 tech-highlight">Fucntions</h3>
-                        <p class="text-sm text-emerald-200 mb-4">Functions introduction.</p>
-                    </div>
-
-                    <div class="pdf-icon-container mb-4 h-20 flex items-center justify-center">
-                        <i class="far fa-file-pdf text-5xl text-emerald-400 transition-transform duration-300 group-hover:scale-110"></i>
-                    </div>
-
-                    <a href="https://github.com/Capodivento/Simone-s-Portfolio/blob/main/Function.pdf" 
-                       target="_blank" rel="noopener noreferrer" 
-                       class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg
-                              transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                              hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                        <i class="fas fa-download mr-2"></i> Download PDF
-                    </a>
-                </div>
-            </div>
-        -->
-
 
         <div class="pdf-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20 h-full">
                 <div class="flex flex-col justify-between flex-grow w-full">
                     <div>
                         <h3 class="text-xl md:text-2xl font-semibold mb-3 tech-highlight">Automate the boring stuff with Python</h3>
                         <p class="text-sm text-emerald-200 mb-4">Guide to learn python for beginners.</p>
+                        <p class="card-text">Al Sweigart</p>
                     </div>
 
                     <div class="pdf-icon-container mb-4 h-20 flex items-center justify-center">
@@ -509,49 +432,68 @@
                 </div>
             </div>
 
+      
         
 <div class="card bg-dark text-white">
-  <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot 2025-11-23 at 09.56.14.png" class="card-img" alt="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-emerald-400 shadow-md" width="1600" height="1600">
+  <img src="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/Screenshot 2025-11-23 at 09.55.17.png" class="card-img" alt="w-16 h-16 md:w-20 md:h-20 rounded-full ring-2 ring-emerald-400 shadow-md" width="1600" height="1600">
   <div class="card-img-overlay">
     <h5 class="card-title">Explain a Function.</h5>
     <p class="card-text">This is how i think about functions, i would explain as the input represented by the excavator that feeds the function that is the cement mixer and it forms the briks that is final output.</p>
-    <p class="card-text">Function representation</p>
   </div>
 </div>
 
-    </section>
-        
 
+    </section>
+
+    <section class="p-8 md:p-12 bg-gray-900 bg-opacity-20">
+        <h2 class="text-2xl font-bold scientific-text mb-6 text-center">About Me</h2>
+
+        <button class="accordion">I stend for</button>
+        <div class="panel">
+          <p>Intentionality.</p>
+        </div>
+
+        <button class="accordion">I coltivate my</button>
+        <div class="panel">
+          <p>curiosity.</p>
+        </div>
+
+        <button class="accordion">I am tring to achive</button>
+        <div class="panel">
+          <p>Eudaimonia.</p>
+        </div>
+    </section>
 
     <section id="contact" class="p-8 md:p-12 text-center backdrop-blur-sm bg-opacity-10 bg-gray-900">
-    <h2 class="text-3xl md:text-4xl font-bold scientific-text">Contact</h2>
-    <p class="mt-4 text-sm md:text-base">Check me out here.</p>
-    <div class="mt-6 flex justify-center space-x-6">
-        <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-             <i class="fab fa-instagram text-3xl"></i>
-        </a>
-        <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-             <i class="fab fa-linkedin text-3xl"></i>
-        </a>
-        <a href="https://github.com/Capodivento" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-             <i class="fab fa-github text-3xl"></i>
-        </a>
-        <a href="https://leetcode.com/u/simonecapodivento311/" target="_blank" rel="noopener noreferrer" aria-label="LeetCode Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-             <i class="fas fa-code text-3xl"></i>
-        </a>
-        <a href="https://www.strava.com/athletes/166666006" target="_blank" rel="noopener noreferrer" aria-label="Strava Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
-             <i class="fab fa-strava text-3xl"></i>
-        </a>
-    </div>
-</section>
-</main> 
+        <h2 class="text-3xl md:text-4xl font-bold scientific-text">Contact</h2>
+        <p class="mt-4 text-sm md:text-base">Check me out here.</p>
+        
+        <div class="mt-6 flex justify-center space-x-6">
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+                 <i class="fab fa-instagram text-3xl"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/simone-capodivento-a31497235/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+                 <i class="fab fa-linkedin text-3xl"></i>
+            </a>
+            <a href="https://github.com/Capodivento" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+                 <i class="fab fa-github text-3xl"></i>
+            </a>
+            <a href="https://leetcode.com/u/simonecapodivento311/" target="_blank" rel="noopener noreferrer" aria-label="LeetCode Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+                 <i class="fas fa-code text-3xl"></i>
+            </a>
+            <a href="https://www.strava.com/athletes/166666006" target="_blank" rel="noopener noreferrer" aria-label="Strava Profile" class="hover:text-emerald-300 transition-colors transform hover:scale-110">
+                 <i class="fab fa-strava text-3xl"></i>
+            </a>
+        </div>
+    </section>
+    </main> 
 
     <footer class="p-6 text-center text-emerald-300 backdrop-blur-sm bg-opacity-20 bg-gray-900 text-sm">
         <p>&copy; <span id="current-year"></span> Simone Capodivento. All rights reserved.</p>
     </footer>
 
 
-<!-- Modifica il div del contatore così: -->
+
 <div class="counter tech-font">
     <span id="busuanzi_container_site_pv">
         <span id="busuanzi_value_site_pv"></span> Views
@@ -559,7 +501,7 @@
 </div>
 
     <script defer>
-        // --- Global Variables & Flags ---
+
         let backgroundScene, backgroundCamera, backgroundRenderer, backgroundShapes = [], backgroundMouse = new THREE.Vector2(), targetCameraPos = new THREE.Vector3();
         let projectScene, projectCamera, projectRenderer, projectMesh, projectWireframe;
         let isProjectDragging = false;
@@ -569,7 +511,6 @@
         const projectContainer = document.getElementById('project-3d-container');
         const projectLoader = document.getElementById('project-3d-loader');
 
-        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
             setCopyrightYear();
@@ -578,11 +519,11 @@
             setupBackgroundScene();
             setupProject3DObserver();
             setupEventListeners();
-            startAnimations(); // Start initially
+            setupAccordions();
+            startAnimations(); 
             startParticleEffect();
         });
 
-        // --- Setup Functions ---
 
         function setCopyrightYear() {
             const yearSpan = document.getElementById('current-year');
@@ -603,15 +544,15 @@
                 gsap.from(card, {
                     scrollTrigger: {
                         trigger: card,
-                        start: "top 85%", // Start animation slightly later
+                        start: "top 85%", 
                         toggleActions: "play none none none",
-                        once: true // Optional: Animate only once
+                        once: true 
                     },
                     opacity: 0, y: 50, scale: 0.95, duration: 0.7, delay: i * 0.1, ease: "power3.out"
                 });
             });
 
-            // Add animation for university notes cards
+            
             gsap.utils.toArray('.pdf-card').forEach((card, i) => {
                 gsap.from(card, {
                     scrollTrigger: {
@@ -652,7 +593,7 @@
             backgroundRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
             backgroundRenderer.setSize(window.innerWidth, window.innerHeight);
-            backgroundRenderer.setPixelRatio(window.devicePixelRatio); // Added for sharpness
+            backgroundRenderer.setPixelRatio(window.devicePixelRatio); 
             container.appendChild(backgroundRenderer.domElement);
 
             const geometries = [
@@ -679,7 +620,7 @@
                 backgroundScene.add(shape);
             }
 
-            // Lighting
+
             backgroundScene.add(new THREE.AmbientLight(0xffffff, 0.6));
             const pointLight = new THREE.PointLight(0x48DBF1, 1.2, 100);
             pointLight.position.set(5, 15, 15);
@@ -699,28 +640,25 @@
             const projectObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        // Delay slightly to ensure container dimensions are stable
+                        
                         setTimeout(() => {
-                            if (!projectScene) { // Initialize only if not already done
+                            if (!projectScene) { 
                                 initProject3D();
-                            } else if (!projectAnimationId) { // Resume if already initialized but paused
+                            } else if (!projectAnimationId) { 
                                 startProjectAnimation();
                             }
                         }, 150);
                     } else {
-                         // Optional: Pause project animation when it scrolls out of view
-                         // Be careful if you want it to keep animating slightly out of view
-                         // stopProjectAnimation();
                     }
                 });
-            }, { threshold: 0.1 }); // Trigger when 10% visible
+            }, { threshold: 0.1 }); 
 
             projectObserver.observe(projectContainer);
         }
 
 
         function initProject3D() {
-            if (!projectContainer || projectScene) return; // Don't re-initialize
+            if (!projectContainer || projectScene) return; 
             if(projectLoader) projectLoader.classList.add('visible');
 
             const projWidth = projectContainer.clientWidth;
@@ -729,7 +667,7 @@
             if (projWidth <= 0 || projHeight <= 0) {
                 console.warn("Project container has zero/invalid dimensions. Cannot initialize 3D scene yet.");
                  if(projectLoader) projectLoader.classList.remove('visible');
-                // Consider retrying later or logging an error
+                
                 return;
             }
 
@@ -740,7 +678,7 @@
             projectRenderer.setPixelRatio(window.devicePixelRatio);
             projectContainer.appendChild(projectRenderer.domElement);
 
-            // Custom Geometry (as before)
+            
             const mainGeometry = createCustomGeometry();
             const mainMaterial = new THREE.MeshStandardMaterial({
                 color: 0x48DBF1, metalness: 0.3, roughness: 0.6,
@@ -756,7 +694,7 @@
             projectWireframe.scale.copy(projectMesh.scale);
             projectScene.add(projectWireframe);
 
-            // Lighting
+            
             projectScene.add(new THREE.AmbientLight(0xffffff, 0.5));
             const projPointLight = new THREE.PointLight(0xffffff, 0.8, 100);
             projPointLight.position.set(5, 5, 5);
@@ -767,42 +705,42 @@
 
             projectCamera.position.z = 4;
 
-            setupProjectDragInteraction(); // Setup interaction after elements are created
+            setupProjectDragInteraction(); 
 
              if(projectLoader) projectLoader.classList.remove('visible');
-             startProjectAnimation(); // Start animation loop for this scene
+             startProjectAnimation(); 
         }
 
          function createCustomGeometry() {
-             // Same geometry creation logic as before
+             
              const geometry = new THREE.BufferGeometry();
              const vertices = new Float32Array([
-                 -1.0, -1.0, 1.0,  1.0, -1.0, 1.0,  1.0,  1.0, 1.0, -1.0,  1.0, 1.0, // Front face
-                 -1.0, -1.0,-1.0,  1.0, -1.0,-1.0,  1.0,  1.0,-1.0, -1.0,  1.0,-1.0, // Back face
-                  0.0,  2.0, 0.0,  2.0,  0.0, 0.0, -2.0,  0.0, 0.0,  0.0,  0.0, 2.0, // Spikes/Points
+                 -1.0, -1.0, 1.0,  1.0, -1.0, 1.0,  1.0,  1.0, 1.0, -1.0,  1.0, 1.0, 
+                 -1.0, -1.0,-1.0,  1.0, -1.0,-1.0,  1.0,  1.0,-1.0, -1.0,  1.0,-1.0, 
+                  0.0,  2.0, 0.0,  2.0,  0.0, 0.0, -2.0,  0.0, 0.0,  0.0,  0.0, 2.0, 
                   0.0,  0.0,-2.0
              ]);
-             // Indices need careful checking if vertices change. This set assumes 13 vertices (0-12).
+             
              const indices = [
-                  0, 1, 2,   0, 2, 3,    // Front
-                  1, 5, 6,   1, 6, 2,    // Right
-                  5, 4, 7,   5, 7, 6,    // Back
-                  4, 0, 3,   4, 3, 7,    // Left
-                  // Connections to extra points (adjust if needed based on desired shape)
-                  3, 2, 8,   2, 6, 8,    // Top point connections
-                  4, 5, 12,  0, 4, 10,   // Side/Bottom connections (check vertex indices)
+                  0, 1, 2,   0, 2, 3,    
+                  1, 5, 6,   1, 6, 2,    
+                  5, 4, 7,   5, 7, 6,    
+                  4, 0, 3,   4, 3, 7,    
+                  
+                  3, 2, 8,   2, 6, 8,    
+                  4, 5, 12,  0, 4, 10,   
                   1, 0, 11,  5, 1, 9,
-                  // Example: Connect side points (may need adjustment)
-                  8, 3, 7,   8, 6, 7,    // Connect top point down
-                  9, 1, 2,   9, 5, 6,    // Connect right point
-                  10,4, 0,   10,7, 3,   // Connect left point
-                  11,0, 1,   11,3, 2,   // Connect front point
-                  12,4, 5,   12,7, 6    // Connect back point
+                  
+                  8, 3, 7,   8, 6, 7,    
+                  9, 1, 2,   9, 5, 6,    
+                  10,4, 0,   10,7, 3,   
+                  11,0, 1,   11,3, 2,   
+                  12,4, 5,   12,7, 6    
              ];
              geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
              geometry.setIndex(indices);
              try {
-                geometry.computeVertexNormals(); // Important for lighting
+                geometry.computeVertexNormals(); 
              } catch (e) {
                 console.error("Error computing vertex normals, check geometry indices:", e);
              }
@@ -810,14 +748,27 @@
          }
 
         function setupEventListeners() {
-            // Background mouse move
-            window.addEventListener('mousemove', onBackgroundMouseMove, { passive: true }); // Use passive listener
+            
+            window.addEventListener('mousemove', onBackgroundMouseMove, { passive: true }); 
 
-            // Window Resize
+            
             window.addEventListener('resize', onWindowResize);
 
-            // Page Visibility
+            
             document.addEventListener('visibilitychange', handleVisibilityChange);
+        }
+
+        function setupAccordions() {
+            const accordions = document.querySelectorAll(".accordion");
+            accordions.forEach(button => {
+                button.addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    const panel = this.nextElementSibling;
+                    if (panel) {
+                        panel.style.display = (panel.style.display === "block") ? "none" : "block";
+                    }
+                });
+            });
         }
 
          function setupProjectDragInteraction() {
@@ -829,11 +780,11 @@
                  isProjectDragging = true;
                  previousMousePosition = { x: e.clientX, y: e.clientY };
                  projectContainer.style.cursor = 'grabbing';
-                 // Prevent text selection during drag
+                 
                  e.preventDefault();
              });
 
-             // Use document for mousemove/mouseup to catch events outside the container
+             
              document.addEventListener('mousemove', (e) => {
                  if (!isProjectDragging || !projectMesh) return;
                  const currentMousePosition = { x: e.clientX, y: e.clientY };
@@ -842,7 +793,7 @@
                      y: currentMousePosition.y - previousMousePosition.y
                  };
                  const rotateSpeed = 0.007;
-                 // Apply rotation relative to the camera's view
+                 
                  const deltaRotationQuaternion = new THREE.Quaternion()
                      .setFromEuler(new THREE.Euler(deltaMove.y * rotateSpeed, deltaMove.x * rotateSpeed, 0, 'XYZ'));
                  projectMesh.quaternion.multiplyQuaternions(deltaRotationQuaternion, projectMesh.quaternion);
@@ -859,15 +810,15 @@
                  }
              });
 
-             // Optional: Touch events for mobile
+             
               projectContainer.addEventListener('touchstart', (e) => {
                  if (e.touches.length === 1) {
                      isProjectDragging = true;
                      previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
                      projectContainer.style.cursor = 'grabbing';
-                     e.preventDefault(); // Prevent scrolling while dragging object
+                     e.preventDefault(); 
                  }
-             }, { passive: false }); // Need passive: false to call preventDefault
+             }, { passive: false }); 
 
              document.addEventListener('touchmove', (e) => {
                  if (!isProjectDragging || !projectMesh || e.touches.length !== 1) return;
@@ -876,7 +827,7 @@
                      x: currentMousePosition.x - previousMousePosition.x,
                      y: currentMousePosition.y - previousMousePosition.y
                  };
-                 const rotateSpeed = 0.008; // Slightly adjust speed for touch if needed
+                 const rotateSpeed = 0.008; 
                   const deltaRotationQuaternion = new THREE.Quaternion()
                      .setFromEuler(new THREE.Euler(deltaMove.y * rotateSpeed, deltaMove.x * rotateSpeed, 0, 'XYZ'));
                  projectMesh.quaternion.multiplyQuaternions(deltaRotationQuaternion, projectMesh.quaternion);
@@ -884,8 +835,8 @@
                     projectWireframe.quaternion.copy(projectMesh.quaternion);
                  }
                  previousMousePosition = currentMousePosition;
-                 e.preventDefault(); // Prevent scrolling while dragging object
-             }, { passive: false }); // Need passive: false to call preventDefault
+                 e.preventDefault(); 
+             }, { passive: false }); 
 
              document.addEventListener('touchend', () => {
                  if (isProjectDragging) {
@@ -895,27 +846,24 @@
              });
          }
 
-
-        // --- Event Handlers ---
-
         function onBackgroundMouseMove(event) {
             backgroundMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             backgroundMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            // Update target camera position slightly based on mouse
-            targetCameraPos.x = backgroundMouse.x * 1.0; // Reduced influence
-            targetCameraPos.y = backgroundMouse.y * 1.0; // Reduced influence
+            
+            targetCameraPos.x = backgroundMouse.x * 1.0; 
+            targetCameraPos.y = backgroundMouse.y * 1.0; 
         }
 
         function onWindowResize() {
-            // Background resize
+            
             if (backgroundCamera && backgroundRenderer) {
                 backgroundCamera.aspect = window.innerWidth / window.innerHeight;
                 backgroundCamera.updateProjectionMatrix();
                 backgroundRenderer.setSize(window.innerWidth, window.innerHeight);
-                // No need to setPixelRatio again unless it changes dynamically
+                
             }
 
-            // Project 3D resize
+            
             if (projectCamera && projectRenderer && projectContainer) {
                 const projWidth = projectContainer.clientWidth;
                 const projHeight = projectContainer.clientHeight;
@@ -929,10 +877,10 @@
 
         function handleVisibilityChange() {
             if (document.hidden) {
-                stopAnimations(); // Pause when tab is hidden
+                stopAnimations(); 
                 stopParticleEffect();
             } else {
-                startAnimations(); // Resume when tab is visible
+                startAnimations(); 
                 startParticleEffect();
             }
         }
@@ -943,7 +891,7 @@
             if (!backgroundAnimationId && backgroundScene) {
                 animateBackground();
             }
-            // Only start project animation if it has been initialized
+            
             if (!projectAnimationId && projectScene) {
                  startProjectAnimation();
             }
@@ -970,28 +918,12 @@
              }
          }
 
-        // --- Animation Loops ---
-
-        function animateBackground() {
-            backgroundAnimationId = requestAnimationFrame(animateBackground);
-
-            // Smooth camera movement towards target
-            backgroundCamera.position.x += (targetCameraPos.x - backgroundCamera.position.x) * 0.03;
-            backgroundCamera.position.y += (targetCameraPos.y + 1 - backgroundCamera.position.y) * 0.03; // Adjust vertical offset if needed
-            backgroundCamera.lookAt(backgroundScene.position);
-
-            backgroundShapes.forEach((shape, index) => {
-                shape.rotation.x += 0.001 + index * 0.00005;
-                shape.rotation.y += 0.002 + index * 0.00005;
-            });
-            backgroundRenderer.render(backgroundScene, backgroundCamera);
-        }
 
         function animateProject() {
-            if (!projectScene) return; // Should not happen if called correctly, but safe check
+            if (!projectScene) return; 
             projectAnimationId = requestAnimationFrame(animateProject);
 
-            // Continuous rotation when not dragging
+            
             if (!isProjectDragging && projectMesh) {
                 projectMesh.rotation.y += 0.002;
                  if (projectWireframe) projectWireframe.rotation.y += 0.002;
@@ -1000,195 +932,68 @@
             projectRenderer.render(projectScene, projectCamera);
         }
 
-        // --- Particle Effect ---
-// Replace your current particle effect code with this optimized version:
 
-function createParticle() {
-    // Limit total particles
-    const maxParticles = 50;
-    const currentParticles = document.querySelectorAll('.particle').length;
-    
-    if (currentParticles >= maxParticles) return;
-
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-    const size = Math.random() * 3 + 1;
-    particle.style.width = `${size}px`;
-    particle.style.height = `${size}px`;
-    
-    // Create particles only in viewport
-    const viewportHeight = window.innerHeight;
-    const viewportWidth = window.innerWidth;
-    
-    gsap.set(particle, {
-        x: Math.random() * viewportWidth,
-        y: Math.random() * viewportHeight,
-        opacity: 1
-    });
-
-    document.body.appendChild(particle);
-
-    gsap.to(particle, {
-        y: `random(-100, 100)`,
-        x: `random(-100, 100)`,
-        opacity: 0,
-        duration: 3,
-        ease: "power1.out",
-        onComplete: () => particle.remove()
-    });
-}
-
-function startParticleEffect() {
-    if (!particleIntervalId) {
-        createParticle();
-        // Increase interval time to reduce frequency
-        particleIntervalId = setInterval(createParticle, 500);
-    }
-}
-
-// Add this new function for scroll performance
-function handleScroll() {
-
-    const scrollPosition = window.scrollY + window.innerHeight;
-    const scrollThreshold = document.documentElement.scrollHeight - 500; // Increased threshold
-    
-    if (scrollPosition > scrollThreshold) {
-        stopAllAnimations();
-    } else {
-        resumeAllAnimations();
-    }
-}
-
-function stopAllAnimations() {
-    // Stop particles
-    stopParticleEffect();
-    // Reduce background animation framerate
-    if (backgroundScene) {
-        backgroundRenderer.setAnimationLoop(null);
-    }
-    // Stop project animation if visible
-    if (projectScene) {
-        projectRenderer.setAnimationLoop(null);
-    }
-}
-function resumeAllAnimations() {
-    // Resume particles with reduced count
-    startParticleEffect(30); // Reduced particle count
-    // Resume background animation
-    if (backgroundScene) {
-        backgroundRenderer.setAnimationLoop(animateBackground);
-    }
-    // Resume project animation if visible
-    if (projectScene) {
-        projectRenderer.setAnimationLoop(animateProject);
-    }
-}
-
-// Optimize particle effect
-function startParticleEffect(maxCount = 30) {
-    if (particleIntervalId) return;
-    
-    particleIntervalId = setInterval(() => {
-        const currentParticles = document.querySelectorAll('.particle').length;
-        if (currentParticles < maxCount) {
-            createParticle();
-        }
-    }, 1000); // Increased interval
-}
-
-    // Throttle scroll events
-
-
-    // Add throttle function
-function throttle(func, limit) {
-    let inThrottle;
-    return function(...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            requestAnimationFrame(() => inThrottle = false);
-        }
-    }
-}
-
-// Use throttled scroll handler
-window.addEventListener('scroll', throttle(handleScroll, 100), { passive: true });
-
-
-    if (!handleScroll.throttleTimer) {
-        handleScroll.throttleTimer = setTimeout(() => {
-            // Check if near bottom
-            const bottomThreshold = 100;
-            const isNearBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - bottomThreshold;
+        function createParticle() {
+            const maxParticles = 50;
+            const currentParticles = document.querySelectorAll('.particle').length;
             
-            if (isNearBottom) {
-                // Reduce animations when near bottom
-                stopParticleEffect();
-            } else {
-                // Resume animations when not near bottom
-                startParticleEffect();
+            if (currentParticles >= maxParticles) return;
+
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const size = Math.random() * 3 + 1;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+            
+            gsap.set(particle, {
+                x: Math.random() * viewportWidth,
+                y: Math.random() * viewportHeight,
+                opacity: 1
+            });
+
+            document.body.appendChild(particle);
+
+            gsap.to(particle, {
+                y: `random(-100, 100)`,
+                x: `random(-100, 100)`,
+                opacity: 0,
+                duration: 3,
+                ease: "power1.out",
+                onComplete: () => particle.remove()
+            });
+        }
+
+        function stopParticleEffect() {
+            if (particleIntervalId) {
+                clearInterval(particleIntervalId);
+                particleIntervalId = null;
             }
-            handleScroll.throttleTimer = null;
-        }, 100);
-    }
-}
+        }
 
-// Add this to your setupEventListeners function:
-function setupEventListeners() {
-    // ...existing listeners...
-    
-    // Add scroll listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
-}
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    requestAnimationFrame(() => inThrottle = false);
+                }
+            }
+        }
 
+        function handleScroll() {
+            const scrollPosition = window.scrollY + window.innerHeight;
+            const scrollThreshold = document.documentElement.scrollHeight - 500;
+            
+            if (scrollPosition > scrollThreshold) {
+                stopParticleEffect();
+            }
+        }
 
-// Optimize animation loops
-function animateBackground() {
-    if (!document.hidden && backgroundScene) {
-        backgroundAnimationId = requestAnimationFrame(animateBackground);
-        
-        // Reduce calculations
-        const lerpFactor = 0.03;
-        backgroundCamera.position.x += (targetCameraPos.x - backgroundCamera.position.x) * lerpFactor;
-        backgroundCamera.position.y += (targetCameraPos.y + 1 - backgroundCamera.position.y) * lerpFactor;
-        backgroundCamera.lookAt(backgroundScene.position);
-
-        // Optimize shape rotations
-        const baseRotation = 0.001;
-        backgroundShapes.forEach((shape, index) => {
-            shape.rotation.x += baseRotation;
-            shape.rotation.y += baseRotation;
-        });
-        
-        backgroundRenderer.render(backgroundScene, backgroundCamera);
-    }
-}
-//section about projects like poly 
-function updateBackgroundComplexity() {
-    if (!backgroundScene) return;
-    
-    const scrollPosition = window.scrollY + window.innerHeight;
-    const scrollThreshold = document.documentElement.scrollHeight - 500;
-    
-    if (scrollPosition > scrollThreshold) {
-        // Reduce number of visible shapes
-        backgroundShapes.forEach((shape, index) => {
-            if (index > 5) shape.visible = false;
-        });
-        // Lower render quality
-        backgroundRenderer.setPixelRatio(1.0);
-    } else {
-        // Restore shapes and quality
-        backgroundShapes.forEach(shape => shape.visible = true);
-        backgroundRenderer.setPixelRatio(window.devicePixelRatio);
-    }
-}
-
-// Add to your scroll handler
-function handleScroll() {
-    // ...existing code...
-    updateBackgroundComplexity();
-}
+        window.addEventListener('scroll', throttle(handleScroll, 100), { passive: true });
 
     </script>
 
