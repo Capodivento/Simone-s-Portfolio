@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -191,6 +192,36 @@
     overflow: hidden;
   }
 
+    /* Scoped particle styles for project card effect */
+    .project-card { position: relative; overflow: hidden; }
+    .project-card .particles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    .project-card .particle { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: rgba(16,185,129,0.45); animation: float-up 12s linear infinite; }
+
+    @keyframes float-up {
+        0% { transform: translateY(100%) translateX(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-100%) translateX(30px); opacity: 0; }
+    }
+
+    /* Centering tweaks for the rocket inside project card (responsive) */
+    .project-card .container { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
+    .project-card .pdf-card { width: 100%; max-width: 100%; }
+    @media (min-width: 640px) { .project-card .pdf-card { max-width: 420px; } }
+    @media (min-width: 1024px) { .project-card .pdf-card { max-width: 480px; } }
+    .project-card .card-content { padding: 20px 16px; }
+    @media (min-width: 768px) { .project-card .card-content { padding: 28px 20px; } }
+    .project-card .icon-container { margin-bottom: 10px; display:flex; align-items:center; justify-content:center; height:100px; position:relative; }
+    @media (min-width: 768px) { .project-card .icon-container { height:140px; } }
+    .project-card .icon-container .icon-bg { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:90px; height:90px; }
+    @media (min-width: 768px) { .project-card .icon-container .icon-bg { width:110px; height:110px; } }
+    .project-card .icon-container i { display:block; margin:0 auto; }
+
+    /* About section accordion styling to match card aesthetics */
+    .about-accordion .panel { display: none; }
+    .about-accordion .panel[style] { display: block; }
+    .about-accordion .accordion { border: none; }
+
     </style>
 </head>
 <body class="bg-transparent text-emerald-100 relative tech-font">
@@ -306,6 +337,46 @@
              height="300">
     </div>
 </div>
+        
+        <div class="project-card bg-gray-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md hover:bg-opacity-30 flex flex-col h-full">
+            <div class="flex-grow">
+                <h3 class="text-xl md:text-2xl font-semibold mb-4 tech-highlight">Design My Life Project</h3>
+                <p class="mt-2 mb-4 text-emerald-200 text-sm md:text-base">Interactive demo and notes — a small WebGL/three.js experience.</p>
+                <div class="tags">
+                    <span class="tag">three.js</span>
+                    <span class="tag">WebGL</span>
+                    <span class="tag">Interactive</span>
+                </div>
+            </div>
+            <div class="w-full h-56 md:h-64 lg:h-72 flex items-center justify-center overflow-hidden rounded-lg bg-black/20 p-4">
+                <div class="particles" id="particles"></div>
+                <div class="container max-w-xs sm:max-w-sm md:max-w-md mx-auto z-10 flex items-center justify-center px-4">
+                    <div class="pdf-card w-full">
+                        <div class="card-content text-center">
+                            <div class="card-header">
+                                <h3 class="tech-highlight">Design My Life Project</h3>
+                                <p class="card-description">Interactive WebGL demo exploring life-design concepts.</p>
+                            </div>
+
+                            
+
+                            <div class="icon-container">
+                                <div class="icon-bg"></div>
+                                <i class="fas fa-rocket text-5xl md:text-7xl text-emerald-300"></i>
+                            </div>
+
+                            <a href="https://capodivento.github.io/Design_my_life_project/" 
+                               target="_blank" 
+                               rel="noopener noreferrer" 
+                               class="pdf-btn">
+                                <span><i class="fas fa-arrow-right"></i></span>
+                                <span>Explore Project</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
    <section id="university-notes" class="p-8 md:p-12 bg-gray-900 bg-opacity-20 backdrop-blur-md">
@@ -480,49 +551,35 @@
             </div>
         </div>
 
-       
-       <div class="pdf-card bg-gray-900 bg-opacity-20 rounded-lg backdrop-blur-md hover:bg-opacity-30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20 overflow-hidden">
-                <div class="flex flex-col h-full">
-                    <div class="flex-1 p-6 flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-xl md:text-2xl font-semibold mb-3 tech-highlight">Logics and OOP</h3>
-                            <p class="text-sm text-emerald-200 mb-4">That is a Design my life project</p>
+
+    </section>
+
+    <section class="p-8 md:p-12">
+        <h2 class="text-2xl font-bold scientific-text mb-6 text-center">About Me</h2>
+
+        <div class="project-card bg-emerald-900 bg-opacity-20 p-6 rounded-lg backdrop-blur-md flex items-center justify-center">
+            <div class="particles" id="about-particles"></div>
+            <div class="container max-w-md mx-auto z-10">
+                <div class="pdf-card">
+                    <div class="card-content text-center">
+                        <div class="card-header">
+                            <h3 class="tech-highlight">About Me</h3>
+                            <p class="card-description">I design thoughtful web experiences, focus on clean code, and enjoy 3D graphics and animation.</p>
                         </div>
-                        <div class="mt-4">
-                            <div class="flex items-center justify-center mb-4 h-16">
-                                <i class="far fa-file-pdf text-4xl text-emerald-400 transition-transform duration-300 hover:scale-110"></i>
-                            </div>
-                            <a href="https://raw.githubusercontent.com/Capodivento/Simone-s-Portfolio/main/https://capodivento.github.io/Design_my_life_project/ " 
-                               target="_blank" rel="noopener noreferrer" 
-                               class="pdf-btn block w-full py-2 px-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg text-center
-                                      transition-all duration-300 hover:from-emerald-500 hover:to-cyan-500 hover:shadow-lg
-                                      hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                                <i class="fas fa-download mr-2"></i> go to project
-                            </a>
+
+                        <div class="about-accordion mt-4 space-y-3">
+                            <button class="accordion flex items-center justify-between w-full px-4 py-3 rounded bg-emerald-800 bg-opacity-30 text-emerald-100" aria-expanded="false">I stend for <span class="text-sm text-emerald-200">Intentionality</span></button>
+                            <div class="panel px-4 py-3 rounded text-emerald-100 bg-emerald-900 bg-opacity-20">Be self aware and put all the Intentionality in my actions.</div>
+
+                            <button class="accordion flex items-center justify-between w-full px-4 py-3 rounded bg-emerald-800 bg-opacity-30 text-emerald-100" aria-expanded="false">I cultivate my <span class="text-sm text-emerald-200">Curiosity</span></button>
+                            <div class="panel px-4 py-3 rounded text-emerald-100 bg-emerald-900 bg-opacity-20">Be open minded.</div>
+
+                            <button class="accordion flex items-center justify-between w-full px-4 py-3 rounded bg-emerald-800 bg-opacity-30 text-emerald-100" aria-expanded="false">I am tring to achive <span class="text-sm text-emerald-200">Eudaimonia</span></button>
+                            <div class="panel px-4 py-3 rounded text-emerald-100 bg-emerald-900 bg-opacity-20">katametron.</div>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-    </section>
-
-    <section class="p-8 md:p-12 bg-gray-900 bg-opacity-20">
-        <h2 class="text-2xl font-bold scientific-text mb-6 text-center">About Me</h2>
-
-        <button class="accordion">I stend for</button>
-        <div class="panel">
-          <p>Intentionality.</p>
-        </div>
-
-        <button class="accordion">I cultivate my</button>
-        <div class="panel">
-          <p>curiosity.</p>
-        </div>
-
-        <button class="accordion">I am tring to achive</button>
-        <div class="panel">
-          <p>Eudaimonia.</p>
         </div>
     </section>
 
@@ -1059,5 +1116,65 @@
 
     </script>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Create floating particles inside project card
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50;
+
+        if (particlesContainer) {
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Add click ripple effect to the first .pdf-card
+        const card = document.querySelector('.pdf-card');
+        if (card) {
+            if (!getComputedStyle(card).position || getComputedStyle(card).position === 'static') {
+                card.style.position = 'relative';
+            }
+            card.addEventListener('click', function(e) {
+                const rect = card.getBoundingClientRect();
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(16, 185, 129, 0.25)';
+                ripple.style.width = ripple.style.height = '100px';
+                ripple.style.left = (e.clientX - rect.left - 50) + 'px';
+                ripple.style.top = (e.clientY - rect.top - 50) + 'px';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.opacity = '1';
+                ripple.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
+                card.appendChild(ripple);
+
+                requestAnimationFrame(() => {
+                    ripple.style.transform = 'scale(4)';
+                    ripple.style.opacity = '0';
+                });
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+        }
+
+        // Add keyframes for ripple if not present
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple-effect { to { transform: scale(4); opacity: 0; } }
+            .particle { position: absolute; width: 2px; height: 2px; background: rgba(16,185,129,0.5); border-radius: 50%; }
+        `;
+        document.head.appendChild(style);
+    });
+    </script>
+
+
 </body>
 </html>
+
+
