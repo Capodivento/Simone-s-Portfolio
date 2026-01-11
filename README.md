@@ -41,10 +41,3 @@ Here’s what powers this site:
 - **GSAP** — for smooth and captivating animations
 - **Three.js** — stunning 3D visual elements
 
----
-
-## 🛠 Development
-
-Want to run it locally? Here’s how:
-
-```bash
